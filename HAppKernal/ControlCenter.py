@@ -24,10 +24,25 @@ class ControlCenter:
         self.VisualizationManager = vm.VisualizationManager()
         self.PathManager = PathManager
         
+        # list for holding roms
+        self.romList = []
+        
         # Timer which creates the main loop of the application
         self.operationTimerDictionary = {}
         self.OperationsTimer = QTimer()
         self.OperationsTimer.timeout.connect(self.launchOperations)
+        
+        
+    def addRom(self, Rom):
+        self.romList.append(Rom)
+        
+    def pauseRoms(self):
+        for Rom in self.romList:
+            Rom.stopEvent.clear()
+            
+    def resumeRoms(self):
+        for Rom in self.romList:
+            Rom.stopEvent.set()
         
     def startLaunchingOperations(self, interval):
         self.OperationsTimer.start(interval)
@@ -62,7 +77,9 @@ class ControlCenter:
         return self.OperationManager.getAllOperations()
     
     def interruptExecute(self, func):
-        QTimer.singleShot(0, func)
+        self.pauseRoms()
+        func()
+        self.resumeRoms()
         
     def addPeripheral(self, Peripheral):
         self.PeripheralManager.addPeripheral(Peripheral)
@@ -162,6 +179,7 @@ class ControlCenter:
     """
     
     def launchOperations(self):
+        self.pauseRoms()
         
         for Operation in self.OperationManager.getAllOperations():
                 
@@ -192,12 +210,14 @@ class ControlCenter:
             
             # begin the operation
             OperationExecutionTimer.launchOperation()
-                
-            
+        
+        self.resumeRoms()
         
     def executeOperation(self, Operation):
-       
-
+        self.pauseRoms()
+        
+        timeToExecute = time.time()
+        
         try:
             # grab all relevant execution information from executionParameters
             # determines the way it should stop execution
@@ -214,6 +234,10 @@ class ControlCenter:
             # Check for how long the timer has been running for and compare to the time limit
             elapsedTime = time.time() - Operation.startTime
                 
+            Operation.lastExecuteTime = Operation.currentExecuteTime
+            Operation.currentExecuteTime = time.time()
+            Operation.timeBetween = Operation.currentExecuteTime - Operation.lastExecuteTime
+            
             #print(elapsedTime)
             if executeTimeLimit:
                 if int(elapsedTime*1000) > executeTimeLimit:
@@ -232,7 +256,11 @@ class ControlCenter:
             print("Failed Operation: {}".format(Operation.name))
             print("An error occurred:")
             print(e)
-            
+        
+        timeToExecute = time.time() - timeToExecute
+        
+        self.resumeRoms()
+        #print("Operation{} took {} seconds".format(Operation.name, timeToExecute))
             
     def stopExecutingOperation(self, Operation):
         Operation.stopOperation()

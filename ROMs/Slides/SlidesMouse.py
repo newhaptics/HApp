@@ -18,6 +18,9 @@ class SlidesMouseHandles(rs.RomMouseHandles):
         self.VisualizerOperator = self.MasterModel.Controller.HAppControlCenter.getOperation("TouchVisualizerRefreshOperation")
         
     def LeftButtonHandler(self, xCoordinate, yCoordinate):
+        VisualizerOperation = self.MasterModel.Controller.HAppControlCenter.getOperation("TouchVisualizerRefreshOperation")
+        self.MasterModel.Controller.HAppControlCenter.interruptExecute(lambda x=xCoordinate,y=yCoordinate: VisualizerOperation.clickSelect(x, y))
+        
         # Mouse click event for visualizer operator
         scaler = self.VisualizerOperator.scaler
         
@@ -31,8 +34,7 @@ class SlidesMouseHandles(rs.RomMouseHandles):
         #self.MasterModel.parameterClicked([int(pinSelected[1]), int(pinSelected[0])])
         self.MasterModel.parameterClicked([int(yPinCoordinate), int(xPinCoordinate)])
         
-# =============================================================================
-#     def MoveHandler(self, xCoordinate, yCoordinate):
-#         # Turn off the touch screen tracker
-#         #self.VisualizerOperator.moveAction(xCoordinate, yCoordinate)
-# =============================================================================
+    def MoveHandler(self, xCoordinate, yCoordinate):
+        # Turn off the touch screen tracker
+        VisualizerOperation = self.MasterModel.Controller.HAppControlCenter.getOperation("TouchVisualizerRefreshOperation")
+        self.MasterModel.Controller.HAppControlCenter.interruptExecute(lambda x=xCoordinate, y=yCoordinate: VisualizerOperation.moveAction(x, y))

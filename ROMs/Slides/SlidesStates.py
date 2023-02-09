@@ -82,10 +82,11 @@ class SlidesTool(rs.RomState):
 # =============================================================================
             
     def startState(self):
-      
+        
         #create a text editor object for this state
         print('Slides Tools Begin')
         self.MasterModel = sm.SlidesMaster(self.Controller)
+        self.MasterModel.selectTool("drawDot")
         
         # set the mouse handler for the rom
         MousePeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Mouse")

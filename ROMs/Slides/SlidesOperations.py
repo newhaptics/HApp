@@ -20,6 +20,7 @@ class ToolExecutionOperation(rs.RomOperation):
         self.ToolFlag = ToolFlag
         self.inputDictionary[self.ToolFlag.name] = self.ToolFlag
         
+        # outputs to the operation
         self.TactileDisplay = TactileDisplay
         self.outputDictionary[self.TactileDisplay.name] = self.TactileDisplay
         
@@ -213,7 +214,7 @@ class UpdateSlidesGuiOperation(rs.RomOperation):
         self.createDebugString()
         
     def execute(self):
-        print("Updating Slides GUI")
+        print("Loading ROM visualizations...")
         self.RomVisualizer = self.Controller.HAppControlCenter.getVisualization("RomVisualizer")
         self.VisualizationWindow = self.RomVisualizer.RomExplorer
         
@@ -222,9 +223,10 @@ class UpdateSlidesGuiOperation(rs.RomOperation):
         
         self.RomVisualization.VisualizationHandler.setNewRomVisualizationHandler(self.SlidesVisualizationHandles)
         
-        # 
+        # create the visualization for the slides rom
         self.SlidesVisualizationHandles.createSlideButtons(self.MasterModel.FileManager.currentNumSlides())
 
+        self.RomVisualization.show()
 
 class ToolFlag(rs.RomFlag):
     

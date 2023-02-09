@@ -21,6 +21,11 @@ class Operation():
         self.startTime = None
         self.isStopped = False
         
+        # keep trakc of time between exectuion 
+        self.lastExecuteTime = 0
+        self.currentExecuteTime = 0
+        self.timeBetween = 0
+        
         # default execution parameter values
         
         # determines if it should execute
@@ -70,7 +75,9 @@ class Operation():
             executionString += "{} = {},".format(parameter[0], parameter[1])
         executionString += "\n"
         
-        self.debugString = inputString + outputString + self.description
+        timeString = "time between executions {}".format(self.timeBetween) + "\n"
+        
+        self.debugString = inputString + outputString + timeString + self.description
         
     def setFunction(self, func):
         self.function = func
@@ -149,7 +156,7 @@ class OperationManager():
         operationDebugText = "ARCS Operations-\n"
         for Operation in self.operationDictionary.values():
             operationDebugText += "{}\n".format(Operation.name)
-            #operationDebugText += "{}\n".format(Operation.debugString)
+            operationDebugText += "{}\n".format(Operation.debugString)
             
 # =============================================================================
 #             operationDebugText += "----Flag Dependencies: {}\n".format(Operation.flagDependencies)

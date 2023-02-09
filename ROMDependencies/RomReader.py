@@ -14,9 +14,13 @@ class RomReader(threading.Thread):
     def __init__(self, filename):
                 
         super().__init__()
+        self.lock = threading.Lock()
+        self.stopEvent = threading.Event()
+        
         #open the rom
         self.rom = open(filename)
         self.romString = self.rom.read()
+        
         
         thisCode = self.romString
         start = thisCode.find('@RomInputsBegin') + 17
@@ -42,7 +46,6 @@ class RomReader(threading.Thread):
 #         print(self.commentList)
 # =============================================================================
         
-    
     def createInterruptDictionary(self):
         romInterruptNames = self.getInterruptNames()
         
@@ -60,7 +63,6 @@ class RomReader(threading.Thread):
         #get rid of id
         interruptDictionaryAddress = interruptDictionaryAddress[3:-1]
         
-        
         interruptDictionaryAddress = interruptDictionaryAddress.replace('{', "")
         interrupts = interruptDictionaryAddress.split(',')
         interruptNames = []
@@ -74,7 +76,6 @@ class RomReader(threading.Thread):
         
     def setInterruptFlag(self, romInterruptString, value):
         self.interruptDictionary[romInterruptString] = value
-        
         
     def getSettings(self):
         return self.romSettings
@@ -93,5 +94,7 @@ class RomReader(threading.Thread):
         self.join()
         
     def run(self):
-        exec(self.romString,self.romSettings)
-        
+        self.romSettings['stopEvent'] = self.stopEvent
+        with self.lock:
+            # block simultanous execution of shared variables
+            exec(self.romString,self.romSettings)

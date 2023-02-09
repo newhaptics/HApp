@@ -76,6 +76,14 @@ class TouchVisualizerOperation(StateVisualizerOperation):
         # initialize the braille display and pass in the visualizer 
         super().__init__(name, TactileDisplay, StateVisualizer)
         
+        # inputs to the operation
+        self.TactileDisplay = TactileDisplay
+        self.inputDictionary[self.TactileDisplay.name] = self.TactileDisplay
+        
+        # outputs to the operation
+        self.StateVisualizer = StateVisualizer
+        self.outputDictionary[self.StateVisualizer.name] = self.StateVisualizer
+        
         # provide a description
         self.description = "This operation collects the current state of the braille display and communicates with the touchscreen to update the visualizer."
         
@@ -137,8 +145,11 @@ class TouchVisualizerOperation(StateVisualizerOperation):
         xNewTouchCoordinate = touchPosition[0]
         yNewTouchCoordinate = touchPosition[1]
         
-        positionString = "x:{0} y:{1} touch".format(xNewTouchCoordinate, yNewTouchCoordinate)
+        positionString = "x:{0} y:{1} touch position".format(xNewTouchCoordinate, yNewTouchCoordinate)
 
+        self.description = positionString
+        self.createDebugString()
+        
         significantChange = self.coordinateChangedSignificantly(xNewTouchCoordinate, yNewTouchCoordinate, 0.01)
         
         if significantChange:

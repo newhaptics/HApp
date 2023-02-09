@@ -15,8 +15,6 @@ import NewRomVisualizationHandles as nrvh
 
 import BasicRomVisualizationHandles as brvh
 
-
-
 class RomVisualization(vm.Visualization):
     
     def __init__(self, name, interruptDictionary):

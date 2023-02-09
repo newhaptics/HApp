@@ -19,9 +19,8 @@ echo = 0
 """
 
 import RomAPI as rs
-
 import SlidesStates as ns
-
+import time
 
 class SlidesController(rs.RomController):
     
@@ -78,6 +77,10 @@ while shouldRomEnd == 0:
     
     
     shouldRomEnd = ThisRom.getInterruptFlag('romEnd')
+    
+    time.sleep(0.01)
+    stopEvent.wait()
+    #print("testing thread")
     
 else:
     ThisRom.exitRom()

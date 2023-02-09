@@ -12,31 +12,20 @@ import RomVisualization as rv
 
 class RomLauncher(rr.RomReader):
     
-    def __init__(self, filename, HAppControlCenter):
-        super().__init__(filename)
-           
+    def __init__(self, romFilePath, HAppControlCenter):
+        super().__init__(romFilePath)
+        
+        # save the path to the rom file
+        self.romFilePath = romFilePath
         
         # add the HApp control center to the class
         self.HAppControlCenter = HAppControlCenter
         
-        #add the rom to the python path
-        fileFolderList = filename.split("/")
-
-        folderDirectory = ""
-
-        for folder in fileFolderList[:-1]:
-            folderDirectory = folderDirectory + folder + "//"
-            
-        print(folderDirectory)
-        self.HAppControlCenter.PathManager.addDirectory(folderDirectory)
-        
-        
-        
+        # add the Roms containing folder to the python path
+        self.addROMFolderToPath()
         
         # get the ROMs settings and description
         self.interruptDictionary = self.createInterruptDictionary()
-        self.romSettings = self.getSettings()
-        self.romComments = self.getDescriptions()
         
         # load the address of the Control center into the rom settings
         OperationsControlAddress = id(self.HAppControlCenter)
@@ -48,14 +37,23 @@ class RomLauncher(rr.RomReader):
         self.setSettings(self.romSettings)
         
         self.RomVisualization = rv.RomVisualization("RomVisualizer", self.interruptDictionary)
-        
-        print("loading visual")
-        self.RomVisualization.show()
-        
         self.HAppControlCenter.addVisualization(self.RomVisualization)
-        
+                
         print("rom settings are {}".format(self.romSettings))
-        
         self.executeRom()
         
-        #self.RomVisualization = rv.RomVisualization("RomVisualizer", self.interruptDictionary)
+        
+        
+    def addROMFolderToPath(self):
+        print("Adding ROM folders to path...")
+        #add the rom to the python path
+        fileFolderList = self.romFilePath.split("/")
+
+        folderDirectory = ""
+
+        for folder in fileFolderList[:-1]:
+            folderDirectory = folderDirectory + folder + "//"
+            
+        print(folderDirectory)
+
+        self.HAppControlCenter.PathManager.addDirectory(folderDirectory)
