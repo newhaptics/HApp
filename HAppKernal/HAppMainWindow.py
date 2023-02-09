@@ -129,7 +129,7 @@ class HAppMainWindow(qw.QMainWindow):
         # begin executing HApp operations
         self.HAppControlCenter.startLaunchingOperations(2)
         
-        qc.QTimer.singleShot(2000, lambda: self.quickConnect())
+        #qc.QTimer.singleShot(2000, lambda: self.quickConnect())
         
     def quickConnect(self):
         # ease of use

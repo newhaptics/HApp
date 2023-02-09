@@ -51,6 +51,10 @@ class SlidesMaster():
         # Implement the panning feature for loading the csv
         self.CanvasNavigation = scn.SlidesCanvasNav((19,41))
         
+        # slide data storage
+        self.nSlides = 0
+        self.currentSlide = 0
+        self.slidesDictionary = {}
         #super().__init__(toolKeyList, toolParameterDictionary)
         
     def selectTool(self, toolKey):
@@ -130,5 +134,37 @@ class SlidesMaster():
 #     def getSlideData(self):
 #         return self.BrailleDisplay.desired()
 # =============================================================================
+
+    def loadNextSlide(self):
+        if self.currentSlide < self.nSlides:
+            self.currentSlide += 1
+            self.loadSlide(self.currentSlide)
+        else:
+            print("can't load next slide")
+        
+    def loadPreviousSlide(self):
+        if self.currentSlide > 1:
+            self.currentSlide -= 1
+            self.loadSlide(self.currentSlide)
+        else:
+            print("can't load previous slide")
+        
+
+    def loadSlide(self, slideNum):
+        # grab a slide.csv from the cwd
+        self.currentSlide = slideNum
+        slideString = "Slide {}".format(slideNum)
+        print(slideString)
+        
+        #print(self.currentSlide)
+        canvas = self.FileManager.openSlide(slideString)
+        
+        # set the current canvas to the new slide
+        self.CanvasNavigation.setCanvas(canvas)
+        
+        # update the braille display with the new canvas
+        self.updateViewSpace()
+        
+        
         
         

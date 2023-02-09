@@ -12,12 +12,12 @@ class SlidesVisualizationHandles(rs.RomVisualizationHandles):
     def __init__(self, RomExplorer, MasterModel):
         print("Slides handler initialized")
         
-        self.nSlides = 0
-        self.currentSlide = 0
-        self.slidesDictionary = {}
-        
         self.MasterModel = MasterModel
         self.FileManager = self.MasterModel.FileManager
+        
+        self.MasterModel.nSlides = 0
+        self.MasterModel.currentSlide = 0
+        self.MasterModel.slidesDictionary = {}
         
         self.RomExplorer = RomExplorer
         self.RomExplorer.setWindowTitle("Slides Rom Window")
@@ -62,9 +62,9 @@ class SlidesVisualizationHandles(rs.RomVisualizationHandles):
         
         # create add and delete slides buttons
         self.RomExplorer.addSlideButton = qw.QPushButton("Add Slide", self.RomExplorer)
-        self.RomExplorer.addSlideButton.clicked.connect(lambda: self.createSlide(self.nSlides + 1))
+        self.RomExplorer.addSlideButton.clicked.connect(lambda: self.createSlide(self.MasterModel.nSlides + 1))
         self.RomExplorer.removeSlideButton = qw.QPushButton("Remove Slide", self.RomExplorer)
-        self.RomExplorer.removeSlideButton.clicked.connect(lambda: self.removeSlide(self.nSlides))
+        self.RomExplorer.removeSlideButton.clicked.connect(lambda: self.removeSlide(self.MasterModel.nSlides))
         
         
         # create the buttons for options and settings
@@ -182,18 +182,18 @@ class SlidesVisualizationHandles(rs.RomVisualizationHandles):
     
     def saveFile(self):
         # save currentSlide
-        slideString = "Slide {}".format(self.currentSlide)
+        slideString = "Slide {}".format(self.MasterModel.currentSlide)
         self.FileManager.saveSlide(slideString, self.MasterModel.TactileDisplay.return_desiredState())
 
         
     def reloadSlides(self):
         # clear all the slide buttons and reload the slides
-        for slide in self.slidesDictionary.values():
+        for slide in self.MasterModel.slidesDictionary.values():
             self.RomExplorer.rightToolBar.removeAction(slide)
             
-        self.nSlides = 0
-        self.currentSlide = 0
-        self.slidesDictionary.clear()
+        self.MasterModel.nSlides = 0
+        self.MasterModel.currentSlide = 0
+        self.MasterModel.slidesDictionary.clear()
         
         self.createSlideButtons(self.FileManager.currentNumSlides())
         
@@ -202,28 +202,28 @@ class SlidesVisualizationHandles(rs.RomVisualizationHandles):
         for i in range(1,nSlides + 1):
             self.addSlide(i)
     
-        self.currentSlide = 1
+        self.MasterModel.currentSlide = 1
         
     def overwriteSlide(self):
         
         mat = self.MasterModel.getSlideData()
         print(mat)
-        slideString = "Slide {}".format(self.currentSlide)
+        slideString = "Slide {}".format(self.MasterModel.currentSlide)
         self.FileManager.saveSlide(slideString, mat)
         
         
     def addSlide(self, slideNum):
         # adds QPushButton to self.RomExplorer.rightToolBar
-        self.nSlides += 1
+        self.MasterModel.nSlides += 1
         slideString = "Slide {}".format(slideNum)
         
         # creates a QPushButton instance for this slide
         button = qw.QPushButton(slideString, self.RomExplorer)
-        button.clicked.connect(lambda: self.loadSlide(slideNum))
+        button.clicked.connect(lambda: self.MasterModel.loadSlide(slideNum))
         
         # adds the push button to the slides dictionary and rightToolBar
         buttonAction = self.RomExplorer.rightToolBar.addWidget(button)
-        self.slidesDictionary[slideString] = buttonAction
+        self.MasterModel.slidesDictionary[slideString] = buttonAction
         
     def createSlide(self, slideNum):
         slideString = "Slide {}".format(slideNum)
@@ -238,28 +238,28 @@ class SlidesVisualizationHandles(rs.RomVisualizationHandles):
         
     def removeSlide(self, slideNum):
         # removes a QPushButton from self.RomExplorer.rightToolBar depending on the slide num
-        if self.nSlides > 0:
+        if self.MasterModel.nSlides > 0:
             slideString = "Slide {}".format(slideNum)
-            self.nSlides -= 1
+            self.MasterModel.nSlides -= 1
             
             # remove widget from the rightToolBar
-            self.RomExplorer.rightToolBar.removeAction(self.slidesDictionary[slideString])
+            self.RomExplorer.rightToolBar.removeAction(self.MasterModel.slidesDictionary[slideString])
             
             # delete slide.csv from cwd
             #self.FileManager.deleteSlide(slideString)
             
             # delete the dictionary instance
-            del self.slidesDictionary[slideString]
+            del self.MasterModel.slidesDictionary[slideString]
         else:
             # all slides gone
             pass
             
     def loadSlide(self, slideNum):
         # grab a slide.csv from the cwd
-        self.currentSlide = slideNum
+        self.MasterModel.currentSlide = slideNum
         slideString = "Slide {}".format(slideNum)
         
-        #print(self.currentSlide)
+        #print(self.MasterModel.currentSlide)
         canvas = self.FileManager.openSlide(slideString)
         
         # set the current canvas to the new slide

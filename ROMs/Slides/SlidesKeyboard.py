@@ -87,3 +87,9 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
 
     def KeyTabHandler(self):
         self.VisualizerOperator.changeDisplay()
+
+    def KeyPageUpHandler(self):
+        self.MasterModel.loadNextSlide()
+        
+    def KeyPageDownHandler(self):
+        self.MasterModel.loadPreviousSlide()
