@@ -134,8 +134,8 @@ class HAppMainWindow(qw.QMainWindow):
     def quickConnect(self):
         # ease of use
         self.connectDisplay("COM12")
-        qc.QTimer.singleShot(1000, lambda: self.connectTouchscreen("COM34"))
-        qc.QTimer.singleShot(2000, lambda: self.connectTouchscreen("COM7"))
+        #qc.QTimer.singleShot(1000, lambda: self.connectTouchscreen("COM34"))
+        #qc.QTimer.singleShot(2000, lambda: self.connectTouchscreen("COM7"))
         #ARCSLayout = self.HAppControlCenter.debugGetResourceLabels()
         #self.ARCSLabel.setLayout(ARCSLayout)
         
@@ -506,7 +506,7 @@ class HAppMainWindow(qw.QMainWindow):
         self.StateVisualizer = rtsv.StateVisualizer("StateVisualizer", state, displaySize)
         
         # create an operation to constantly refresh the visualizer and add it to the controller
-        self.StateVisualizerRefreshOperation = rtsv.StateVisualizerOperation("StateVisualizerRefreshOperation", self.TactileDisplay, self.StateVisualizer)
+        self.StateVisualizerRefreshOperation = rtsv.StateVisualizerOperation("StateVisualizerRefreshOperation",  self.MousePeripheral, self.TactileDisplay, self.StateVisualizer)
         
         # add it as a visualization to the control center
         self.HAppControlCenter.addVisualization(self.StateVisualizer)
@@ -529,7 +529,7 @@ class HAppMainWindow(qw.QMainWindow):
             self.TouchVisualizer = tsv.TouchVisualizer("TouchVisualizer", state, displaySize)
             
             # create an operation to constantly refresh the visualizer and add it to the controller
-            self.TouchVisualizerRefreshOperation = tsv.TouchVisualizerOperation("TouchVisualizerRefreshOperation", self.TactileDisplay, self.TouchVisualizer, self.margins)
+            self.TouchVisualizerRefreshOperation = tsv.TouchVisualizerOperation("TouchVisualizerRefreshOperation", self.MousePeripheral, self.TactileDisplay, self.TouchVisualizer, self.margins)
             
             # remove the state visualizer
             self.HAppControlCenter.killOperation("StateVisualizerRefreshOperation")
@@ -561,7 +561,7 @@ class HAppMainWindow(qw.QMainWindow):
             self.TouchVisualizer = tsv.TouchVisualizer("TouchVisualizer", state, displaySize)
             
             # create an operation to constantly refresh the visualizer and add it to the controller
-            self.TouchVisualizerRefreshOperation = tsv.TouchVisualizerOperation("TouchVisualizerRefreshOperation", self.TactileDisplay, self.TouchVisualizer, self.margins)
+            self.TouchVisualizerRefreshOperation = tsv.TouchVisualizerOperation("TouchVisualizerRefreshOperation", self.MousePeripheral, self.TactileDisplay, self.TouchVisualizer, self.margins)
             
             # add it as a visualization to the control center
             self.HAppControlCenter.addVisualization(self.TouchVisualizer)

@@ -22,10 +22,6 @@ class TouchVisualizer(StateVisualizer):
         
         super().__init__(name, state, displaySize)
         
-        # mouse tracking ability
-        self.setMouseTracking(True)
-        self.setAttribute(qc.Qt.WA_TransparentForMouseEvents, True)
-        
         # set each label to have mouseTracking
         
         for pin in self.pinList:
@@ -72,17 +68,9 @@ class TouchCursor(qw.QLabel):
         
 class TouchVisualizerOperation(StateVisualizerOperation):
     
-    def __init__(self, name, TactileDisplay, StateVisualizer, margins):
+    def __init__(self, name, MousePeripheral, TactileDisplay, StateVisualizer, margins):
         # initialize the braille display and pass in the visualizer 
-        super().__init__(name, TactileDisplay, StateVisualizer)
-        
-        # inputs to the operation
-        self.TactileDisplay = TactileDisplay
-        self.inputDictionary[self.TactileDisplay.name] = self.TactileDisplay
-        
-        # outputs to the operation
-        self.StateVisualizer = StateVisualizer
-        self.outputDictionary[self.StateVisualizer.name] = self.StateVisualizer
+        super().__init__(name, MousePeripheral, TactileDisplay, StateVisualizer)
         
         # provide a description
         self.description = "This operation collects the current state of the braille display and communicates with the touchscreen to update the visualizer."
@@ -91,7 +79,7 @@ class TouchVisualizerOperation(StateVisualizerOperation):
         executionParameters = {
             "executeDelay": 0, # a delay in milliseconds that starts the execution of the Operation after the flag dependencies have been met
             "executeContinuously": True, # a boolean value that determines if the Operation will execute forever
-            "executionIntervalTime": 30, # an interval in milliseconds that determines the time between execution
+            "executionIntervalTime": 10, # an interval in milliseconds that determines the time between execution
         }
         
         self.setExecutionParameters(executionParameters)
@@ -170,8 +158,8 @@ class TouchVisualizerOperation(StateVisualizerOperation):
             # print("no change")
             
         # update the pin position 
-        xCursorCoordinate = self.StateVisualizer.xCursorCoordinate
-        yCursorCoordinate = self.StateVisualizer.yCursorCoordinate
+        xCursorCoordinate = self.MousePeripheral.xCoordinate
+        yCursorCoordinate = self.MousePeripheral.yCoordinate
         
         # get the pin position from visualizer coordinate
         scaledDict = self.scaler.scale(xCursorCoordinate, yCursorCoordinate, "visualizer")

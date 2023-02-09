@@ -11,6 +11,7 @@ from PyQt5 import QtGui as qg
 from PyQt5 import QtCore as qc
 
 import VisualizationManager as vm
+import CoordinateScalar as cs
 
 import OperationsManager as om
 
@@ -21,6 +22,10 @@ class StateVisualizer(vm.Visualization):
     def __init__(self, name, state, displaySize, parent=None):
         
         super().__init__(name)
+        
+        # mouse tracking ability
+        self.setMouseTracking(True)
+        self.setAttribute(qc.Qt.WA_TransparentForMouseEvents, True)
         
         self.setStyleSheet("border: 1px dotted black;")
         
@@ -94,9 +99,13 @@ class StateVisualizer(vm.Visualization):
 
 class StateVisualizerOperation(om.Operation):
     
-    def __init__(self, name, TactileDisplay, StateVisualizer):
+    def __init__(self, name, MousePeripheral, TactileDisplay, StateVisualizer):
         super().__init__(name)
+        
         # inputs to the operation
+        self.MousePeripheral = MousePeripheral
+        self.inputDictionary[self.MousePeripheral.name] = self.MousePeripheral
+        
         self.TactileDisplay = TactileDisplay
         self.inputDictionary[self.TactileDisplay.name] = self.TactileDisplay
         
@@ -111,7 +120,7 @@ class StateVisualizerOperation(om.Operation):
         executionParameters = {
             "executeDelay": 2500, # a delay in milliseconds that starts the execution of the Operation after the flag dependencies have been met
             "executeContinuously": True, # a boolean value that determines if the Operation will execute forever
-            "executionIntervalTime": 100, # an interval in milliseconds that determines the time between execution
+            "executionIntervalTime": 10, # an interval in milliseconds that determines the time between execution
         }
         
         self.setExecutionParameters(executionParameters)
@@ -119,12 +128,41 @@ class StateVisualizerOperation(om.Operation):
         self.executable = self.execute
         
         self.createDebugString()
+        
+    def startOperation(self):
+
+        # "Real GUI" Size
+        self.realGuiWidth =  880#self.StateVisualizer.frameGeometry().width() #- leftMargin*2#(self.dotSize + 1) * self.nColumns
+        self.realGuiHeight = 425#self.StateVisualizer.frameGeometry().height() #- topMargin*2#(self.dotSize + 1) * self.nRows
     
+        pinWidth = 41
+        pinHeight = 19
+        
+        # create a coordinate scaler
+        regions = { "pin" : (pinWidth, pinHeight),
+                    "visualizer" : (self.realGuiWidth, self.realGuiHeight)
+                   }
+        
+        self.scaler = cs.CoordinateScaler(regions)
+        
     def execute(self):
         # get the state from the firmware
         state = self.TactileDisplay.state()
         #state = self.TactileDisplay.return_currentState()
-
+        
+        # update the pin position 
+        xCursorCoordinate = self.MousePeripheral.xCoordinate
+        yCursorCoordinate = self.MousePeripheral.yCoordinate
+        
+        # get the pin position from visualizer coordinate
+        scaledDict = self.scaler.scale(xCursorCoordinate, yCursorCoordinate, "visualizer")
+        
+        # get the pin coordinate to highlight
+        xPinCoordinate = scaledDict["pin"][0]
+        yPinCoordinate = scaledDict["pin"][1]
+        
+        self.StateVisualizer.highlightPin = (xPinCoordinate, yPinCoordinate)
+        
         # refresh the visualizer state
         self.StateVisualizer.refreshPins(state)
         

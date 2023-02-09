@@ -17,6 +17,9 @@ class MousePeripheral(pm.PeripheralDevice):
         self.DefaultMouseHandles = MouseHandles
         self.MouseHandles = MouseHandles
         
+        self.xCoordinate = 0
+        self.yCoordinate = 0
+        
     def setNewMouseHandler(self, NewMouseHandles):
         
         self.MouseHandles = NewMouseHandles
@@ -42,6 +45,8 @@ class MousePeripheral(pm.PeripheralDevice):
         else:
             yCoordinate = 0
             
+        self.xCoordinate = xCoordinate
+        self.yCoordinate = yCoordinate
         self.debugString = "Mouse Position: x:{} y:{}".format(xCoordinate, yCoordinate)
 
 # =============================================================================
@@ -94,6 +99,8 @@ class MousePeripheral(pm.PeripheralDevice):
         else:
             yCoordinate = 0
         
+        self.xCoordinate = xCoordinate
+        self.yCoordinate = yCoordinate
         
         self.debugString = "Mouse Position: x:{} y:{}".format(xCoordinate, yCoordinate)
 

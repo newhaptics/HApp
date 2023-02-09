@@ -14,12 +14,28 @@ class SlidesMouseHandles(rs.RomMouseHandles):
         super().__init__()
         
         self.MasterModel = MasterModel
-        #self.VisualizerOperator = self.MasterModel.Controller.HAppControlCenter.getOperation("StateVisualizerRefreshOperation")
-        self.VisualizerOperator = self.MasterModel.Controller.HAppControlCenter.getOperation("TouchVisualizerRefreshOperation")
         
+        # check if the touchscreen is attached or not
+        VisualizerOperator = self.MasterModel.Controller.HAppControlCenter.getOperation("TouchVisualizerRefreshOperation")
+        if VisualizerOperator is not None:
+            self.VisualizerOperator = VisualizerOperator
+        else:
+            print("no touch screen attached")
+            
+        VisualizerOperator = self.MasterModel.Controller.HAppControlCenter.getOperation("StateVisualizerRefreshOperation")
+        if VisualizerOperator is not None:
+            self.VisualizerOperator = VisualizerOperator
+        else:
+            print("no device attached")
+                
+                
     def LeftButtonHandler(self, xCoordinate, yCoordinate):
         VisualizerOperation = self.MasterModel.Controller.HAppControlCenter.getOperation("TouchVisualizerRefreshOperation")
-        self.MasterModel.Controller.HAppControlCenter.interruptExecute(lambda x=xCoordinate,y=yCoordinate: VisualizerOperation.clickSelect(x, y))
+        if VisualizerOperation is not None:
+            self.MasterModel.Controller.HAppControlCenter.interruptExecute(lambda x=xCoordinate,y=yCoordinate: VisualizerOperation.clickSelect(x, y))
+        else:
+            pass
+     
         
         # Mouse click event for visualizer operator
         scaler = self.VisualizerOperator.scaler
@@ -37,4 +53,8 @@ class SlidesMouseHandles(rs.RomMouseHandles):
     def MoveHandler(self, xCoordinate, yCoordinate):
         # Turn off the touch screen tracker
         VisualizerOperation = self.MasterModel.Controller.HAppControlCenter.getOperation("TouchVisualizerRefreshOperation")
-        self.MasterModel.Controller.HAppControlCenter.interruptExecute(lambda x=xCoordinate, y=yCoordinate: VisualizerOperation.moveAction(x, y))
+        if VisualizerOperation is not None:
+            self.MasterModel.Controller.HAppControlCenter.interruptExecute(lambda x=xCoordinate,y=yCoordinate: VisualizerOperation.moveAction(x, y))
+        else:
+            pass
+        
