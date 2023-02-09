@@ -34,6 +34,7 @@ import RealTimeStateVisualizer as rtsv
 import HAppOperations as ho
 import ControlCenter as cc
 import RomOperation as ro
+import RomReader as rr
 
 import RomVisualization as rv
 
@@ -584,49 +585,61 @@ class HAppMainWindow(qw.QMainWindow):
         
         # Initialize the Rom Operation which activates all associated libraries needed to start the rom
         self.InitializeRomOperation = ro.RomOperation("InitializeRomOperation", self.HAppControlCenter, filename, self.HAppPathManager)
+        self.interruptDictionary = self.ThisRom.createInterruptDictionary()
+        self.romSettings = self.ThisRom.getSettings()
+        self.romComments = self.ThisRom.getDescriptions()
+        OperationsControlAddress = id(self.HAppControlCenter)
+        self.romSettings['OperationsControlAddress'] = OperationsControlAddress
+        self.ThisRom.setSettings(self.romSettings)
+        self.ThisRom = rr.RomReader(filename)
+        self.ThisRom.executeRom()
         
-        # Construct the Rom settings pop up dialog
-        self.romSettingsWindow = qw.QDialog()
-        self.romSettingsWindow.setWindowTitle("rom settings window")
-        settingInputLocationX = 0
-        settingInputLocationY = 0
-        romSettingQLineInputs = {}
-        romSettings = self.InitializeRomOperation.romSettings
-        romComments = self.InitializeRomOperation.romComments
-        romSettingKeys = list(romSettings.keys())
         
-        for (i,romSettingKey) in enumerate(romSettingKeys):
-            if romSettingKey == "interruptDictionaryAddress" or romSettingKey == "OperationsControlAddress":
-                pass
-            else:
-                #create qt label for setting
-                romSettingLabel = qw.QLabel(romSettingKey, self.romSettingsWindow)
-                romSettingLabel.move(settingInputLocationX, settingInputLocationY)
-                romSettingComment = qw.QLabel(romComments[i], self.romSettingsWindow)
-                romSettingComment.move(settingInputLocationX, settingInputLocationY + 25)
-                
-                #create input box for setting
-            
-                romSettingQLineInputs[romSettingKey] = qw.QLineEdit(romSettings[romSettingKey], self.romSettingsWindow)
-                romSettingQLineInputs[romSettingKey].move(settingInputLocationX + 100,settingInputLocationY)
-                
-                settingInputLocationY += 50
         
-        #create execute rom button
-        executeRomButton = qw.QPushButton("Execute Rom", self.romSettingsWindow)
-        executeRomButton.move(settingInputLocationX,settingInputLocationY)
-        
-        executeRomButton.clicked.connect(lambda: self.InitializeRomOperation.startOperation(romSettingQLineInputs))
-        
-        #create end rom button
-        endRomButton = qw.QPushButton("End Rom", self.romSettingsWindow)
-        endRomButton.move(settingInputLocationX + 100,settingInputLocationY)
-        
-        endRomButton.clicked.connect(lambda: self.InitializeRomOperation.stopOperation())
-        
-        #self.HAppOperationController.setOperation("InitializeRomOperation", self.InitializeRomOperation)
-        
-        self.romSettingsWindow.show()
+# =============================================================================
+#         # Construct the Rom settings pop up dialog
+#         self.romSettingsWindow = qw.QDialog()
+#         self.romSettingsWindow.setWindowTitle("rom settings window")
+#         settingInputLocationX = 0
+#         settingInputLocationY = 0
+#         romSettingQLineInputs = {}
+#         romSettings = self.InitializeRomOperation.romSettings
+#         romComments = self.InitializeRomOperation.romComments
+#         romSettingKeys = list(romSettings.keys())
+#         
+#         for (i,romSettingKey) in enumerate(romSettingKeys):
+#             if romSettingKey == "interruptDictionaryAddress" or romSettingKey == "OperationsControlAddress":
+#                 pass
+#             else:
+#                 #create qt label for setting
+#                 romSettingLabel = qw.QLabel(romSettingKey, self.romSettingsWindow)
+#                 romSettingLabel.move(settingInputLocationX, settingInputLocationY)
+#                 romSettingComment = qw.QLabel(romComments[i], self.romSettingsWindow)
+#                 romSettingComment.move(settingInputLocationX, settingInputLocationY + 25)
+#                 
+#                 #create input box for setting
+#             
+#                 romSettingQLineInputs[romSettingKey] = qw.QLineEdit(romSettings[romSettingKey], self.romSettingsWindow)
+#                 romSettingQLineInputs[romSettingKey].move(settingInputLocationX + 100,settingInputLocationY)
+#                 
+#                 settingInputLocationY += 50
+#         
+#         #create execute rom button
+#         executeRomButton = qw.QPushButton("Execute Rom", self.romSettingsWindow)
+#         executeRomButton.move(settingInputLocationX,settingInputLocationY)
+#         
+#         executeRomButton.clicked.connect(lambda: self.InitializeRomOperation.startOperation(romSettingQLineInputs))
+#         
+#         #create end rom button
+#         endRomButton = qw.QPushButton("End Rom", self.romSettingsWindow)
+#         endRomButton.move(settingInputLocationX + 100,settingInputLocationY)
+#         
+#         endRomButton.clicked.connect(lambda: self.InitializeRomOperation.stopOperation())
+#         
+#         #self.HAppOperationController.setOperation("InitializeRomOperation", self.InitializeRomOperation)
+#         
+#         self.romSettingsWindow.show()
+# =============================================================================
         
 
     """ connection subroutines """

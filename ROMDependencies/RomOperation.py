@@ -64,6 +64,7 @@ class RomOperation(om.Operation):
         
         
     def startRom(self, romSettingQLineInputs):
+        
         for romSettingKey in self.romSettingsKeys:
             if romSettingKey == "interruptDictionaryAddress" or romSettingKey == "OperationsControlAddress":
                 pass

@@ -153,6 +153,8 @@ class SlidesVisualizationHandles(rs.RomVisualizationHandles):
         
     def newFile(self):
         # create a new folder in the Root
+        self.FileManager.makeCWD("testScripts")
+        
         options = qw.QFileDialog.Options()
         options |= qw.QFileDialog.DontUseNativeDialog
         fileName, _ = qw.QFileDialog.getSaveFileName(self.RomExplorer,"Save File", options=options)
@@ -164,10 +166,12 @@ class SlidesVisualizationHandles(rs.RomVisualizationHandles):
             
     def loadFile(self):
         # load a file here
+        self.FileManager.makeCWD("testScripts")
+
         options = qw.QFileDialog.Options()
         options |= qw.QFileDialog.DontUseNativeDialog
         options |= qw.QFileDialog.ShowDirsOnly
-        directory = qw.QFileDialog.getExistingDirectory(self.RomExplorer, "Select Directory", "", options=options)
+        directory = qw.QFileDialog.getExistingDirectory(self.RomExplorer, "Load File", "", options=options)
         if directory:
             source = directory + "//"
             print(source)

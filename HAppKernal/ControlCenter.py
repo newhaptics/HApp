@@ -180,9 +180,6 @@ class ControlCenter:
                 if not Operation.checkFlagConditions():#self.checkFlagConditions(executeOnFlags, Operation):
                     # the Operation does not meet all execute flag                    
                     continue
-                else:
-                    print("Operation Conditions met")
-                    print(Operation.name)
 
             # if operation made it here it should be executed 
             # below is how it starts execution
@@ -274,8 +271,6 @@ class OperationTimer(QTimer):
             self.setSingleShot(True)
             
         self.Operation.startTime = time.time()
-        print("starting operation")
-        print(self.Operation.name)
         QTimer.singleShot(self.executeDelay, self.start)
     
 class UpdateMonitorOperation(om.Operation):

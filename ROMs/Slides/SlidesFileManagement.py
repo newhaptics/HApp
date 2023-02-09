@@ -24,7 +24,7 @@ class SlidesFileManagement():
         
         self.rootSoftwarePath = self.PathManager.rootSoftwarePath
         
-        self.currentSlidesDirectory = self.rootSoftwarePath + "APIv0.7-Coeus//v0.769-Coeus//testScripts//SlidesTestScripts//SlidesTest2//"
+        self.currentSlidesDirectory = self.rootSoftwarePath + "testScripts//SlidesTestScripts//SlidesTest1//"
         
         # create a first slide in cwd
         self.currentSlidePath = self.currentSlidesDirectory  + "Slide 1.csv"
@@ -112,4 +112,12 @@ class SlidesFileManagement():
                 f.write("\n")
         f.close()
         
-    
+    def makeCWD(self, directoryString):
+        
+        subDirectoryList = os.listdir(self.PathManager.pathToSoftwareFolder)
+        
+        for subdirectory in subDirectoryList:
+            if subdirectory == directoryString:
+                directioryPath = os.path.join(self.PathManager.pathToSoftwareFolder, subdirectory)
+                print(directioryPath)
+                os.chdir(directioryPath)

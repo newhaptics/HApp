@@ -27,12 +27,12 @@ class PathManager():
 
         # root path
         self.rootSoftwarePath = os.getcwd() #"C://Users//derek//OneDrive//NewHaptics Shared//HapticOS//FC_GUI_API//"
-        self.rootSoftwarePath = self.rootSoftwarePath.split("FC_GUI_API\\", 1)
-        self.rootSoftwarePath = self.rootSoftwarePath[0] + "FC_GUI_API//"
+        self.rootSoftwarePath = self.rootSoftwarePath.split("HApp\\", 1)
+        self.rootSoftwarePath = self.rootSoftwarePath[0] + "HApp//"
         print(self.rootSoftwarePath)
         
         # path to software folder of the current version
-        self.pathToSoftwareFolder = self.rootSoftwarePath + self.softwareReleaseFolder + self.softwareFolder
+        self.pathToSoftwareFolder = self.rootSoftwarePath #+ self.softwareReleaseFolder + self.softwareFolder
         
         # Add the software folder to the Python path
         sys.path.append(self.pathToSoftwareFolder)

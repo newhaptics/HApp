@@ -105,7 +105,6 @@ class ToolExecutionOperation(rs.RomOperation):
         funcHandle = toolFunctions[selectedTool]
         toolParameterKwargs = dict(zip(parameterKeys, selectedParameters))
         
-        
         self.Toolchain.setTool(funcHandle, toolParameterKwargs)
         
         self.Toolchain.executeSelectedTool()

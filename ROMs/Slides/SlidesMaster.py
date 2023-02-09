@@ -130,6 +130,7 @@ class SlidesMaster():
         
     def updateViewSpace(self):
         testMatrix = self.CanvasNavigation.extractViewSpace()
+        
         self.DisplayFlag.setState(1)
         self.DisplayFlag.setMatrix(testMatrix)
         
