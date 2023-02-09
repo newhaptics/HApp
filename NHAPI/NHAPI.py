@@ -186,6 +186,7 @@ class NHAPI(he.HapticsEngine):
 
     def setMat(self, mat):
         self.set_desiredState(mat)
+        self.makeGraphics()
         if self.autoRefresh:
             self.refresh()
 

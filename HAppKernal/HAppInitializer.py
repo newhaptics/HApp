@@ -17,8 +17,10 @@ import sys
 HAppPathManager = pm.PathManager("0.771", "Coeus")
 HAppPathManager.addSubdirectories()
 
-for path in sys.path:
-    print(path)
+# =============================================================================
+# for path in sys.path:
+#     print(path)
+# =============================================================================
 
 # import the remaining HApp Libraries
 import HAppMainWindow as hm
