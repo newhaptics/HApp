@@ -80,21 +80,23 @@ class SlidesVisualizationHandles(rs.RomVisualizationHandles):
         self.RomExplorer.refreshButton.clicked.connect(lambda: self.MasterModel.selectTool("refresh"))
         
         
-        # test button
-        self.RomExplorer.inputButton = qw.QPushButton("Move Right", self.RomExplorer)
-        self.RomExplorer.inputButton.clicked.connect(lambda: self.MasterModel.CanvasNavigation.moveRight())
-        self.RomExplorer.inputButton.clicked.connect(lambda: self.MasterModel.updateViewSpace())
-        self.RomExplorer.fillButton = qw.QPushButton("Move Down", self.RomExplorer)
-        self.RomExplorer.fillButton.clicked.connect(lambda: self.MasterModel.CanvasNavigation.moveDown())
-        self.RomExplorer.fillButton.clicked.connect(lambda: self.MasterModel.updateViewSpace())
-        self.RomExplorer.directButton = qw.QPushButton("Move Left", self.RomExplorer)
-        self.RomExplorer.directButton.clicked.connect(lambda: self.MasterModel.CanvasNavigation.moveLeft())
-        self.RomExplorer.directButton.clicked.connect(lambda: self.MasterModel.updateViewSpace())
-        self.RomExplorer.strokeButton = qw.QPushButton("Move Up", self.RomExplorer)
-        self.RomExplorer.strokeButton.clicked.connect(lambda: self.MasterModel.CanvasNavigation.moveUp())
-        self.RomExplorer.refreshButton.clicked.connect(lambda: self.MasterModel.updateViewSpace())
-        self.RomExplorer.refreshButton = qw.QPushButton("Refresh", self.RomExplorer)
-        self.RomExplorer.refreshButton.clicked.connect(lambda: self.MasterModel.updateViewSpace())
+# =============================================================================
+#         # test button
+#         self.RomExplorer.inputButton = qw.QPushButton("Move Right", self.RomExplorer)
+#         self.RomExplorer.inputButton.clicked.connect(lambda: self.MasterModel.CanvasNavigation.moveRight())
+#         self.RomExplorer.inputButton.clicked.connect(lambda: self.MasterModel.updateViewSpace())
+#         self.RomExplorer.fillButton = qw.QPushButton("Move Down", self.RomExplorer)
+#         self.RomExplorer.fillButton.clicked.connect(lambda: self.MasterModel.CanvasNavigation.moveDown())
+#         self.RomExplorer.fillButton.clicked.connect(lambda: self.MasterModel.updateViewSpace())
+#         self.RomExplorer.directButton = qw.QPushButton("Move Left", self.RomExplorer)
+#         self.RomExplorer.directButton.clicked.connect(lambda: self.MasterModel.CanvasNavigation.moveLeft())
+#         self.RomExplorer.directButton.clicked.connect(lambda: self.MasterModel.updateViewSpace())
+#         self.RomExplorer.strokeButton = qw.QPushButton("Move Up", self.RomExplorer)
+#         self.RomExplorer.strokeButton.clicked.connect(lambda: self.MasterModel.CanvasNavigation.moveUp())
+#         self.RomExplorer.refreshButton.clicked.connect(lambda: self.MasterModel.updateViewSpace())
+#         self.RomExplorer.refreshButton = qw.QPushButton("Refresh", self.RomExplorer)
+#         self.RomExplorer.refreshButton.clicked.connect(lambda: self.MasterModel.updateViewSpace())
+# =============================================================================
         
     def createWidgetsHandler(self):
         print("Create Slides Widgets")

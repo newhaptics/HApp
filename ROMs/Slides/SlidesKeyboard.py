@@ -29,6 +29,26 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
         else:
             print("no device attached")
 
+    def KeyLeftHandler(self):
+        #perform cursor movement left
+        self.MasterModel.CanvasNavigation.moveLeft()
+        self.MasterModel.updateViewSpace()
+        
+    def KeyUpHandler(self):
+        #perform cursor movement up
+        self.MasterModel.CanvasNavigation.moveUp()
+        self.MasterModel.updateViewSpace()
+        
+    def KeyRightHandler(self):
+        #perform cursor movement right
+        self.MasterModel.CanvasNavigation.moveRight()
+        self.MasterModel.updateViewSpace()
+        
+    def KeyDownHandler(self):
+        #perform cursor movement down
+        self.MasterModel.CanvasNavigation.moveDown()
+        self.MasterModel.updateViewSpace()
+
     def KeySpaceHandler(self):
         # Space bar event for visualizer operator
         # self.VisualizerOperator.clickSelect(xCoordinate, yCoordinate)

@@ -17,7 +17,7 @@ import BasicRomVisualizationHandles as brvh
 
 class RomVisualization(vm.Visualization):
     
-    def __init__(self, name, interruptDictionary):
+    def __init__(self, name, HAppControlCenter):
         
         super().__init__(name)
         #put a main window in the QDialog and add elements to the main window
@@ -34,12 +34,11 @@ class RomVisualization(vm.Visualization):
         # add the RomExplorer to the layout
         self.RomLayout.addWidget(self.RomExplorer)
         self.setLayout(self.RomLayout)
+    
+        # get the keyboard and mouse peripherals
+        self.KeyboardPeripheral = HAppControlCenter.getPeripheral("Master Keyboard")
         
-        # initialize the BasicRomVisualizationHandles class
-        #self.VisualizationHandles = brvh.SlidesVisualizationHandles(interruptDictionary, self.RomWindow)
-        
-        # initialize the NewRomVisualizationHandles class
-        #self.VisualizationHandles = nrvh.NewRomVisualizationHandles()
+        self.MousePeripheral = HAppControlCenter.getPeripheral("Master Mouse")
         
         # initialize the RomVisualizationHandles class
         self.VisualizationHandles = drvh.DefaultRomVisualizationHandles()
@@ -77,6 +76,29 @@ class RomVisualization(vm.Visualization):
 # =============================================================================
         
         self.generateWindow()
+        
+    """ Keyboard related functions """
+    
+    def keyPressEvent(self, event):
+        event.ignore()
+        # Connect to KeyboardPeripheral class key press event
+        self.KeyboardPeripheral.handleKeyPressEvent(event)
+
+    def keyReleaseEvent(self, event):
+        event.ignore()
+        # Connect to KeyboardPeripheral class key release event
+        self.KeyboardPeripheral.handleKeyReleaseEvent(event)
+        
+    """ Mouse related functions """
+    
+    def mouseMoveEvent(self, event):
+        event.ignore()
+        self.MousePeripheral.handleMouseMoveEvent(event)
+
+    def mousePressEvent(self, event):
+        event.ignore()
+        # mouse handler interaction
+        self.MousePeripheral.handleMouseEvent(event)
         
     def generateWindow(self):
         # add visual elements

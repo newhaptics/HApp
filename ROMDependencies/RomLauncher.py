@@ -36,7 +36,7 @@ class RomLauncher(rr.RomReader):
         # passes all necessary values to the rom in order to start it
         self.setSettings(self.romSettings)
         
-        self.RomVisualization = rv.RomVisualization("RomVisualizer", self.interruptDictionary)
+        self.RomVisualization = rv.RomVisualization("RomVisualizer", self.HAppControlCenter)
         self.HAppControlCenter.addVisualization(self.RomVisualization)
                 
         print("rom settings are {}".format(self.romSettings))
