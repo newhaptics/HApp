@@ -7,6 +7,8 @@ Created on Thu Oct  6 10:08:09 2022
 
 import threading
 
+""" reads settings from rom file and starts executing rom in seperate thread """
+
 class RomReader(threading.Thread):
     
     def __init__(self, filename):

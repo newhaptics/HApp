@@ -34,11 +34,13 @@ import RealTimeStateVisualizer as rtsv
 import HAppOperations as ho
 import ControlCenter as cc
 import RomOperation as ro
-import RomReader as rr
+import RomLauncher as rl
 
 import RomVisualization as rv
 
 import sys
+
+""" HApp MainWindow """
 
 class HAppMainWindow(qw.QMainWindow):
     
@@ -132,7 +134,7 @@ class HAppMainWindow(qw.QMainWindow):
     def quickConnect(self):
         # ease of use
         self.connectDisplay("COM12")
-        qc.QTimer.singleShot(1000, lambda: self.connectTouchscreen("COM35"))
+        qc.QTimer.singleShot(1000, lambda: self.connectTouchscreen("COM34"))
         qc.QTimer.singleShot(2000, lambda: self.connectTouchscreen("COM7"))
         #ARCSLayout = self.HAppControlCenter.debugGetResourceLabels()
         #self.ARCSLabel.setLayout(ARCSLayout)
@@ -583,16 +585,23 @@ class HAppMainWindow(qw.QMainWindow):
         
     def initializeRom(self, filename):
         
-        # Initialize the Rom Operation which activates all associated libraries needed to start the rom
-        self.InitializeRomOperation = ro.RomOperation("InitializeRomOperation", self.HAppControlCenter, filename, self.HAppPathManager)
-        self.interruptDictionary = self.ThisRom.createInterruptDictionary()
-        self.romSettings = self.ThisRom.getSettings()
-        self.romComments = self.ThisRom.getDescriptions()
-        OperationsControlAddress = id(self.HAppControlCenter)
-        self.romSettings['OperationsControlAddress'] = OperationsControlAddress
-        self.ThisRom.setSettings(self.romSettings)
-        self.ThisRom = rr.RomReader(filename)
-        self.ThisRom.executeRom()
+        # read in the file name and use the RomLauncher to start the ROM in a seperate thread
+        self.ThisRom = rl.RomLauncher(filename, self.HAppControlCenter)
+        
+        self.ThisRom.startRom()
+        
+        
+        
+# =============================================================================
+#         self.interruptDictionary = self.ThisRom.createInterruptDictionary()
+#         self.romSettings = self.ThisRom.getSettings()
+#         self.romComments = self.ThisRom.getDescriptions()
+#         OperationsControlAddress = id(self.HAppControlCenter)
+#         self.romSettings['OperationsControlAddress'] = OperationsControlAddress
+#         self.ThisRom.setSettings(self.romSettings)
+#         self.ThisRom = rr.RomReader(filename)
+#         self.ThisRom.executeRom()
+# =============================================================================
         
         
         

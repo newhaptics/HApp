@@ -20,6 +20,7 @@ import RomVisualization as rv
 
 import time
 
+""" another class responsible for controlling and starting the rom """
 
 class RomRunner():
     

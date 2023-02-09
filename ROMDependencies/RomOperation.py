@@ -12,6 +12,8 @@ import RomReader as rre
 import RomRunner as rru
 import RomVisualization as rv
 
+""" Operation responsible for starting rom """
+
 class RomOperation(om.Operation):
     
     def __init__(self, name, ControlCenter, filename, PathManager):
