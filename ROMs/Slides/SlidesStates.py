@@ -92,71 +92,16 @@ class SlidesTool(rs.RomState):
         MousePeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Mouse")
         MousePeripheral.setNewMouseHandler(self.MasterModel.MouseHandles)
         
-# =============================================================================
-#         # set the keyboard handler for the rom
-#         KeyboardPeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Keyboard")
-#         KeyboardPeripheral.setNewKeyboardHandler(self.MasterModel.KeyboardHandles)
-# =============================================================================
-        
         # set the keyboard handler for the rom
-        #self.Controller.OperationsController.KeyboardHandler.setNewKeyboardHandler(self.TextEditor.KeyboardHandles)
+        KeyboardPeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Keyboard")
+        KeyboardPeripheral.setNewKeyboardHandler(self.MasterModel.KeyboardHandles)
         
         # set the visualization for the rom
         self.UpdateSlidesGuiOperation = no.UpdateSlidesGuiOperation("Update Slides Operation", self.Controller, self.MasterModel)
         self.Controller.HAppControlCenter.addOperation(self.UpdateSlidesGuiOperation)
-        
-# =============================================================================
-#         self.VisualizationHandler = self.Controller.OperationsController.getVisualization("RomVisualization")
-#         self.VisualizationWindow = self.VisualizationHandler.RomWindow
-#         self.SlidesVisualizationHandles = sg.SlidesVisualizationHandles(self.VisualizationWindow)
-#         
-#         self.VisualizationHandler.setNewRomVisualizationHandler(self.SlidesVisualizationHandles)
-#         self.Controller.OperationsController.pauseExecutingOperations()
-#         #create a braille edit gui
-#         #self.SlidesGUI = rr.BrailleEdit()
-#         
-#         #get the size of the Braille Display
-#         displaySize = self.BrailleDisplay.return_displaySize()
-#         nRows = displaySize[0]
-#         nColumns = displaySize[1]
-#         print("FileNavigator")
-#         self.TextEditor = fn.FileNavigatorEditor(nRows, nColumns)
-#         self.Controller.OperationsController.KeyboardHandler.setNewKeyboardHandler(self.TextEditor.KeyboardHandles)
-#         
-#         
-#         #create an operation that tracks the editor cursor and decides where it is
-#         #to do
-#         
-#         #create an operation that grabs state from the touch screen
-#         self.TouchScreenOperation = no.GetTouchScreenOperation(self.Controller, self.TextEditor)
-#         self.Controller.OperationsController.setOperation("TouchScreenOperation", self.TouchScreenOperation)
-#         
-#         #create an operation that blinks the cursor of the Braille Display
-#         self.BlinkCursorOperation = no.BlinkCursorOperation(self.Controller, self.TextEditor)
-#         self.Controller.OperationsController.setOperation("BlinkCursorOperation", self.BlinkCursorOperation)
-#         
-#         #create an operation that decides when to send the desired state over the serial port
-#         self.BrailleDisplayRefreshOperation = no.BrailleDisplayRefreshOperation(self.Controller.OperationsController.BrailleDisplay)
-#         self.Controller.OperationsController.setOperation("BrailleDisplayRefreshOperation", self.BrailleDisplayRefreshOperation)
-#         
-#         self.Controller.OperationsController.resumeExecutingOperations()
-# =============================================================================
-        
-        
+                
     def closeState(self):
         #clear the screen of all information and shut down start screen processes
-        
-# =============================================================================
-#         #close all state operations
-#         self.Controller.OperationsController.pauseExecutingOperations()
-#         self.Controller.OperationsController.stopExecutingOperation("TouchScreenOperation")
-#         self.Controller.OperationsController.stopExecutingOperation("BlinkCursorOperation")
-#         self.Controller.OperationsController.stopExecutingOperation("BrailleDisplayRefreshOperation")
-#         self.Controller.OperationsController.resumeExecutingOperations()
-#         
-#         # revert to default keyboard handler
-#         self.Controller.OperationsController.KeyboardHandler.revertToDefaultHandler()
-# =============================================================================
         
         print('End Menu Close')
 

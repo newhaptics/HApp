@@ -167,11 +167,7 @@ class StateVisualizerOperation(om.Operation):
         self.StateVisualizer.refreshPins(state)
         
     def changeDisplay(self):
-        if self.Visualizer.BrailleSize == 4:
-            self.Visualizer.BrailleSize = 5
+        if self.StateVisualizer.BrailleSize == 4:
+            self.StateVisualizer.BrailleSize = 5
         else:
-            self.Visualizer.BrailleSize = 4
-
-
-                
-                
+            self.StateVisualizer.BrailleSize = 4                

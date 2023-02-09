@@ -61,8 +61,8 @@ class KeyboardPeripheral(pm.PeripheralDevice):
         else:
             try:
                 self.normalHandlers(key)
-            except:
-                print("key error")
+            except Exception as e:
+                print("key error: {}".format(e))
             
     def normalHandlers(self, key):
         

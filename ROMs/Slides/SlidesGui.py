@@ -263,8 +263,6 @@ class SlidesVisualizationHandles(rs.RomVisualizationHandles):
         # set the current canvas to the new slide
         self.MasterModel.CanvasNavigation.setCanvas(canvas)
         
-        print(canvas)
-        
         # update the braille display with the new canvas
         self.MasterModel.updateViewSpace()
         

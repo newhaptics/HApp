@@ -16,46 +16,54 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
     def __init__(self, MasterModel):
         super().__init__()
         self.MasterModel = MasterModel
-        #self.VisualizerOperator = self.MasterModel.Controller.OperationsController.getOperation("VisualizationRefreshOperation")
+        # check if the touchscreen is attached or not
+        VisualizerOperator = self.MasterModel.Controller.HAppControlCenter.getOperation("TouchVisualizerRefreshOperation")
+        if VisualizerOperator is not None:
+            self.VisualizerOperator = VisualizerOperator
+        else:
+            print("no touch screen attached")
+            
+        VisualizerOperator = self.MasterModel.Controller.HAppControlCenter.getOperation("StateVisualizerRefreshOperation")
+        if VisualizerOperator is not None:
+            self.VisualizerOperator = VisualizerOperator
+        else:
+            print("no device attached")
 
+    def KeySpaceHandler(self):
+        # Space bar event for visualizer operator
+        # self.VisualizerOperator.clickSelect(xCoordinate, yCoordinate)
+        
+        pinSelected = self.VisualizerOperator.getPinPosition()
+        
+        print(pinSelected)
+        
+        self.MasterModel.parameterClicked([int(pinSelected[1]), int(pinSelected[0])])
+        
+    def KeyF1Handler(self):
+        self.MasterModel.selectTool("drawDot")
+        
+    def KeyF2Handler(self):
+        self.MasterModel.selectTool("drawLine")
+        
+    def KeyF3Handler(self):
+        self.MasterModel.selectTool("drawCurve")
+        
+# =============================================================================
+#     def KeyF4Handler(self):
+#         self.MasterModel.selectTool("drawCircle")
+# =============================================================================
+        
+    def KeyF5Handler(self):
+        self.MasterModel.selectTool("drawRectangle")
 
-# =============================================================================
-#     def KeySpaceHandler(self):
-#         # Space bar event for visualizer operator
-#         # self.VisualizerOperator.clickSelect(xCoordinate, yCoordinate)
-#         
-#         pinSelected = self.VisualizerOperator.getPinPosition()
-#         
-#         print(pinSelected)
-#         
-#         self.MasterModel.parameterClicked([int(pinSelected[1]), int(pinSelected[0])])
-#         
-#     def KeyF1Handler(self):
-#         self.MasterModel.selectTool("drawDot")
-#         
-#     def KeyF2Handler(self):
-#         self.MasterModel.selectTool("drawLine")
-#         
-#     def KeyF3Handler(self):
-#         self.MasterModel.selectTool("drawCurve")
-#         
-# # =============================================================================
-# #     def KeyF4Handler(self):
-# #         self.MasterModel.selectTool("drawCircle")
-# # =============================================================================
-#         
-#     def KeyF5Handler(self):
-#         self.MasterModel.selectTool("drawRectangle")
-# 
-#     def KeyF6Handler(self):
-#         self.MasterModel.selectTool("drawTriangle")
-#         
-#     def KeyF7Handler(self):
-#         self.MasterModel.selectTool("drawPolygon")
-# 
-#     def KeyF8Handler(self):
-#         self.MasterModel.selectTool("selectClear")
-# 
-#     def KeyTabHandler(self):
-#         self.VisualizerOperator.changeDisplay()
-# =============================================================================
+    def KeyF6Handler(self):
+        self.MasterModel.selectTool("drawTriangle")
+        
+    def KeyF7Handler(self):
+        self.MasterModel.selectTool("drawPolygon")
+
+    def KeyF8Handler(self):
+        self.MasterModel.selectTool("selectClear")
+
+    def KeyTabHandler(self):
+        self.VisualizerOperator.changeDisplay()

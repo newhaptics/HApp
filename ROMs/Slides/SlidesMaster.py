@@ -20,30 +20,11 @@ class SlidesMaster():
         self.Controller = Controller
         
         self.TactileDisplay = self.Controller.HAppControlCenter.getPeripheral("NewHaptics Display SarissaV1")
+        self.displaySize = self.TactileDisplay.return_displaySize()
         
         # create the ability to navigate and load slides
         self.FileManager = sfm.SlidesFileManagement(self.Controller.HAppControlCenter.PathManager)
-        #self.FileManager.createNewSlidesFile("C://Users//derek//OneDrive//NewHaptics Shared//HapticOS//FC_GUI_API//APIv0.7-Coeus//v0.769-Coeus//testScripts//SlidesTestScripts//SlidesTest3//")
-        print("current number of slides {}".format(self.FileManager.currentNumSlides()))
-        print("current slides path {}".format(self.FileManager.currentSlidePath))
-        print("current slides directory {}".format(self.FileManager.currentSlidesDirectory))
-        print("root software path {}".format(self.FileManager.rootSoftwarePath))
-        #self.FileManager.loadSlidesFile("C://Users//derek//OneDrive//NewHaptics Shared//HapticOS//FC_GUI_API//APIv0.7-Coeus//v0.769-Coeus//testScripts//SlidesTestScripts//SlidesTest2//")
-        # test file
-        #dummyTestFile = [[0 for i in range(0, 41)] for j in range(0, 18)]
-        
-        # create an empty slide
-        #self.FileManager.saveSlide("Slide11", dummyTestFile)
 
-# =============================================================================
-#         print("current number of slides {}".format(self.FileManager.currentNumSlides()))
-#         print("current slides path {}".format(self.FileManager.currentSlidePath))
-#         print("current slides directory {}".format(self.FileManager.currentSlidesDirectory))
-#         print("root software path {}".format(self.FileManager.rootSoftwarePath))
-#         
-# =============================================================================
-        self.displaySize = self.TactileDisplay.return_displaySize()
-        
         # Create the tool flag
         self.ToolFlag = so.ToolFlag("ToolFlag")
         self.Controller.HAppControlCenter.addFlag(self.ToolFlag)
