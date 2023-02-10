@@ -78,7 +78,6 @@ class TextEditor():
 
                 #print("limiter deleted")
         
-        
     def cursorLimiterCheck(self):
         #returns true or false depending on if you can move to that location
         xPosition = self.editor.cursor[0]
@@ -167,8 +166,6 @@ class TextEditor():
             if index > (yPosition + 1):
                 limiter[1] += 1
         
-
-    
     def cursorMoveNewLine(self):
         xPosition = self.cursor[0]
         yPosition = self.cursor[1]
@@ -182,7 +179,6 @@ class TextEditor():
             #print("move down")
         else:
             print("hit bottom")
-        
         
     def moveCursorForward(self):
         xPosition = self.cursor[0]
@@ -212,8 +208,6 @@ class TextEditor():
             #do nothing
             print("hit bottom corner")
         #determine how to move forwards
-        
-        
         
     def moveCursorBackward(self):
         xPosition = self.cursor[0]
@@ -259,8 +253,6 @@ class TextEditor():
         else:
             print("hit upper edge")
             
-        
-        
     def moveCursorDownward(self):
         #perform cursor downward
         xPosition = self.cursor[0]
@@ -290,14 +282,10 @@ class TextEditor():
         else:
             print("hit end of editor")
         
-        
-        
     def insertCharacter(self, character):
         #inserts a character at the cursor location
         xPosition = self.cursor[0]
         yPosition = self.cursor[1]
-        #print((xPosition,yPosition))
-        
         
         #reformat the matrix back to display size
         #self.editorMatrix = self.reformatMatrixToDisplaySize(self.editorMatrix,self.nBrailleCellColumns)
@@ -309,9 +297,6 @@ class TextEditor():
         self.moveCursorForward()
         
         self.addCharacterToMatrix(yPosition,xPosition,character)
-        
-        #print(self.editorMatrixOutput())
-        
         
     def addCharacterToMatrix(self,yPosition,xPosition, character):
         #editorMatrixRows = len(self.editorMatrix)
@@ -338,8 +323,6 @@ class TextEditor():
         else:
             print("hit end of editor")
             
-
-                
     def characterOverflow(self, yPosition):
         #this function takes the editor matrix and shifts the excess data down one line
         lineAlreadyBelow = len(self.editorMatrix) > (yPosition + 1)

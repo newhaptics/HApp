@@ -16,7 +16,7 @@ class FileNavigatorEditor(npe.NotePadEditor):
         
         self.lineSelect = 0
         self.cursorMode = 0
-        self.period = 100
+        self.period = 30
         self.dutyCycle = 0.5
         self.touchScreenMode = 0
         

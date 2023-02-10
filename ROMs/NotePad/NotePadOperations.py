@@ -7,37 +7,77 @@ Created on Tue Nov 15 15:12:55 2022
 
 import RomAPI as rs
 
-
-class BrailleDisplayRefreshOperation(rs.RomOperation):
+class TactileDisplayRefreshOperation(rs.RomOperation):
     
-    def __init__(self, engine):
-        super().__init__()
-        self.BrailleDisplay = engine
-        self.displayUpdate = 0
+    def __init__(self, name, TactileDisplay, DisplayFlag):
+        super().__init__(name)
+        
+        # inputs to the operation
+        self.DisplayFlag = DisplayFlag
+        self.inputDictionary[self.DisplayFlag.name] = self.DisplayFlag
+        
+        # outputs to the operation
+        self.TactileDisplay = TactileDisplay
+        self.outputDictionary[self.TactileDisplay.name] = self.TactileDisplay
+        
+        # provide a description
+        self.description = "This operation refreshs the display when keys are typed."
+        
+        # execute the function continuously until otherwise
+        executionParameters = {
+            "executeOnFlags": [self.DisplayFlag], # a set of flag dependencies that when met start executing the Operation
+            "executeDelay": 0, # a delay in milliseconds that starts the execution of the Operation after the flag dependencies have been met
+        }
+        
+        self.setExecutionParameters(executionParameters)
+        
+        self.executable = self.execute
+        
+        self.createDebugString()
+        
         
     def execute(self):
-        if self.operationOn:
-            self.refreshDisplay()
+        # print("update the display")
+        flagMatrix = self.DisplayFlag.matrix
+# =============================================================================
+#         print('---------------------------\n')
+#         print('\n'.join([' '.join(['{:4}'.format(item) for item in row])
+#                          for row in flagMatrix]))
+#         print('---------------------------\n')
+#         
+# =============================================================================
+        self.TactileDisplay.setMat(flagMatrix)
+        self.TactileDisplay.refresh()
+        
+        self.DisplayFlag.clearState()
             
-    def refreshDisplay(self):
-        if self.displayUpdate == 20:
-            self.BrailleDisplay.refresh()
-            self.displayUpdate = 0
+        
+    def checkFlagConditions(self):
+        # grab the state of DisplayFlag
+        displayState = self.DisplayFlag.state
+        
+        # get the current state of the tactile display
+        if displayState:
+            # compare the flag matrix to the current state of the Tactile Display
+            print("load slides passed")
+            return True
         else:
-            self.displayUpdate += 1
-            
-    def restartOperation(self):
-        self.displayUpdate = 0
+            # if they are not the same then return false
+            return False
         
     def stopOperation(self):
-        self.operationOn = 0
+        # delete the timer for the operation by running the super class function
+        super().stopOperation()
+        
+        # mark isStopped as false so the function is not killed
+        self.isStopped = False
         
 class GetTouchScreenOperation(rs.RomOperation):
     
     def __init__(self, Controller, Editor):
         super().__init__()
         self.Controller = Controller
-        self.BrailleDisplay = self.Controller.OperationsController.BrailleDisplay
+        self.TactileDisplay = self.Controller.HAppControlCenter.TactileDisplay
         self.TextEditor = Editor
         self.BrailleCellColumn = 0
         self.BrailleCellRow = 0
@@ -56,7 +96,7 @@ class GetTouchScreenOperation(rs.RomOperation):
         if self.touchScreenTimer > 50:
             self.touchScreenTimer = 0
             
-            pinCursor = self.BrailleDisplay.getPinCursorPosition()
+            pinCursor = self.TactileDisplay.getPinCursorPosition()
             
             #print("Old Touch Screen Braille Position {0},{1}".format(self.BrailleCellColumn, self.BrailleCellRow))
             
@@ -89,16 +129,40 @@ class GetTouchScreenOperation(rs.RomOperation):
     
 class BlinkCursorOperation(rs.RomOperation):
     
-    def __init__(self, Controller, Editor):
-        super().__init__()
-        self.Controller = Controller
-        self.BrailleDisplay = self.Controller.OperationsController.BrailleDisplay
-        self.TextEditor = Editor
-        self.displayString = ""
+    def __init__(self, name, Controller, Editor):
+        super().__init__(name)
+        self.createDebugString()        
+        self.HAppControlCenter = Controller.HAppControlCenter
         self.cursorBlinker = 0
-# =============================================================================
-#         self.displayText = ""
-# =============================================================================
+        
+        # inputs to the operation
+        self.TextEditor = Editor
+        self.outputDictionary["Text Editor"] = self.TextEditor
+        
+        # outputs to the operation
+        self.DisplayFlag = DisplayFlag("Display Flag")
+        self.HAppControlCenter.addFlag(self.DisplayFlag)
+        self.outputDictionary[self.DisplayFlag.name] = self.DisplayFlag
+        
+        self.TactileDisplay = Controller.HAppControlCenter.getPeripheral("NewHaptics Display SarissaV1")
+        self.outputDictionary[self.TactileDisplay.name] = self.TactileDisplay
+        
+        # provide a description
+        self.description = "This operation refreshs the display when keys are typed."
+        
+        # execute the function continuously until otherwise
+        executionParameters = {
+            "executeDelay": 0, # a delay in milliseconds that starts the execution of the Operation after the flag dependencies have been met
+            "executeContinuously": True, # a boolean value that determines if the Operation will execute forever
+            "executionIntervalTime": 1, # an interval in milliseconds that determines the time between execution
+        }
+        
+        self.setExecutionParameters(executionParameters)
+        
+        self.executable = self.execute
+        
+        self.createDebugString()
+        
     def stopOperation(self):
         self.operationOn = 0
             
@@ -113,16 +177,18 @@ class BlinkCursorOperation(rs.RomOperation):
         pinPosition = (brailleXPosition,brailleYPosition)
         
         
-        self.BrailleDisplay.setPinCursorPosition(pinPosition)
+        self.TactileDisplay.setPinCursorPosition(pinPosition)
         
         #when cursor location moves outside of bounding box switch bounding box location
-        pinCursor = self.BrailleDisplay.grabPinCursor()
+        pinCursor = self.TactileDisplay.grabPinCursor()
         
         #control refresh
-        if self.displayString != self.TextEditor.editorMatrixOutput():
-            self.displayString = self.TextEditor.editorMatrixOutput()
-            self.Controller.OperationsController.restartExecutingOperation("BrailleDisplayRefreshOperation")
-            
+# =============================================================================
+#         if self.displayString != self.TextEditor.editorMatrixOutput():
+#             self.displayString = self.TextEditor.editorMatrixOutput()
+#             self.Controller.HAppControlCenter.restartExecutingOperation("TactileDisplayRefreshOperation")
+#             
+# =============================================================================
             
         try:
             self.renderCursor(pinCursor, self.TextEditor.period, self.TextEditor.dutyCycle)
@@ -132,8 +198,9 @@ class BlinkCursorOperation(rs.RomOperation):
         self.cursorBlinker += 1
     
     def execute(self):
-        if self.operationOn:
-            self.cursorBlink()
+        self.cursorBlink()
+        self.DisplayFlag.setState(1)
+        self.DisplayFlag.setMatrix(self.TactileDisplay.return_desiredState())
         
     def renderCursor(self, pinCursor, period, dutyCycle): #, period, dutyCycle
         
@@ -141,20 +208,20 @@ class BlinkCursorOperation(rs.RomOperation):
 #         #make the pin cursor position blink
 #         if self.cursorBlinker == 100:
 #             self.cursorBlinker = 0
-#             self.BrailleDisplay.braille((0,0),self.TextEditor.editorMatrixOutput())
+#             self.TactileDisplay.braille((0,0),self.TextEditor.editorMatrixOutput())
 #             
 #             #turn the cursor on
 #             self.cursorOn(pinCursor)
 #             
 #             
 #         elif self.cursorBlinker == 50:
-#             self.BrailleDisplay.braille((0,0),self.TextEditor.editorMatrixOutput())
+#             self.TactileDisplay.braille((0,0),self.TextEditor.editorMatrixOutput())
 #             
 #             #turn the cursor off
 #             self.cursorOff(pinCursor)
 # 
 #             
-#             self.Controller.OperationsController.restartExecutingOperation("BrailleDisplayRefreshOperation")
+#             self.Controller.HAppControlCenter.restartExecutingOperation("TactileDisplayRefreshOperation")
 #         
 # =============================================================================
         #calculate the number of times the cursor should blink
@@ -166,48 +233,48 @@ class BlinkCursorOperation(rs.RomOperation):
         if self.cursorBlinker > period:
             #print(self.cursorBlinker)
             self.cursorBlinker = 0
-            self.BrailleDisplay.braille((0,0),self.TextEditor.editorMatrixOutput())
+            self.TactileDisplay.braille((0,0),self.TextEditor.editorMatrixOutput())
             
             #turn the cursor on
             self.cursorOn(pinCursor)
 
         elif self.cursorBlinker == timeLow:
             #print(self.cursorBlinker)
-            self.BrailleDisplay.braille((0,0),self.TextEditor.editorMatrixOutput())
+            self.TactileDisplay.braille((0,0),self.TextEditor.editorMatrixOutput())
             
             #turn the cursor off
             self.cursorOff(pinCursor)
     
             #restart the refresh operation
-            self.Controller.OperationsController.restartExecutingOperation("BrailleDisplayRefreshOperation")
+            self.Controller.HAppControlCenter.restartExecutingOperation("TactileDisplayRefreshOperation")
 
         
     def cursorOn(self, pinCursor):
         
         if self.TextEditor.cursorMode == 0:
             #just blink the cursor like normal
-            self.BrailleDisplay.rect((pinCursor[1],pinCursor[0]),(pinCursor[1] + 3,pinCursor[0] + 1))
+            self.TactileDisplay.rect((pinCursor[1],pinCursor[0]),(pinCursor[1] + 3,pinCursor[0] + 1))
             
             
         elif self.TextEditor.cursorMode == 1:
             #force cursor to left side
-            self.BrailleDisplay.rect( (pinCursor[1], 0), (pinCursor[1] + 3, 1) )
+            self.TactileDisplay.rect( (pinCursor[1], 0), (pinCursor[1] + 3, 1) )
 
             
         elif self.TextEditor.cursorMode == 2:
             #force cursor to left unblinking
-            self.BrailleDisplay.rect( (pinCursor[1], 0), (pinCursor[1] + 3, 1) )
+            self.TactileDisplay.rect( (pinCursor[1], 0), (pinCursor[1] + 3, 1) )
 
             
 
         elif self.TextEditor.cursorMode == 3:
             #blink line 1
-            self.BrailleDisplay.rect( (pinCursor[1], 0), (pinCursor[1] + 3, 1)  )
+            self.TactileDisplay.rect( (pinCursor[1], 0), (pinCursor[1] + 3, 1)  )
             
             
         elif self.TextEditor.cursorMode == 4:
             #blink line 0
-            self.BrailleDisplay.rect( (pinCursor[1], 0), (pinCursor[1] + 3, 1) )
+            self.TactileDisplay.rect( (pinCursor[1], 0), (pinCursor[1] + 3, 1) )
             
             
             
@@ -216,7 +283,7 @@ class BlinkCursorOperation(rs.RomOperation):
         
         else:
             #just blink the cursor like normal
-            self.BrailleDisplay.rect((pinCursor[1],pinCursor[0]),(pinCursor[1] + 3,pinCursor[0] + 1))
+            self.TactileDisplay.rect((pinCursor[1],pinCursor[0]),(pinCursor[1] + 3,pinCursor[0] + 1))
             
             
     def cursorOff(self, pinCursor):
@@ -231,26 +298,26 @@ class BlinkCursorOperation(rs.RomOperation):
             
         elif self.TextEditor.cursorMode == 2:
             #force cursor to left unblinking
-            self.BrailleDisplay.rect( (pinCursor[1], 0), (pinCursor[1] + 3, 1) )
+            self.TactileDisplay.rect( (pinCursor[1], 0), (pinCursor[1] + 3, 1) )
             
         elif self.TextEditor.cursorMode == 3:
             #blink line 1
-            self.BrailleDisplay.rect( (pinCursor[1], 0), (pinCursor[1] + 3, 1) )
-            self.BrailleDisplay.fill("on")
-            self.BrailleDisplay.rect( (pinCursor[1], 0), (pinCursor[1] + 3, 41) )
-            self.BrailleDisplay.fill("off")
+            self.TactileDisplay.rect( (pinCursor[1], 0), (pinCursor[1] + 3, 1) )
+            self.TactileDisplay.fill("on")
+            self.TactileDisplay.rect( (pinCursor[1], 0), (pinCursor[1] + 3, 41) )
+            self.TactileDisplay.fill("off")
 
             
         elif self.TextEditor.cursorMode == 4:
             #blink line 0
             
-            self.BrailleDisplay.erase("on")
-            self.BrailleDisplay.fill("on")
-            self.BrailleDisplay.rect( (pinCursor[1], 3), (pinCursor[1] + 3, 41) )
-            self.BrailleDisplay.fill("off")
-            self.BrailleDisplay.rect( (pinCursor[1], 3), (pinCursor[1] + 3, 41) )
-            self.BrailleDisplay.erase("off")
-            self.BrailleDisplay.rect( (pinCursor[1], 0), (pinCursor[1] + 3, 1) )
+            self.TactileDisplay.erase("on")
+            self.TactileDisplay.fill("on")
+            self.TactileDisplay.rect( (pinCursor[1], 3), (pinCursor[1] + 3, 41) )
+            self.TactileDisplay.fill("off")
+            self.TactileDisplay.rect( (pinCursor[1], 3), (pinCursor[1] + 3, 41) )
+            self.TactileDisplay.erase("off")
+            self.TactileDisplay.rect( (pinCursor[1], 0), (pinCursor[1] + 3, 1) )
             
         elif self.TextEditor.cursorMode == 5:
             pass
@@ -259,4 +326,16 @@ class BlinkCursorOperation(rs.RomOperation):
             pass
         
         
+class DisplayFlag(rs.RomFlag):
+    
+    def __init__(self, name):
+        super().__init__(name)
+        self.debugString = "This flag indicates to send the state"
+        self.matrix = 0
         
+    def clearState(self):
+        super().clearState()
+        self.matrix = 0
+        
+    def setMatrix(self, state):
+        self.matrix = state

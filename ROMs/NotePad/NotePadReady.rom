@@ -19,7 +19,7 @@ echo = 0
 """
 
 import RomAPI as rs
-
+import time
 import NotePadStates as ns
 
 
@@ -59,9 +59,7 @@ romSettings = { 'demoNumber': int(demoNumber) }
 
 ThisRom = NotePadController(interruptDictionaryAddress, OperationsControlAddress, romSettings, int(echo))
 
-
 shouldRomEnd = ThisRom.getInterruptFlag('romEnd')
-
 
 #Main loop of the Rom
 while shouldRomEnd == 0:
@@ -69,8 +67,6 @@ while shouldRomEnd == 0:
     #always step one tick into the current state
     ThisRom.stepCurrentState()
     
-    
-        
     #decide if peripheral communication is going to occur
     #Put NHAPI functions in here
     ThisRom.runEngineBuffer()
@@ -78,6 +74,8 @@ while shouldRomEnd == 0:
     #decide the next state to move into
     ThisRom.decideNextState()
     
+    time.sleep(0.001)
+    stopEvent.wait()
     
     shouldRomEnd = ThisRom.getInterruptFlag('romEnd')
     

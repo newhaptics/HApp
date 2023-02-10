@@ -52,14 +52,14 @@ class NotePadStartMenu(rs.RomState):
         else:
             #continue with program execution
         
-            return 'Start Menu'
+            return 'Text Editor'
         
 class NotePadTextEditor(rs.RomState):
     
     def __init__(self, Controller):
         #user can make custom state intialization 
         super().__init__(Controller)
-        self.BrailleDisplay = self.Controller.OperationsController.BrailleDisplay
+        self.TactileDisplay = self.Controller.HAppControlCenter.getPeripheral("NewHaptics Display SarissaV1")
         self.displayText = ""
 
         #self.counter = 0
@@ -69,7 +69,7 @@ class NotePadTextEditor(rs.RomState):
         #print('Editor running')
         if len(self.TextEditor.inputCommand) > 0:
             try:        
-                output = self.Controller.OperationsController.matlabEvaluate(self.TextEditor.inputCommand)
+                output = self.Controller.HAppControlCenter.matlabEvaluate(self.TextEditor.inputCommand)
                 print(output)
             except:
                 print("failed to execute matlab operation")
@@ -82,49 +82,52 @@ class NotePadTextEditor(rs.RomState):
     def startState(self):
         #create a text editor object for this state
         print('Text Editor Begin')
-        self.Controller.OperationsController.pauseExecutingOperations()
         #create a braille edit gui
         #self.NotePadGUI = rr.BrailleEdit()
         
         #get the size of the Braille Display
-        displaySize = self.BrailleDisplay.return_displaySize()
+        displaySize = self.TactileDisplay.return_displaySize()
         nRows = displaySize[0]
-        nColumns = displaySize[1]
-        print("FileNavigator")
+        nColumns = displaySize[1]        
+        # create the Text Editor model for editing files
         self.TextEditor = fn.FileNavigatorEditor(nRows, nColumns)
-        self.Controller.OperationsController.KeyboardHandler.setNewKeyboardHandler(self.TextEditor.KeyboardHandles)
         
+        # add in the keyboard handles by grabbing from the HApp control center
+        KeyboardPeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Keyboard")
+        KeyboardPeripheral.setNewKeyboardHandler(self.TextEditor.KeyboardHandles)
         
         #create an operation that tracks the editor cursor and decides where it is
-        #to do
         
         #create an operation that grabs state from the touch screen
-        self.TouchScreenOperation = no.GetTouchScreenOperation(self.Controller, self.TextEditor)
-        self.Controller.OperationsController.setOperation("TouchScreenOperation", self.TouchScreenOperation)
+# =============================================================================
+#         self.TouchScreenOperation = no.GetTouchScreenOperation(self.Controller, self.TextEditor)
+#         self.Controller.HAppControlCenter.setOperation("TouchScreenOperation", self.TouchScreenOperation)
+# =============================================================================
         
         #create an operation that blinks the cursor of the Braille Display
-        self.BlinkCursorOperation = no.BlinkCursorOperation(self.Controller, self.TextEditor)
-        self.Controller.OperationsController.setOperation("BlinkCursorOperation", self.BlinkCursorOperation)
+        self.BlinkCursorOperation = no.BlinkCursorOperation("BlinkCursorOperation", self.Controller, self.TextEditor)
+        self.Controller.HAppControlCenter.addOperation(self.BlinkCursorOperation)
         
         #create an operation that decides when to send the desired state over the serial port
-        self.BrailleDisplayRefreshOperation = no.BrailleDisplayRefreshOperation(self.Controller.OperationsController.BrailleDisplay)
-        self.Controller.OperationsController.setOperation("BrailleDisplayRefreshOperation", self.BrailleDisplayRefreshOperation)
+        self.TactileDisplayRefreshOperation = no.TactileDisplayRefreshOperation("TactileDisplayRefreshOperation", self.TactileDisplay, self.BlinkCursorOperation.DisplayFlag)
+        self.Controller.HAppControlCenter.addOperation(self.TactileDisplayRefreshOperation)
         
-        self.Controller.OperationsController.resumeExecutingOperations()
         
         
     def closeState(self):
         #clear the screen of all information and shut down start screen processes
         
-        #close all state operations
-        self.Controller.OperationsController.pauseExecutingOperations()
-        self.Controller.OperationsController.stopExecutingOperation("TouchScreenOperation")
-        self.Controller.OperationsController.stopExecutingOperation("BlinkCursorOperation")
-        self.Controller.OperationsController.stopExecutingOperation("BrailleDisplayRefreshOperation")
-        self.Controller.OperationsController.resumeExecutingOperations()
-        
-        # revert to default keyboard handler
-        self.Controller.OperationsController.KeyboardHandler.revertToDefaultHandler()
+# =============================================================================
+#         #close all state operations
+#         self.Controller.HAppControlCenter.pauseExecutingOperations()
+#         self.Controller.HAppControlCenter.stopExecutingOperation("TouchScreenOperation")
+#         self.Controller.HAppControlCenter.stopExecutingOperation("BlinkCursorOperation")
+#         self.Controller.HAppControlCenter.stopExecutingOperation("TactileDisplayRefreshOperation")
+#         self.Controller.HAppControlCenter.resumeExecutingOperations()
+#         
+#         # revert to default keyboard handler
+#         self.Controller.HAppControlCenter.KeyboardHandler.revertToDefaultHandler()
+# =============================================================================
         
         print('End Menu Close')
 
@@ -237,7 +240,7 @@ class NotePadExitState(rs.RomState):
 # # =============================================================================
 # # =============================================================================
 # #         #get the touch screen position
-# #         self.Controller.TextEditor.cursorPosition = self.Controller.BrailleDisplay.getPinCursorPosition()
+# #         self.Controller.TextEditor.cursorPosition = self.Controller.TactileDisplay.getPinCursorPosition()
 # #         print(self.Controller.TextEditor.cursorPosition)
 # #         
 # #         
@@ -273,8 +276,8 @@ class NotePadExitState(rs.RomState):
 #         
 #         #send the display text
 #         
-#         #self.Controller.BrailleDisplay.braille((0,0),self.displayText)
-#         #self.Controller.BrailleDisplay.refresh()
+#         #self.Controller.TactileDisplay.braille((0,0),self.displayText)
+#         #self.Controller.TactileDisplay.refresh()
 #         #print(displayText)
 #         self.updateRomView()
 #         
@@ -374,7 +377,7 @@ class NotePadExitState(rs.RomState):
 #         yPinPosition = characterPosition[1]*characterHeight
 #         pinPosition = (xPinPosition,yPinPosition)
 #         
-#         self.Controller.BrailleDisplay.setPinCursorPosition(pinPosition)
+#         self.Controller.TactileDisplay.setPinCursorPosition(pinPosition)
 #         
 #         
 #     def startAllOtherTimers(self):
