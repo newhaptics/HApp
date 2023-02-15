@@ -14,7 +14,7 @@ from pyqtconsole.console import PythonConsole
 import sys
 
 # create the path manager and add the subdirectories
-HAppPathManager = pm.PathManager("0.772", "Coeus")
+HAppPathManager = pm.PathManager("0.773", "Coeus")
 HAppPathManager.addSubdirectories()
 
 # =============================================================================

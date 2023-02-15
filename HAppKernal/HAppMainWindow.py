@@ -17,9 +17,11 @@ import ComFinder as cf
 import APIConsole as ac
 
 import KeyboardPeripheral as kb
-import DefaultKeyboardHandles as dh
+import HAppKeyboardHandles as hk
+import DefaultKeyboardHandles as dk
 
 import MousePeripheral as mh
+import HAppMouseHandles as hm
 import DefaultMouseHandles as dm
 
 import RomVisualizationHandler as rh
@@ -105,7 +107,7 @@ class HAppMainWindow(qw.QMainWindow):
         self.HAppPathManager = self.HAppControlCenter.PathManager
         
         # Build a default keyboard
-        self.DefaultKeyboardHandles = dh.DefaultKeyboardHandles()
+        self.DefaultKeyboardHandles = dk.DefaultKeyboardHandles()
         self.KeyboardPeripheral = kb.KeyboardPeripheral("Master Keyboard", self.DefaultKeyboardHandles)
         
         # add the Keyboard to the control center
@@ -508,6 +510,14 @@ class HAppMainWindow(qw.QMainWindow):
         # create an operation to constantly refresh the visualizer and add it to the controller
         self.StateVisualizerRefreshOperation = rtsv.StateVisualizerOperation("StateVisualizerRefreshOperation",  self.MousePeripheral, self.TactileDisplay, self.StateVisualizer)
         
+        # Build a HApp keyboard
+        self.HAppKeyboardHandles = hk.HAppKeyboardHandles(self.StateVisualizerRefreshOperation)
+        self.KeyboardPeripheral.setDefaultHandler(self.HAppKeyboardHandles)
+        
+        # Build a HApp mouse
+        self.HAppMouseHandles = hm.HAppMouseHandles(self.StateVisualizerRefreshOperation)
+        self.MousePeripheral.setDefaultHandler(self.HAppMouseHandles)
+        
         # add it as a visualization to the control center
         self.HAppControlCenter.addVisualization(self.StateVisualizer)
         self.HAppControlCenter.addOperation(self.StateVisualizerRefreshOperation)
@@ -530,6 +540,14 @@ class HAppMainWindow(qw.QMainWindow):
             
             # create an operation to constantly refresh the visualizer and add it to the controller
             self.TouchVisualizerRefreshOperation = tsv.TouchVisualizerOperation("TouchVisualizerRefreshOperation", self.MousePeripheral, self.TactileDisplay, self.TouchVisualizer, self.margins)
+            
+            # Build a HApp keyboard
+            self.HAppKeyboardHandles = hk.HAppKeyboardHandles(self.TouchVisualizerRefreshOperation)
+            self.KeyboardPeripheral.setDefaultHandler(self.HAppKeyboardHandles)
+            
+            # Build a HApp mouse
+            self.HAppMouseHandles = hm.HAppMouseHandles(self.TouchVisualizerRefreshOperation)
+            self.MousePeripheral.setDefaultHandler(self.HAppMouseHandles)
             
             # remove the state visualizer
             self.HAppControlCenter.killOperation("StateVisualizerRefreshOperation")
@@ -556,6 +574,14 @@ class HAppMainWindow(qw.QMainWindow):
             # remove the state visualizer
             self.HAppControlCenter.killOperation("TouchVisualizerRefreshOperation")
             self.HAppControlCenter.removeVisualization("TouchVisualizer")
+            
+            # Build a HApp keyboard
+            self.HAppKeyboardHandles = hk.HAppKeyboardHandles(self.TouchVisualizerRefreshOperation)
+            self.KeyboardPeripheral.setDefaultHandler(self.HAppKeyboardHandles)
+            
+            # Build a HApp mouse
+            self.HAppMouseHandles = hm.HAppMouseHandles(self.TouchVisualizerRefreshOperation)
+            self.MousePeripheral.setDefaultHandler(self.HAppMouseHandles)
             
             # Create the real time visualizer
             self.TouchVisualizer = tsv.TouchVisualizer("TouchVisualizer", state, displaySize)

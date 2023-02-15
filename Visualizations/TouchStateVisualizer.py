@@ -98,13 +98,13 @@ class TouchVisualizerOperation(StateVisualizerOperation):
         self.xCurrentTouchCoordinate = touchPosition[0]
         self.yCurrentTouchCoordinate = touchPosition[1]
         
+        # "Real GUI" Size
+        self.realGuiWidth =  829#self.StateVisualizer.frameGeometry().width() #- leftMargin*2#(self.dotSize + 1) * self.nColumns
+        self.realGuiHeight = 390#self.StateVisualizer.frameGeometry().height() #- topMargin*2#(self.dotSize + 1) * self.nRows
+        
         # take the contents margin and subtract from the gui window
         leftMargin = self.margins.left()
         topMargin = self.margins.top()
-    
-        # "Real GUI" Size
-        self.realGuiWidth =  880#self.StateVisualizer.frameGeometry().width() #- leftMargin*2#(self.dotSize + 1) * self.nColumns
-        self.realGuiHeight = 425#self.StateVisualizer.frameGeometry().height() #- topMargin*2#(self.dotSize + 1) * self.nRows
     
         pinWidth = 41
         pinHeight = 19

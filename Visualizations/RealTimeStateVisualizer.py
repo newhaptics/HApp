@@ -28,7 +28,7 @@ class StateVisualizer(vm.Visualization):
         self.setAttribute(qc.Qt.WA_TransparentForMouseEvents, True)
         
         self.setStyleSheet("border: 1px dotted black;")
-        
+        self.uniformDot = False
         self.highlightPin = (0,0)
         self.dotSize = 20
         self.BrailleSize = 4
@@ -38,11 +38,11 @@ class StateVisualizer(vm.Visualization):
         self.nRows = displaySize[0]
         self.nColumns = displaySize[1]
         self.blank = qg.QPixmap(":dot")
-        self.blank = self.blank.scaled(qc.QSize(self.dotSize,self.dotSize))
+        self.blank = self.blank.scaled(qc.QSize(self.dotSize * 0.9,self.dotSize * 0.9))
         self.emptyPin = qg.QPixmap(":emptyPin")
-        self.emptyPin = self.emptyPin.scaled(qc.QSize(self.dotSize,self.dotSize))
+        self.emptyPin = self.emptyPin.scaled(qc.QSize(self.dotSize * 0.9,self.dotSize * 0.9))
         self.filledPin = qg.QPixmap(":filledPin")
-        self.filledPin = self.filledPin.scaled(qc.QSize(self.dotSize,self.dotSize))
+        self.filledPin = self.filledPin.scaled(qc.QSize(self.dotSize * 0.9,self.dotSize * 0.9))
         self.grid = qw.QGridLayout()
         self.grid.setHorizontalSpacing(0)
         self.grid.setVerticalSpacing(0)
@@ -52,7 +52,7 @@ class StateVisualizer(vm.Visualization):
         self.grid.setVerticalSpacing(0)
         for iRow in range(0,displaySize[0] + 1):
             for iColumn in range(0,displaySize[1]):
-                if ((iRow + 1) % self.BrailleSize == 0) or ((iColumn + 1) % 3 == 0):
+                if ((iRow + 1) % self.BrailleSize == 0) or ((iColumn + 1) % 3 == 0) or self.uniformDot:
                     pinImage = qw.QLabel()
                     pinImage.setFixedSize(qc.QSize(self.dotSize,self.dotSize))
                     #pinImage.setPixmap(self.blank)
@@ -85,7 +85,7 @@ class StateVisualizer(vm.Visualization):
         iPin = 0
         for iRow,rowList in enumerate(state):
             for iColumn,iElement in enumerate(rowList):
-                if ((iRow + 1) % self.BrailleSize == 0) or ((iColumn + 1) % 3 == 0):
+                if ((iRow + 1) % self.BrailleSize == 0) or ((iColumn + 1) % 3 == 0) and not self.uniformDot:
                     self.pinList[iPin].clear()
                 else:
                     if not iElement:
@@ -132,8 +132,8 @@ class StateVisualizerOperation(om.Operation):
     def startOperation(self):
 
         # "Real GUI" Size
-        self.realGuiWidth =  880#self.StateVisualizer.frameGeometry().width() #- leftMargin*2#(self.dotSize + 1) * self.nColumns
-        self.realGuiHeight = 425#self.StateVisualizer.frameGeometry().height() #- topMargin*2#(self.dotSize + 1) * self.nRows
+        self.realGuiWidth =  829#self.StateVisualizer.frameGeometry().width() #- leftMargin*2#(self.dotSize + 1) * self.nColumns
+        self.realGuiHeight = 390#self.StateVisualizer.frameGeometry().height() #- topMargin*2#(self.dotSize + 1) * self.nRows
     
         pinWidth = 41
         pinHeight = 19
@@ -169,5 +169,9 @@ class StateVisualizerOperation(om.Operation):
     def changeDisplay(self):
         if self.StateVisualizer.BrailleSize == 4:
             self.StateVisualizer.BrailleSize = 5
+        elif self.StateVisualizer.BrailleSize == 5:
+            self.StateVisualizer.uniformDot = True
+            self.StateVisualizer.BrailleSize = 20
         else:
+            self.StateVisualizer.uniformDot = False
             self.StateVisualizer.BrailleSize = 4                
