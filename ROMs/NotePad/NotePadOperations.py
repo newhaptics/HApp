@@ -6,30 +6,23 @@ Created on Tue Nov 15 15:12:55 2022
 """
 
 import RomAPI as rs
+import time
 
 class TactileDisplayRefreshOperation(rs.RomOperation):
     
-    def __init__(self, name, TactileDisplay, DisplayFlag):
+    def __init__(self, name, TactileDisplay, TextEditor):
         super().__init__(name)
         
         # inputs to the operation
-        self.DisplayFlag = DisplayFlag
-        self.inputDictionary[self.DisplayFlag.name] = self.DisplayFlag
+        self.TextEditor = TextEditor
+        self.inputDictionary["Text Editor"] = self.TextEditor
         
         # outputs to the operation
         self.TactileDisplay = TactileDisplay
         self.outputDictionary[self.TactileDisplay.name] = self.TactileDisplay
         
         # provide a description
-        self.description = "This operation refreshs the display when keys are typed."
-        
-        # execute the function continuously until otherwise
-        executionParameters = {
-            "executeOnFlags": [self.DisplayFlag], # a set of flag dependencies that when met start executing the Operation
-            "executeDelay": 0, # a delay in milliseconds that starts the execution of the Operation after the flag dependencies have been met
-        }
-        
-        self.setExecutionParameters(executionParameters)
+        self.description = "This operation refreshs the display when keys are typed. It's execution is interupt based."
         
         self.executable = self.execute
         
@@ -37,93 +30,78 @@ class TactileDisplayRefreshOperation(rs.RomOperation):
         
         
     def execute(self):
-        # print("update the display")
-        flagMatrix = self.DisplayFlag.matrix
-# =============================================================================
-#         print('---------------------------\n')
-#         print('\n'.join([' '.join(['{:4}'.format(item) for item in row])
-#                          for row in flagMatrix]))
-#         print('---------------------------\n')
-#         
-# =============================================================================
-        self.TactileDisplay.setMat(flagMatrix)
+        self.TactileDisplay.braille((0,0),self.TextEditor.editorMatrixOutput())
+        
         self.TactileDisplay.refresh()
         
-        self.DisplayFlag.clearState()
-            
+# =============================================================================
+#     def checkFlagConditions(self):
+#         # grab the state of DisplayFlag
+#         displayState = self.DisplayFlag.state
+#         
+#         # get the current state of the tactile display
+#         if displayState:
+#             # compare the flag matrix to the current state of the Tactile Display
+#             return True
+#         else:
+#             # if they are not the same then return false
+#             return False
+# =============================================================================
         
-    def checkFlagConditions(self):
-        # grab the state of DisplayFlag
-        displayState = self.DisplayFlag.state
-        
-        # get the current state of the tactile display
-        if displayState:
-            # compare the flag matrix to the current state of the Tactile Display
-            print("load slides passed")
-            return True
-        else:
-            # if they are not the same then return false
-            return False
-        
-    def stopOperation(self):
-        # delete the timer for the operation by running the super class function
-        super().stopOperation()
-        
-        # mark isStopped as false so the function is not killed
-        self.isStopped = False
-        
-class GetTouchScreenOperation(rs.RomOperation):
-    
-    def __init__(self, Controller, Editor):
-        super().__init__()
-        self.Controller = Controller
-        self.TactileDisplay = self.Controller.HAppControlCenter.TactileDisplay
-        self.TextEditor = Editor
-        self.BrailleCellColumn = 0
-        self.BrailleCellRow = 0
-        self.touchScreenTimer = 0
-        
-    def stopOperation(self):
-        self.operationOn = 0
-        
-    def execute(self):
-        if self.operationOn:
-            self.getTouchScreenCursor()
-       
-            
-    def getTouchScreenCursor(self):
-        #check the position of the touch screen
-        if self.touchScreenTimer > 50:
-            self.touchScreenTimer = 0
-            
-            pinCursor = self.TactileDisplay.getPinCursorPosition()
-            
-            #print("Old Touch Screen Braille Position {0},{1}".format(self.BrailleCellColumn, self.BrailleCellRow))
-            
-            newBrailleCellColumn = int((pinCursor[1] + 1)/3)
-            newBrailleCellRow = int((pinCursor[0] + 1)/4)
-            
-            if newBrailleCellRow == 5:
-                newBrailleCellRow = 4
-            
-            #print("New Touch Screen Braille Position {0},{1}".format(newBrailleCellColumn, newBrailleCellRow))
-            
-            
-            #if the touch screen position is different than the text editor position set text editor to touch screen position
-            if (self.BrailleCellRow != newBrailleCellRow or self.BrailleCellColumn != newBrailleCellColumn) and self.TextEditor.touchScreenMode :
-                
-                self.BrailleCellColumn = newBrailleCellColumn
-                self.BrailleCellRow = newBrailleCellRow
-                
-                #set the TextEditor y position to the touch position
-                self.TextEditor.cursor[1] = self.BrailleCellRow + self.TextEditor.boundingBox[0]
-                self.TextEditor.cursor[0] = self.BrailleCellColumn
-                print("New Braille Position {0}".format(self.BrailleCellRow))
-                print("New Editor Position {0}".format(self.TextEditor.cursor[1]))
-                print("New Pin Position {0}".format(pinCursor[0]))
-                
-        else:
-            self.touchScreenTimer += 1
+# =============================================================================
+# class GetTouchScreenOperation(rs.RomOperation):
+#     
+#     def __init__(self, Controller, Editor):
+#         super().__init__()
+#         self.Controller = Controller
+#         self.TactileDisplay = self.Controller.HAppControlCenter.TactileDisplay
+#         self.TextEditor = Editor
+#         self.BrailleCellColumn = 0
+#         self.BrailleCellRow = 0
+#         self.touchScreenTimer = 0
+#         
+#     def stopOperation(self):
+#         self.operationOn = 0
+#         
+#     def execute(self):
+#         if self.operationOn:
+#             self.getTouchScreenCursor()
+#        
+#             
+#     def getTouchScreenCursor(self):
+#         #check the position of the touch screen
+#         if self.touchScreenTimer > 50:
+#             self.touchScreenTimer = 0
+#             
+#             pinCursor = self.TactileDisplay.getPinCursorPosition()
+#             
+#             #print("Old Touch Screen Braille Position {0},{1}".format(self.BrailleCellColumn, self.BrailleCellRow))
+#             
+#             newBrailleCellColumn = int((pinCursor[1] + 1)/3)
+#             newBrailleCellRow = int((pinCursor[0] + 1)/4)
+#             
+#             if newBrailleCellRow == 5:
+#                 newBrailleCellRow = 4
+#             
+#             #print("New Touch Screen Braille Position {0},{1}".format(newBrailleCellColumn, newBrailleCellRow))
+#             
+#             
+#             #if the touch screen position is different than the text editor position set text editor to touch screen position
+#             if (self.BrailleCellRow != newBrailleCellRow or self.BrailleCellColumn != newBrailleCellColumn) and self.TextEditor.touchScreenMode :
+#                 
+#                 self.BrailleCellColumn = newBrailleCellColumn
+#                 self.BrailleCellRow = newBrailleCellRow
+#                 
+#                 #set the TextEditor y position to the touch position
+#                 self.TextEditor.cursor[1] = self.BrailleCellRow + self.TextEditor.boundingBox[0]
+#                 self.TextEditor.cursor[0] = self.BrailleCellColumn
+#                 print("New Braille Position {0}".format(self.BrailleCellRow))
+#                 print("New Editor Position {0}".format(self.TextEditor.cursor[1]))
+#                 print("New Pin Position {0}".format(pinCursor[0]))
+#                 
+#         else:
+#             self.touchScreenTimer += 1
+# =============================================================================
         
             
     
@@ -140,10 +118,6 @@ class BlinkCursorOperation(rs.RomOperation):
         self.outputDictionary["Text Editor"] = self.TextEditor
         
         # outputs to the operation
-        self.DisplayFlag = DisplayFlag("Display Flag")
-        self.HAppControlCenter.addFlag(self.DisplayFlag)
-        self.outputDictionary[self.DisplayFlag.name] = self.DisplayFlag
-        
         self.TactileDisplay = Controller.HAppControlCenter.getPeripheral("NewHaptics Display SarissaV1")
         self.outputDictionary[self.TactileDisplay.name] = self.TactileDisplay
         
@@ -162,10 +136,21 @@ class BlinkCursorOperation(rs.RomOperation):
         self.executable = self.execute
         
         self.createDebugString()
+    
+    def execute(self):
+        # just print the text editor output to see if the limitation is on rom side
+        self.cursorBlink()
+        self.TactileDisplay.refresh()
         
-    def stopOperation(self):
-        self.operationOn = 0
-            
+        # update the description with the state of the text editor
+        cursorString = "Cursor Location: {}".format(self.TextEditor.cursor)
+        cursorLimiterString = "Cursor Limiter: {}".format(self.TextEditor.cursorLimiter)
+        editorString = "Editor String: {}".format(self.TextEditor.editorMatrix)
+        editorBoxString = "Editor Box: {}".format(self.TextEditor.editorBox)
+        
+        self.description = cursorString + "\n" + cursorLimiterString + "\n" + editorString + "\n"  + editorBoxString
+        self.createDebugString()
+        
     def cursorBlink(self):
         #check the position of the text editor
         cellXPosition = self.TextEditor.cursor[0]
@@ -175,7 +160,6 @@ class BlinkCursorOperation(rs.RomOperation):
         brailleYPosition = cellYPosition*4
         
         pinPosition = (brailleXPosition,brailleYPosition)
-        
         
         self.TactileDisplay.setPinCursorPosition(pinPosition)
         
@@ -196,11 +180,6 @@ class BlinkCursorOperation(rs.RomOperation):
             print("unable to render cursor")
                 
         self.cursorBlinker += 1
-    
-    def execute(self):
-        self.cursorBlink()
-        self.DisplayFlag.setState(1)
-        self.DisplayFlag.setMatrix(self.TactileDisplay.return_desiredState())
         
     def renderCursor(self, pinCursor, period, dutyCycle): #, period, dutyCycle
         
@@ -246,9 +225,9 @@ class BlinkCursorOperation(rs.RomOperation):
             self.cursorOff(pinCursor)
     
             #restart the refresh operation
-            self.Controller.HAppControlCenter.restartExecutingOperation("TactileDisplayRefreshOperation")
+            #self.Controller.HAppControlCenter.restartExecutingOperation("TactileDisplayRefreshOperation")
 
-        
+
     def cursorOn(self, pinCursor):
         
         if self.TextEditor.cursorMode == 0:
@@ -279,7 +258,8 @@ class BlinkCursorOperation(rs.RomOperation):
             
             
         elif self.TextEditor.cursorMode == 5:
-            pass
+            self.TactileDisplay.dot((pinCursor[1] + 2, pinCursor[0]))
+            self.TactileDisplay.dot((pinCursor[1] + 2, pinCursor[0] + 1))
         
         else:
             #just blink the cursor like normal

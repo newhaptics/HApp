@@ -10,13 +10,13 @@ import NotePadEditor as npe
 
 class FileNavigatorEditor(npe.NotePadEditor):
 
-    def __init__(self, nDotRows, nDotColumns):
+    def __init__(self, nDotRows, nDotColumns, HAppControlCenter):
         
-        super().__init__(nDotRows, nDotColumns)
+        super().__init__(nDotRows, nDotColumns, HAppControlCenter)
         
         self.lineSelect = 0
         self.cursorMode = 0
-        self.period = 30
+        self.period = 20
         self.dutyCycle = 0.5
         self.touchScreenMode = 0
         

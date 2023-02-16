@@ -42,6 +42,8 @@ import RomVisualization as rv
 
 import sys
 
+import time
+
 """ HApp MainWindow """
 
 class HAppMainWindow(qw.QMainWindow):
@@ -52,6 +54,9 @@ class HAppMainWindow(qw.QMainWindow):
         
         self.flashSplash()
         super().__init__(parent)
+        
+        self.startTime = 0
+        self.endTime = 0
         
         # set the mouse cursor to always be tracked
         self.setMouseTracking(True)
@@ -160,10 +165,16 @@ class HAppMainWindow(qw.QMainWindow):
     """ Keyboard related functions """
     
     def keyPressEvent(self, event):
+        self.endTime = time.time()
+        execution_time = self.endTime - self.startTime
+        #print(f"Time between keypresses: {execution_time} seconds")
+        
         event.ignore()
+        
         # Connect to KeyboardPeripheral class key press event
         self.KeyboardPeripheral.handleKeyPressEvent(event)
-
+        
+        self.startTime = time.time()
 
     def keyReleaseEvent(self, event):
         event.ignore()

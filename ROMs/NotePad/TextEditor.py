@@ -6,15 +6,19 @@ Created on Wed Nov  9 12:52:45 2022
 """
 
 import NotePadKeyboard as nk
+import time
 
 
 class TextEditor():
 
-    def __init__(self, nDotRows, nDotColumns):
+    def __init__(self, nDotRows, nDotColumns, HAppControlCenter):
         
         #add one as the last line doesn't count
         self.nBrailleCellColumns = int((nDotColumns + 1)/3)
         self.nBrailleCellRows = int((nDotRows + 1)/4)
+        
+        self.startTime = 0
+        self.endTime = 0
         
         #bounding box contains indices of first and last list to display
         self.boundingBox = [0, self.nBrailleCellRows - 1]
@@ -41,7 +45,7 @@ class TextEditor():
         
         newLineList = []
         self.editorBox = []
-        self.KeyboardHandles = nk.TextEditorKeyboardHandles(self)
+        self.KeyboardHandles = nk.TextEditorKeyboardHandles(self, HAppControlCenter)
 
     def deleteCursorLimit(self, yPosition):
         limiter = self.cursorLimiter[yPosition]
@@ -127,12 +131,17 @@ class TextEditor():
             limiter[0] += 1
         else:
             if yPosition < self.nBrailleCellRows - 1:
+# =============================================================================
+#                 self.autoEndline = False
+#                 self.createNewLine(yPosition, self.nBrailleCellColumns)
+#                 
+# =============================================================================
                 self.moveCursorLimitNewLine(yPosition)
                 #self.editorMatrix.insert(yPosition + 1,[])
             else:
                 print("hit end of editor")
             
-        self.cursorLimiter[yPosition] = limiter
+        #self.cursorLimiter[yPosition] = limiter
         #print(self.cursorLimiter)
     
     def moveCursorLimitNewLine(self, yPosition):
@@ -141,8 +150,9 @@ class TextEditor():
         if len(self.cursorLimiter) > (yPosition + 1):
             pass
         else:
-            self.cursorLimiter.append([0,yPosition + 1])
+            self.cursorLimiter.append([2,yPosition + 1])
             limiter = self.cursorLimiter[yPosition + 1]
+            print(limiter)
         #move the limiter to the beginning
         
     def createNewLine(self, yPosition, xPosition):
@@ -201,7 +211,7 @@ class TextEditor():
         elif ableToMoveDown:
             #move down
             self.cursor[1] = yPosition + 1
-            self.cursor[0] = 0
+            self.cursor[0] = 1
             #print("move down")
             #print(self.cursor)
         else:
@@ -283,6 +293,8 @@ class TextEditor():
             print("hit end of editor")
         
     def insertCharacter(self, character):
+        self.startTime = time.time()
+        
         #inserts a character at the cursor location
         xPosition = self.cursor[0]
         yPosition = self.cursor[1]
@@ -290,15 +302,22 @@ class TextEditor():
         #reformat the matrix back to display size
         #self.editorMatrix = self.reformatMatrixToDisplaySize(self.editorMatrix,self.nBrailleCellColumns)
         
-        #move the cursor limit of the row forward
-        self.moveCursorLimitForward(yPosition)
-        
-        #move the cursor forward
-        self.moveCursorForward()
-        
+        # add the character to the matrix
         self.addCharacterToMatrix(yPosition,xPosition,character)
         
-    def addCharacterToMatrix(self,yPosition,xPosition, character):
+        # move the cursor limit of the row forward
+        self.moveCursorLimitForward(yPosition)
+        
+        # move the cursor forward
+        self.moveCursorForward()
+        
+        
+        
+        self.endTime = time.time()
+        execution_time = self.endTime - self.startTime
+        #print(f"Outside text editor Execution time: {execution_time} seconds")
+        
+    def addCharacterToMatrix(self, yPosition,xPosition, character):
         #editorMatrixRows = len(self.editorMatrix)
         
         #print(yPosition)
@@ -327,7 +346,7 @@ class TextEditor():
         #this function takes the editor matrix and shifts the excess data down one line
         lineAlreadyBelow = len(self.editorMatrix) > (yPosition + 1)
         if lineAlreadyBelow:    
-            isLineBelowLength = len(self.editorMatrix[yPosition + 1]) < self.nBrailleCellColumns - 1 
+            isLineBelowLength = len(self.editorMatrix[yPosition + 1]) < self.nBrailleCellColumns
         noLineBelow = not lineAlreadyBelow
         
         #if a line is already below run overflow line function
@@ -353,11 +372,17 @@ class TextEditor():
             
         #if there is no line below create a new line and run overflow line function
         else:
-            #print("A new line needs to be inserted below")
+# =============================================================================
+#             something = self.autoEndline
+#             #print("A new line needs to be inserted below")
+#             if something:
+#                 self.autoEndline = False
+#             else:
+# =============================================================================
             self.createNewLine(yPosition, self.nBrailleCellColumns)
             self.characterOverflow(yPosition)
-            
-        
+            print("oh noes")
+
         
         
                 
@@ -409,7 +434,7 @@ class TextEditor():
                     excessRowLength = len(excessRow)
                     
                     #add a new cursor limit in yPosition
-                    self.cursorLimiter.insert(yPosition, [excessRowLength, yPosition])
+                    #self.cursorLimiter.insert(yPosition, [excessRowLength, yPosition])
                 
                     #set the cursor limit of the previous line to its max value
                     self.cursorLimiter[yPosition - 1] = [self.nBrailleCellColumns - 1, yPosition - 1]

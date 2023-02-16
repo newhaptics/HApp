@@ -93,7 +93,7 @@ class NotePadEditor(tt.TextEditor):
         elif ableToMoveDown:
             #move down
             self.cursor[1] = yPosition + 1
-            self.cursor[0] = 0
+            self.cursor[0] = 1
             
             if self.boundingBox[1] == yPosition:
                 self.boundingBox[0] += 1

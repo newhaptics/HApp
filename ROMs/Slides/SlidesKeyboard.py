@@ -54,9 +54,7 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
         # self.VisualizerOperator.clickSelect(xCoordinate, yCoordinate)
         
         pinSelected = self.VisualizerOperator.getPinPosition()
-        
         print(pinSelected)
-        
         self.MasterModel.parameterClicked([int(pinSelected[1]), int(pinSelected[0])])
         
     def KeyF1Handler(self):

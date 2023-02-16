@@ -88,13 +88,7 @@ class NotePadTextEditor(rs.RomState):
         #get the size of the Braille Display
         displaySize = self.TactileDisplay.return_displaySize()
         nRows = displaySize[0]
-        nColumns = displaySize[1]        
-        # create the Text Editor model for editing files
-        self.TextEditor = fn.FileNavigatorEditor(nRows, nColumns)
-        
-        # add in the keyboard handles by grabbing from the HApp control center
-        KeyboardPeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Keyboard")
-        KeyboardPeripheral.setNewKeyboardHandler(self.TextEditor.KeyboardHandles)
+        nColumns = displaySize[1]
         
         #create an operation that tracks the editor cursor and decides where it is
         
@@ -104,15 +98,22 @@ class NotePadTextEditor(rs.RomState):
 #         self.Controller.HAppControlCenter.setOperation("TouchScreenOperation", self.TouchScreenOperation)
 # =============================================================================
         
+        # create the Text Editor model for editing files
+        self.TextEditor = fn.FileNavigatorEditor(nRows, nColumns, self.Controller.HAppControlCenter)
+        
+        #create an operation that decides when to send the desired state over the serial port
+        self.TactileDisplayRefreshOperation = no.TactileDisplayRefreshOperation("TactileDisplayRefreshOperation", self.TactileDisplay, self.TextEditor)
+        self.Controller.HAppControlCenter.addOperation(self.TactileDisplayRefreshOperation)
+
         #create an operation that blinks the cursor of the Braille Display
         self.BlinkCursorOperation = no.BlinkCursorOperation("BlinkCursorOperation", self.Controller, self.TextEditor)
         self.Controller.HAppControlCenter.addOperation(self.BlinkCursorOperation)
         
-        #create an operation that decides when to send the desired state over the serial port
-        self.TactileDisplayRefreshOperation = no.TactileDisplayRefreshOperation("TactileDisplayRefreshOperation", self.TactileDisplay, self.BlinkCursorOperation.DisplayFlag)
-        self.Controller.HAppControlCenter.addOperation(self.TactileDisplayRefreshOperation)
+        self.TextEditor.KeyboardHandles.TactileDisplayRefreshOperation = self.TactileDisplayRefreshOperation
         
-        
+        # add in the keyboard handles by grabbing from the HApp control center
+        KeyboardPeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Keyboard")
+        KeyboardPeripheral.setNewKeyboardHandler(self.TextEditor.KeyboardHandles)
         
     def closeState(self):
         #clear the screen of all information and shut down start screen processes

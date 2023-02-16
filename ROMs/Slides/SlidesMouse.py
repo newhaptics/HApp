@@ -46,7 +46,7 @@ class SlidesMouseHandles(rs.RomMouseHandles):
         # get the pin coordinate to highlight
         xPinCoordinate = scaledDict["pin"][0]
         yPinCoordinate = scaledDict["pin"][1]
-                
+        
         #self.MasterModel.parameterClicked([int(pinSelected[1]), int(pinSelected[0])])
         self.MasterModel.parameterClicked([int(yPinCoordinate), int(xPinCoordinate)])
         

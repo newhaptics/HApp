@@ -78,7 +78,7 @@ while shouldRomEnd == 0:
     
     shouldRomEnd = ThisRom.getInterruptFlag('romEnd')
     
-    time.sleep(0.01)
+    time.sleep(0.001)
     stopEvent.wait()
     #print("testing thread")
     

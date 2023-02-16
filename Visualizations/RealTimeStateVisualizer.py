@@ -120,7 +120,7 @@ class StateVisualizerOperation(om.Operation):
         executionParameters = {
             "executeDelay": 2500, # a delay in milliseconds that starts the execution of the Operation after the flag dependencies have been met
             "executeContinuously": True, # a boolean value that determines if the Operation will execute forever
-            "executionIntervalTime": 10, # an interval in milliseconds that determines the time between execution
+            "executionIntervalTime": 1, # an interval in milliseconds that determines the time between execution
         }
         
         self.setExecutionParameters(executionParameters)
