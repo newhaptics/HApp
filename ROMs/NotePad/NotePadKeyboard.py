@@ -38,7 +38,7 @@ class TextEditorKeyboardHandles(dh.DefaultKeyboardHandles):
 #         
 #         virtualXPosition = 0
 #         virtualYPosition = 0
-# 
+#           
 #         
 #         for stringList in newLineStringList:
 #             charCounter = 0
@@ -392,7 +392,6 @@ class TextEditorKeyboardHandles(dh.DefaultKeyboardHandles):
         #self.editor.clear()
         print(self.editor.cursorMode)
         self.updateDisplay()
-
         
     def KeyF5Handler(self):
         filename = "C:/Users/derek/OneDrive/NewHaptics Shared/HapticOS/FC_GUI_API/APIv0.7-Coeus/v0.764-Coeus/testScripts/SampleDocument.txt"
@@ -400,41 +399,34 @@ class TextEditorKeyboardHandles(dh.DefaultKeyboardHandles):
         self.editor.cursorMode = 0
         self.updateDisplay()
 
-
     def KeyF6Handler(self):
         filename = "C:/Users/derek/OneDrive/NewHaptics Shared/HapticOS/FC_GUI_API/APIv0.7-Coeus/v0.764-Coeus/testScripts/ArabicNumerals.txt"
         self.editor.loadTxt(filename)
         self.editor.cursorMode = 0
         self.updateDisplay()
 
-
     def KeyF7Handler(self):
         filename = "C:/Users/derek/OneDrive/NewHaptics Shared/HapticOS/FC_GUI_API/APIv0.7-Coeus/v0.764-Coeus/testScripts/CityPop.txt"
         self.editor.loadTxt(filename)
         self.editor.cursorMode = 0
         self.updateDisplay()
-
         
     def KeyF8Handler(self):
         filename = "C:/Users/derek/OneDrive/NewHaptics Shared/HapticOS/FC_GUI_API/APIv0.7-Coeus/v0.764-Coeus/testScripts/CityArea.txt"
         self.editor.loadTxt(filename)
         self.editor.cursorMode = 0
         self.updateDisplay()
-
-
         
     def KeyF9Handler(self):
         filename = "C:/Users/derek/OneDrive/NewHaptics Shared/HapticOS/FC_GUI_API/APIv0.7-Coeus/v0.764-Coeus/testScripts/History.txt"
         self.editor.loadTxt(filename)
         self.editor.cursorMode = 0
         self.updateDisplay()
-
         
     def KeyF10Handler(self):
         filename = "C:/Users/derek/OneDrive/NewHaptics Shared/HapticOS/FC_GUI_API/APIv0.7-Coeus/v0.764-Coeus/testScripts/English.txt"
         self.editor.loadTxt(filename)
         self.editor.cursorMode = 0
-
         
     def KeyF11Handler(self):
         filename = "C:/Users/derek/OneDrive/NewHaptics Shared/HapticOS/FC_GUI_API/APIv0.7-Coeus/v0.764-Coeus/testScripts/Math.txt"
@@ -442,14 +434,12 @@ class TextEditorKeyboardHandles(dh.DefaultKeyboardHandles):
         self.editor.cursorMode = 0
         self.updateDisplay()
 
-
     def KeyF12Handler(self):
         filename = "C:/Users/derek/OneDrive/NewHaptics Shared/HapticOS/FC_GUI_API/APIv0.7-Coeus/v0.764-Coeus/testScripts/FileNavigationTouch.txt"
         self.editor.loadTxt(filename)
         self.editor.cursor[1] = 4
         self.editor.cursorMode = 1
         self.updateDisplay()
-
 
     def KeyEndHandler(self):
         if self.editor.period < 1000:
