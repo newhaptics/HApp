@@ -97,7 +97,7 @@ class PongGame(rs.RomState):
 class PongExitState(rs.RomState):
     
     def __init__(self, Controller):
-        #user can make custom state intialization 
+        # user can make custom state intialization 
         super().__init__(Controller)
         self.PongGraphicsRender = self.Controller.PongGraphicsRender
         self.GameFlag = self.Controller.GameFlag
