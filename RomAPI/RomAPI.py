@@ -102,6 +102,11 @@ class RomController(RomControlBus):
 #         self.difficultySetting = romSettings['difficultySetting']
 # =============================================================================
         
+    def startCurrentState(self):
+        #get the current rom that is running and run its step function
+        currentState = self.getCurrentState()
+        
+        currentState.startState()
         
     def stepCurrentState(self):
         #get the current rom that is running and run its step function

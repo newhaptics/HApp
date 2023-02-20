@@ -21,13 +21,35 @@ echo = 0
 
 import RomAPI as rs
 import time
+import AvalancheOperations as ao
 import AvalancheStates as avs
+import AvalancheKeyboard as ak
+import AvalancheMouse as amo
+
 
 class AvalancheController(rs.RomController):
     
     def __init__(self, interruptDictionaryAddress, OperationsAddress, romSettings, debug):
 
         super().__init__(interruptDictionaryAddress, OperationsAddress, romSettings, debug)
+
+        # add the Tactile Display
+        self.TactileDisplay = self.HAppControlCenter.getPeripheral("NewHaptics Display SarissaV1")
+
+        # Create the Game Flag
+        self.GameFlag = ao.GameStateFlag("Game State Flag", 4)
+        self.HAppControlCenter.addFlag(self.GameFlag)
+
+        # Create the ability to render game graphics
+        self.AvalancheGraphicsRender = ao.AvalancheGraphicsRender("AvalancheGraphicsRender", self.TactileDisplay, self.GameFlag)
+        self.HAppControlCenter.addOperation(self.AvalancheGraphicsRender)
+        
+        # create the handles for the keyboard including the interrupt dictionary
+        self.AvalancheKeyboardHandles = ak.AvalancheKeyboardHandles(self.GameFlag)
+        
+        # add in the keyboard handles by grabbing from the HApp control center
+        KeyboardPeripheral = self.HAppControlCenter.getPeripheral("Master Keyboard")
+        KeyboardPeripheral.setNewKeyboardHandler(self.AvalancheKeyboardHandles)
 
         #initialize all state objects and pass in the controller
         self.AvalancheStartMenu = avs.AvalancheStartMenu(self)
@@ -57,6 +79,9 @@ romSettings = { 'demoNumber': int(demoNumber) }
 ThisRom = AvalancheController(interruptDictionaryAddress, OperationsControlAddress, romSettings, int(echo))
 
 shouldRomEnd = ThisRom.getInterruptFlag('romEnd')
+
+# begin start menu
+ThisRom.startCurrentState()
 
 #Main loop of the Rom
 while shouldRomEnd == 0:
