@@ -12,13 +12,14 @@ import AvalancheOperations as ao
 
 class AvalancheModel:
     
-    def __init__(self, TactileDisplay, difficultySetting, debug):
+    def __init__(self, HAppControlCenter, difficultySetting, debug):
         """ initializing rom resources """
         
-        self.TactileDisplay = TactileDisplay
-        displaySize = self.TactileDisplay.return_displaySize()
-        self.nRows = displaySize[0]
-        self.nColumns = displaySize[1]
+        self.HAppControlCenter = HAppControlCenter
+        self.TactileDisplay = self.HAppControlCenter.getPeripheral("NewHaptics Display SarissaV1")
+        #displaySize = self.TactileDisplay.return_displaySize()
+        self.nRows = 19#displaySize[0]
+        self.nColumns = 41#displaySize[1]
         
         self.difficultySetting = difficultySetting
         
@@ -27,14 +28,16 @@ class AvalancheModel:
         # game settings
         self.echo = debug
 
-    def startMenu(self):
-        self.TactileDisplay.clear()
-        print("press space key to start")
-        self.TactileDisplay.braille((0,0),"press space key to start")
-        self.TactileDisplay.desired()
-        self.TactileDisplay.refresh()
-        self.TactileDisplay.state()
-        self.startNewGame()
+# =============================================================================
+#     def startMenu(self):
+#         self.TactileDisplay.clear()
+#         print("press space key to start")
+#         self.TactileDisplay.braille((0,0),"press space key to start")
+#         self.TactileDisplay.desired()
+#         self.TactileDisplay.refresh()
+#         self.TactileDisplay.state()
+#         self.startNewGame()
+# =============================================================================
         
     def mainGameLoop(self):
         
@@ -43,24 +46,21 @@ class AvalancheModel:
         self.gamePhysics()
         
         self.timingControls()
-        
-        self.gameControlsUpdate()
-       
-        self.createPaddles()
-        
-        self.peripheralCommunication()
+                       
+        #self.peripheralCommunication()
         
         self.timingCalculations()
         
-        self.debugInfo()
+        #self.debugInfo()
 
     def gamePhysics(self):
         """ game physics """
+        pongPosition = self.GameFlag.pongPosition
+        cursorPosition = self.GameFlag.cursorPosition
         if (self.currentTime) > (self.avalancheTimer):
-            self.pongPosition = self.avalanchePhysics(self.pongPosition,self.GameFlag.cursorPosition)
+            pongPosition = self.avalanchePhysics(pongPosition, cursorPosition)
+            self.GameFlag.setPongPosition(pongPosition)
             
-        print("Pong Position{}".format(self.pongPosition))
-        print("Cursor Position{}".format(self.GameFlag.cursorPosition))
         
         """
         if difficulty < 4 and (currentTime) > (avalancheTimer + 0.2):
@@ -69,14 +69,15 @@ class AvalancheModel:
     
     def gameDifficultyCalculation(self):
         """ game difficulty calculation """
-        if self.difficultyIncrement%5 == 0:
+        
+        if self.GameFlag.difficultyIncrement%5 == 0:
             #increase difficulty and display score
-            self.difficultyIncrement = 1
-            if self.difficulty > 1:
-                self.difficulty = self.difficulty - 0.5
-                print("difficulty increased to {}".format(self.difficulty))
+            self.GameFlag.difficultyIncrement = 1
+            if self.GameFlag.difficulty > 1:
+                self.GameFlag.difficulty = self.GameFlag.difficulty - 0.5
+                print("difficulty increased to {}".format(self.GameFlag.difficulty))
                 
-        #print("Game Difficulty: {}".format(self.difficulty))
+        #print("Game Difficulty: {}".format(self.GameFlag.difficulty))
 
     
     def gameControlsUpdate(self):
@@ -88,10 +89,14 @@ class AvalancheModel:
     
     def gameGraphicsRender(self):
         """ game graphics render """
-        self.TactileDisplay.line((self.pongPosition[1] - 2,self.pongPosition[0]), (self.pongPosition[1] - 2,self.pongPosition[0] + 2))
-        self.TactileDisplay.line((self.pongPosition[1] - 1,self.pongPosition[0]), (self.pongPosition[1] - 1,self.pongPosition[0] + 2))
-        self.TactileDisplay.line((self.pongPosition[1],self.pongPosition[0]), (self.pongPosition[1],self.pongPosition[0] + 2))
-        self.peripheralCommunication()
+        self.TactileDisplay.clear()
+        self.TactileDisplay.line((self.GameFlag.pongPosition[1] - 2,self.GameFlag.pongPosition[0]), (self.GameFlag.pongPosition[1] - 2,self.GameFlag.pongPosition[0] + 2))
+        self.TactileDisplay.line((self.GameFlag.pongPosition[1] - 1,self.GameFlag.pongPosition[0]), (self.GameFlag.pongPosition[1] - 1,self.GameFlag.pongPosition[0] + 2))
+        self.TactileDisplay.line((self.GameFlag.pongPosition[1],self.GameFlag.pongPosition[0]), (self.GameFlag.pongPosition[1],self.GameFlag.pongPosition[0] + 2))
+        
+        self.TactileDisplay.line((self.GameFlag.cursorPosition[1], self.GameFlag.cursorPosition[0] - 2), (self.GameFlag.cursorPosition[1], self.GameFlag.cursorPosition[0] + 6))
+        self.TactileDisplay.line((self.GameFlag.cursorPosition[1] + 1,self.GameFlag.cursorPosition[0] - 2), (self.GameFlag.cursorPosition[1] + 1,self.GameFlag.cursorPosition[0] + 6))
+
         
         """
         if difficulty < 4:
@@ -100,16 +105,15 @@ class AvalancheModel:
             self.TactileDisplay.line((self.pong2Position[1],self.pong2Position[0]), (self.pong2Position[1],self.pong2Position[0] + 2))
         """
         if self.echo:    
-            print(self.pongPosition)
+            print(self.GameFlag.pongPosition)
        
     
     def peripheralCommunication(self):
         """ communicate with peripherals """
         self.TactileDisplay.desired()
-        #self.TactileDisplay.refresh()
+        self.TactileDisplay.refresh()
         
         self.TactileDisplay.state()
-        self.TactileDisplay.clear()
         
     def timingCalculations(self):
         """ timing calculations """
@@ -128,7 +132,7 @@ class AvalancheModel:
     def timingControls(self):
         """ Timing Controls """
         if (self.currentTime) > (self.avalancheTimer):
-            self.avalancheTimer += 0.2 + self.difficulty*0.2
+            self.avalancheTimer += 0.2 + self.GameFlag.difficulty*0.2
             
         #print("timing controls: {}".format(self.avalancheTimer))
             
@@ -168,19 +172,21 @@ class AvalancheModel:
 
     def startNewGame(self):
         """ initializing game settings """
-        self.difficulty = self.difficultySetting
-        
-        """ establishing game mechanics """
-        self.xIncrement = 0
-        self.yIncrement = 1
-        self.difficultyIncrement = 1
-        self.score = 0
-        
-        """ initializing game physics """
-        self.tic = 0
-        self.GameFlag = ao.positionFlag("Avalanche Flag")
+        self.GameFlag = ao.GameStateFlag("Game State Flag", self.difficultySetting)
+        self.HAppControlCenter.addFlag(self.GameFlag)
 # =============================================================================
-#         self.pongPosition = [0,0]
+#         """ establishing game mechanics """
+#         self.xIncrement = 0
+#         self.yIncrement = 1
+#         self.GameFlag.difficultyIncrement = 1
+#         self.score = 0
+#         
+#         """ initializing game physics """
+#         self.tic = 0
+#         self.GameFlag = ao.gameStateFlag("Game State Flag")
+# =============================================================================
+# =============================================================================
+#         self.GameFlag.pongPosition = [0,0]
 #         self.pong2Position = [0,0]
 #         self.GameFlag.startPosition = [0,0]
 #         
@@ -201,66 +207,47 @@ class AvalancheModel:
         pass
         #self.TactileDisplay.disconnect()
         
+    """ user input movement actions """
+        
     def moveUp(self):
-        if self.GameFlag.cursorPosition[1] > 0:
-            self.GameFlag.cursorPosition[1] -= 1
+        pongPosition = self.GameFlag.pongPosition
+        if pongPosition[1] > 0:
+            pongPosition[1] -= 1
+            self.GameFlag.setPongPosition(pongPosition)
         else:
             pass
         
     def moveDown(self):
-        if self.pongPosition[1] < 17:
-            self.pongPosition[1] += 1
+        pongPosition = self.GameFlag.pongPosition
+        if pongPosition[1] < 17:
+            pongPosition[1] += 1
+            self.GameFlag.setPongPosition(pongPosition)
         else:
             pass        
         
     def moveRight(self):
-        if self.GameFlag.cursorPosition[0] < 41:
-            self.GameFlag.cursorPosition[0] += 3
+        cursorPosition = self.GameFlag.cursorPosition
+        if cursorPosition[0] < 37:
+            cursorPosition[0] += 3
+            self.GameFlag.setCursorPosition(cursorPosition)
         else:
             pass
             
     def moveLeft(self):
-        if self.GameFlag.cursorPosition[0] > 0:
-            self.GameFlag.cursorPosition[0] -= 3
+        cursorPosition = self.GameFlag.cursorPosition
+        if cursorPosition[0] > 0:
+            cursorPosition[0] -= 3
+            self.GameFlag.setCursorPosition(cursorPosition)
         else:
             pass
-
-# =============================================================================
-#     def keyboardControl(self):
-#         
-#         if self.currentTime > self.keyboardTimer:
-#             if keyboard.is_pressed("up"):
-#                 self.keyboardTimer = 0
-#                 if self.GameFlag.cursorPosition[1] > 0:
-#                     self.GameFlag.cursorPosition[1] -= 1
-#                 else:
-#                     pass
-#                 
-#             if keyboard.is_pressed("down"):
-#                 if self.pongPosition[1] < 17:
-#                     self.pongPosition[1] += 1
-#                 else:
-#                     pass
-#                 
-#             if keyboard.is_pressed("left"):
-#                 self.keyboardTimer = self.currentTime + 0.1
-#                 if self.GameFlag.cursorPosition[0] > 0:
-#                     self.GameFlag.cursorPosition[0] -= 3
-#                 else:
-#                     pass
-#                 
-#             if keyboard.is_pressed("right"):
-#                 self.keyboardTimer = self.currentTime + 0.1
-#                 if self.GameFlag.cursorPosition[0] < 41:
-#                     self.GameFlag.cursorPosition[0] += 3
-#                 else:
-#                     pass
-# =============================================================================
-            
+        
+        
+    """ Game Calculations """
+        
     def createPaddles(self):
         
         #self.TactileDisplay.stroke(2)
-        for paddleRow in range(0,int(self.difficulty),4):
+        for paddleRow in range(0,int(self.GameFlag.difficulty),4):
             pass
             #self.TactileDisplay.line((18 - paddleRow,self.GameFlag.cursorPosition[0] - 4), (18 - paddleRow,self.GameFlag.cursorPosition[0] + 5))
         #self.TactileDisplay.stroke(1)
@@ -277,21 +264,21 @@ class AvalancheModel:
         """
     def avalanchePhysics(self, position, cursorPosition):
         lineValues = [i for i in range(self.GameFlag.cursorPosition[0] - 4, self.GameFlag.cursorPosition[0] + 4)]
-        yValues =  [17 - i for i in range(0,int(self.difficulty),4)]
+        yValues =  [17 - i for i in range(0,int(self.GameFlag.difficulty),4)]
         pongX = position[0]
         pongY = position[1]
         
         if pongX >= (self.nColumns):
-            self.xIncrement = -1 
+            self.GameFlag.xIncrement = -1 
         
         if pongY >= (self.nRows):
-            self.yIncrement = 0
+            self.GameFlag.yIncrement = 0
         
         if pongX < 0:
-            self.xIncrement = 1
+            self.GameFlag.xIncrement = 1
             
         if pongY < 0:
-            self.yIncrement = 1
+            self.GameFlag.yIncrement = 1
             
         if (pongY in yValues) and (pongX in lineValues):
             pongX = random.randint(0,13)*3
@@ -303,15 +290,15 @@ class AvalancheModel:
                 else:
                     xIncrement = 1
             """
-            self.score = self.score + 1
-            self.difficultyIncrement = self.difficultyIncrement + 1
+            self.GameFlag.score = self.GameFlag.score + 1
+            self.GameFlag.difficultyIncrement = self.GameFlag.difficultyIncrement + 1
             
-        newX = pongX + self.xIncrement
-        newY = pongY + self.yIncrement
+        newX = pongX + self.GameFlag.xIncrement
+        newY = pongY + self.GameFlag.yIncrement
         if newY%4 is 0:
-            newY = newY + self.yIncrement
+            newY = newY + self.GameFlag.yIncrement
         if newX%3 is 0:
-            newX = newX + self.xIncrement
+            newX = newX + self.GameFlag.xIncrement
         
         return [newX,newY]
 

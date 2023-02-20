@@ -12,14 +12,10 @@ import DefaultKeyboardHandles as dh
 
 class AvalancheKeyboardHandles(dh.DefaultKeyboardHandles):
     
-    def __init__(self, AvalancheModel, HAppControlCenter):
+    def __init__(self, AvalancheModel):
         super().__init__()
         
-        self.HAppControlCenter = HAppControlCenter
-        
         self.AvalancheModel = AvalancheModel
-        
-        self.TactileDisplay = self.HAppControlCenter.getPeripheral("NewHaptics Display SarissaV1")
         
         #self.editor = textEditor
         

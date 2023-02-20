@@ -10,6 +10,8 @@ import RomAPI as rs
 import AvalancheModel as am
 import AvalancheKeyboard as ak
 import AvalancheMouse as amo
+import AvalancheOperations as ao
+
 #import RomRunner as rr
 
 
@@ -59,7 +61,7 @@ class AvalancheStartMenu(rs.RomState):
 class AvalancheGame(rs.RomState):
     
     def __init__(self, Controller):
-        #user can make custom state intialization 
+        #user can make custom state intialization
         super().__init__(Controller)
         self.TactileDisplay = self.Controller.HAppControlCenter.getPeripheral("NewHaptics Display SarissaV1")
         self.displayText = ""
@@ -70,27 +72,34 @@ class AvalancheGame(rs.RomState):
         #redefined by user in the appropriate subclass
         #print('Editor running')
         self.AvalancheModel.mainGameLoop()
-        self.Controller.HAppControlCenter.interruptExecute(lambda: self.AvalancheModel.gameGraphicsRender())
+        #self.Controller.HAppControlCenter.interruptExecute(lambda: self.AvalancheModel.gameGraphicsRender())
+
             
     def startState(self):
         #create a text editor object for this state
         print('Text Editor Begin')
         # create avalanche model
-        self.AvalancheModel = am.AvalancheModel(self.TactileDisplay, 4, 0)
+        self.AvalancheModel = am.AvalancheModel(self.Controller.HAppControlCenter, 4, 0)
+        
+        # create the game tactil rendering operation
+        self.AvalancheRefreshOperation = ao.AvalancheRefreshOperation("AvalancheRefreshOperation", self.TactileDisplay, self.AvalancheModel)
+        self.Controller.HAppControlCenter.addOperation(self.AvalancheRefreshOperation)
         
         # create the keyboard that operates on the avalanche model
-        self.AvalancheKeyboardHandles = ak.AvalancheKeyboardHandles(self.AvalancheModel, self.Controller.HAppControlCenter)
+        self.AvalancheKeyboardHandles = ak.AvalancheKeyboardHandles(self.AvalancheModel)
         
         # create the mouse handles that operate on the model
-        self.AvalancheMouseHandles = amo.AvalancheMouseHandles(self.AvalancheModel, self.Controller.HAppControlCenter)
+        #self.AvalancheMouseHandles = amo.AvalancheMouseHandles(self.AvalancheModel, self.Controller.HAppControlCenter)
         
         # add in the keyboard handles by grabbing from the HApp control center
         KeyboardPeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Keyboard")
         KeyboardPeripheral.setNewKeyboardHandler(self.AvalancheKeyboardHandles)
         
-        # create a mouse peripheral and then set the handles for the mouse
-        MousePeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Mouse")
-        MousePeripheral.setNewMouseHandler(self.AvalancheMouseHandles)
+# =============================================================================
+#         # create a mouse peripheral and then set the handles for the mouse
+#         MousePeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Mouse")
+#         MousePeripheral.setNewMouseHandler(self.AvalancheMouseHandles)
+# =============================================================================
         
     def closeState(self):
         #clear the screen of all information and shut down start screen processes
