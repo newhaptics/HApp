@@ -55,8 +55,18 @@ class TunesGraphicsRender(rs.RomOperation):
         
     def execute(self):
         
-        self.renderBars()        
-        self.updateDisplay()
+        try:
+            
+            
+            if self.TunesFlag.gameState == "Start Menu":
+                self.renderBars()        
+                self.updateDisplay()
+            else:
+                self.renderExitScreen()
+        
+        
+        except Exception as e:
+            print(e)
         
     def renderBars(self):
         self.TactileDisplay.clear()
@@ -67,13 +77,14 @@ class TunesGraphicsRender(rs.RomOperation):
         yPosition = 1 + brailleCellHeight*0
         xEndPosition = 14 * brailleCellWidth
         
-        self.TactileDispaly.stroke(3)
+        self.TactileDisplay.stroke(3)
         for index,barLength in enumerate(self.TouchTunesModel.bars):
             xStartPosition = 0
             yPosition = 1 + brailleCellHeight*index
-            xEndPosition = barLength * brailleCellWidth
-            self.TactileDisplay.line((yPosition, xStartPosition), (yPosition, xEndPosition))
-        
+            if barLength > 0:
+                xEndPosition = ((barLength)  * brailleCellWidth) - 1
+                self.TactileDisplay.line((yPosition, xStartPosition), (yPosition, xEndPosition))
+            
     def renderExitScreen(self):
         """ exit screen  """
         print("Bye-Bye")
@@ -89,6 +100,13 @@ class TunesGraphicsRender(rs.RomOperation):
         
         self.TactileDisplay.state()
         
+    def stopOperation(self):
+        # delete the timer for the operation by running the super class function
+        super().stopOperation()
+        
+        # mark isStopped as false so the function is not killed
+        self.isStopped = False
+        
 class TunesFlag(rs.RomFlag):
     
     def __init__(self, name):
@@ -96,8 +114,14 @@ class TunesFlag(rs.RomFlag):
         self.debugString = "This flag indicates if the state of the bars has changed."
         self.gameState = "Start Menu"
         self.barSelectedIndex = 0
-
+        self.barLength = 0
+        
+    def createDebugString(self):
+        barSelectedString = "current bar selected: {}".format(self.barSelectedIndex)
+        barLengthString = "length of bar selected: {}".format(self.barLength)
+        
+        self.debugString = barSelectedString + "\n" + barLengthString
+        
     def setState(self, state):
         super().setState(state)
-
-        
+        self.createDebugString()
