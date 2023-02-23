@@ -11,6 +11,8 @@ import serial
 
 ser = serial.Serial('COM7', 115200)  # Open serial port
 
+
+
 # Send byte array
 byte_array = bytearray([1, 2, 3, 0, 2, 4, 35, 0, 3, 2, 1])
 ser.write(byte_array)
