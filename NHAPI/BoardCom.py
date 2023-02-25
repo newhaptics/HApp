@@ -211,7 +211,7 @@ class BoardCom:
         
         
         
-        # Function 7: Sets value of matrix to desired state. Input is m x n array, where m = numRows and n=numCols of matrix.
+    # Function 7: Sets value of matrix to desired state. Input is m x n array, where m = numRows and n=numCols of matrix.
     def set_matrix(self, mat):
         
         #create a list for the output
