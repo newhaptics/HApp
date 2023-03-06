@@ -10,15 +10,14 @@ import PeripheralManager as pm
 import numpy as np
 import serial
 
-
 class TouchScreenPeripheral(pm.PeripheralDevice):
     
     def __init__(self, name):
         super().__init__(name)
         
         # size of sensor array
-        self.nSensorRows = 5
-        self.nSensorColumns = 7 
+        self.nSensorRows = 2#5
+        self.nSensorColumns = 3#7 
         
         # intialize touchscreen data matrix to a default size
         self.sensorDataMatrix = np.ones([self.nSensorRows, self.nSensorColumns])    
@@ -48,13 +47,14 @@ class TouchScreenPeripheral(pm.PeripheralDevice):
     def getDeltaValues(self):
         
         sensorValues = []
-        if self.serialPort.in_waiting > 44:  # Check if there are bytes in the input buffer
+        if self.serialPort.in_waiting > 15: #44 before  # Check if there are bytes in the input buffer
             # read all bytes
             while self.serialPort.in_waiting > 0:
                 # keep reading until no bytes
                 try:
                         
-                    byte = self.serialPort.read(45)  # Read a single byte from the serial port
+                    byte = self.serialPort.read(16) #45  # Read a single byte from the serial port
+                    print(byte)
                     #print(byte)
                     self.comportBuffer = list(bytearray(byte))  # Add the byte to the list
                 except Exception as e:
@@ -65,10 +65,10 @@ class TouchScreenPeripheral(pm.PeripheralDevice):
             
     def processTheRecieveByte(self):
         # check that the delta values are available on the comport buffer
-        if len(self.comportBuffer) == 45:
+        if len(self.comportBuffer) == 16: #45 before
             # throw out the extreneous bytes
-            self.comportBuffer[0:7] = []
-            self.comportBuffer[-3:-1] = []
+            self.comportBuffer[0:7] = [] # 7 before
+            self.comportBuffer[-3:-1] = [] # 3 before
             self.comportBuffer.pop()
             iRow = self.nSensorRows - 1
             iColumn = self.nSensorColumns - 1

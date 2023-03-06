@@ -10,7 +10,9 @@ Created on Thu Feb 23 15:02:45 2023
 import PeripheralManager as pm
 import TouchscreenPeripheral as tp
 import numpy as np
-from scipy.signal import butter, filtfilt
+import touchAlgorithms as ta
+from scipy.interpolate import griddata
+import sys
 
 class IntegratedTouchscreenPeripheral(pm.PeripheralDevice):
 
@@ -29,8 +31,16 @@ class IntegratedTouchscreenPeripheral(pm.PeripheralDevice):
         # create the integrated data matrix
         self.integratedDataMatrix = np.ones([self.nSensorRows, self.nSensorColumns])
         
-        # filtered data matrix
-        self.filteredDataMatrix = np.ones([self.nSensorRows, self.nSensorColumns])
+        # delta value list
+        self.deltaValueList = []
+        
+        # touch algorithm selected
+        self.touchAlgorithm = ""
+        
+        # interpolated matrix
+        self.interpolatedDataMatrix = []
+        
+        # filter settings
         
         
     def connectNewTouchscreen(self, comport):
@@ -49,7 +59,7 @@ class IntegratedTouchscreenPeripheral(pm.PeripheralDevice):
             self.nSensorColumns += Touchscreen.nSensorColumns
 
         self.nSensors = self.nSensorRows * self.nSensorColumns
-        #print(self.nSensors)
+
         # resize the integrated Data matrix
         self.integratedDataMatrix = np.ones([self.nSensorRows, self.nSensorColumns])
         
@@ -66,41 +76,87 @@ class IntegratedTouchscreenPeripheral(pm.PeripheralDevice):
         for i,Touchscreen in enumerate(self.TouchscreenList):
             Touchscreen.getDeltaValues()
             
-            
-            
-            
             # add data to the integrated touchscreen data matrix
             if i > 0:
                 rawDataMatrix = np.hstack((rawDataMatrix, Touchscreen.sensorDataMatrix))
             else:
                 rawDataMatrix = Touchscreen.sensorDataMatrix
                 
+        
         # process the recieved delta values
         self.processDataValues(rawDataMatrix, self.integratedDataMatrix)
+                
+        self.deltaValueList.append(self.integratedDataMatrix)
+        
+        if len(self.deltaValueList) > 100:
+            self.deltaValueList.pop(0)
+        
          
     """ function that creates a new filtered matrix from raw and current data matrix values """
                 
     def processDataValues(self, rawDataMatrix, currentDataMatrix):
         
-        
-        rawDataMatrix = rawDataMatrix.astype(int)
-        currentDataMatrix = currentDataMatrix.astype(int)
+        #rawDataMatrix = rawDataMatrix.astype(int)
+        #currentDataMatrix = currentDataMatrix.astype(int)
         
         # apply low-pass filtering to raw data
         #filteredRawDataMatrix = self.lowPassFilter(rawDataMatrix)
         
         # apply exponential smoothing to filtered raw data
+        #filteredDataMatrix = rawDataMatrix
         filteredDataMatrix = self.exponentialSmoothing(currentDataMatrix, rawDataMatrix, 0.1)
         
-        filteredDataMatrix = filteredDataMatrix.astype(int)
+        #filteredDataMatrix = rawDataMatrix
         
+        #print(self.interpolatedDataMatrix)
+        
+        #sys.exit()
         self.integratedDataMatrix = filteredDataMatrix
         
+    def getInterpolation(self, resolution):
+        # generate the interpolation matrix for the data
+        
+        # Define x and y values for interpolation
+        newX = np.linspace(0, self.integratedDataMatrix.shape[1] - 1, resolution[0])
+        newY = np.linspace(0, self.integratedDataMatrix.shape[0] - 1, resolution[1])
+        
+        self.interpolatedDataMatrix = self.interpolate(self.integratedDataMatrix, newX, newY)
+        
+    def interpolate(self, arr, x, y):
+        # Generate a meshgrid of x and y values
+        x_mesh, y_mesh = np.meshgrid(x, y)
     
-    def exponentialSmoothing(self, currentDataMatrix, filteredRawDataMatrix, alpha):
-        filteredDataMatrix = alpha * filteredRawDataMatrix + (1 - alpha) * currentDataMatrix
+        # Generate a meshgrid of indices for the input array
+        ix_mesh, iy_mesh = np.meshgrid(np.arange(arr.shape[1]), 
+                                       np.arange(arr.shape[0]))
+    
+        # Stack the flattened array and its indices
+        points = np.vstack((arr.ravel(), ix_mesh.ravel(), iy_mesh.ravel())).T
+    
+        # Interpolate the flattened array using griddata
+        interp_arr = griddata(points[:, 1:], points[:, 0], 
+                              (x_mesh, y_mesh), method='cubic')
+
+        return interp_arr
+    
+    def exponentialSmoothing(self, currentDataMatrix, rawDataMatrix, alpha):
+        filteredDataMatrix = alpha * rawDataMatrix + (1 - alpha) * currentDataMatrix
         return filteredDataMatrix
     
+    
+    def findTouchPoints(self):
+        # using either the delta values determine the touch points
+        
+        if self.touchAlgorithm == "center of mass":
+            return ta.centerOfMass(self.integratedDataMatrix)
+        
+        elif self.touchAlgorithm == "kalman filter":
+            return 1
+        else:
+            return 0
+        
+        
+        
     
     def printTheDataMatrix(self):
         print("TouchOut:")

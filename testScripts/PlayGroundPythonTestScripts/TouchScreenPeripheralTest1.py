@@ -27,10 +27,10 @@ def generateTouchScreensList():
 
     print(comports)
     
-    Touchscreen.connectNewTouchscreen("COM7")
-    Touchscreen.connectNewTouchscreen("COM37")
-    Touchscreen.connectNewTouchscreen("COM35")
-    Touchscreen.connectNewTouchscreen("COM36")
+    Touchscreen.connectNewTouchscreen("COM38")
+    #Touchscreen.connectNewTouchscreen("COM7")
+    #Touchscreen.connectNewTouchscreen("COM35")
+    #Touchscreen.connectNewTouchscreen("COM36")
 # =============================================================================
 #     for connection in comports:
 # 

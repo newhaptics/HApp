@@ -38,6 +38,6 @@ if __name__ == '__main__':
     
     #filename = 'C:/Users/derek/OneDrive/NewHaptics Shared/HapticOS/FC_GUI_API/APIv0.7-Coeus/v0.764-Coeus/ROMs/FileNavigator/FileNavigatorReady.rom'
     
-    #MainWindow.initializeRom(filename)
+    # MainWindow.initializeRom(filename)
     
     sys.exit(app.exec_())

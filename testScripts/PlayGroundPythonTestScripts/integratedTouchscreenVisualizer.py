@@ -6,13 +6,14 @@ Created on Thu Feb 23 15:47:56 2023
 
 """
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsView, QGraphicsScene, QWidget, QGridLayout, QLabel
+import matplotlib.pyplot as plt
+from matplotlib import cm
+import matplotlib.animation as animation
+from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QWidget, QGridLayout, QLabel
 from PyQt5 import QtGui as qg
 from PyQt5 import QtCore as qc
 import VisualizationManager as vm
-import PyQt5.QtCore as qc
 import numpy as np
-from scipy import ndimage
 import math
 
 class IntegratedTouchscreenVisualizer(vm.Visualization):
@@ -20,9 +21,12 @@ class IntegratedTouchscreenVisualizer(vm.Visualization):
     def __init__(self, name, IntegratedTouchscreen):
         super().__init__(name)
         self.touchPointList = []
-
+        
         # assign the touch screen an object
         self.integratedTouchscreen = IntegratedTouchscreen
+        
+        # use the center of mass algorithm
+        self.integratedTouchscreen.touchAlgorithm = "center of mass"
         
         # sets the title of the view window
         self.setWindowTitle("Integrated Touch Screen Window")
@@ -40,6 +44,26 @@ class IntegratedTouchscreenVisualizer(vm.Visualization):
         print(self.pixWidth)
         print(self.pixHeight)
         
+        # create figure with subplots
+        # create figure with subplots
+        self.fig, self.ax = plt.subplots(subplot_kw={"projection": "3d"})
+        x = np.arange(100)#self.integratedTouchscreen.nSensorColumns)
+        y = np.arange(100)#self.integratedTouchscreen.nSensorRows)
+        
+        Y, X = np.meshgrid(x,y)
+        
+        self.data = np.random.rand(100,100)
+        
+        self.surf = self.ax.plot_surface(X,Y, self.data, vmin=0, vmax=20, cmap=cm.tab10)
+        
+        # Add a color bar
+        self.fig.colorbar(self.surf, aspect=5)
+        
+        self.ax.set_zlim(0, 20)
+        self.ax.view_init(azim=-20, elev=45)
+        
+        #self.ani = animation.FuncAnimation(self.fig, self.animate, interval=10)
+        self.x = 0
         # generate a grid layout of touch sensors the size of the touchscreen
         for iSensor in range(0, self.integratedTouchscreen.nSensors):
             sensor = QLabel()
@@ -57,6 +81,25 @@ class IntegratedTouchscreenVisualizer(vm.Visualization):
         self.timer = qc.QTimer(self)
         self.timer.timeout.connect(self.getDeltaValues)
         self.timer.start(1)
+        
+# =============================================================================
+#         # This function is called periodically from FuncAnimation
+#     def animate(self):
+#     
+#         # Draw x and y lists
+#         self.ax.clear()
+#         x = np.arange(self.integratedTouchscreen.nSensorColumns)
+#         y = np.arange(self.integratedTouchscreen.nSensorRows)
+#         
+#         X, Y = np.meshgrid(x,y)
+#         
+#         self.data = self.integratedTouchscreen.integratedDataMatrix
+#         
+#         self.surf = self.ax.plot_surface(X,Y, self.data, cmap=cm.coolwarm)
+#         self.ax.set_zlim(0, 40)
+#         self.ax.view_init(azim=5, elev=85)
+# =============================================================================
+        
         
     def getDeltaValues(self):
         self.integratedTouchscreen.writeDeltaCommand()
@@ -77,7 +120,7 @@ class IntegratedTouchscreenVisualizer(vm.Visualization):
                 
                 sensor.setPalette(emptyPalette)
 
-                sensor.setText('{}'.format(sensorValue))
+                sensor.setText('{}'.format(str(round(sensorValue, 2))))
                 
                 iColumn += 1
                 if iColumn % self.integratedTouchscreen.nSensorColumns == 0:
@@ -87,61 +130,78 @@ class IntegratedTouchscreenVisualizer(vm.Visualization):
             except Exception as e:
                 print(e)
          
-        #self.generateTouchPointList()
         self.generateRedDots()
-                
+# =============================================================================
+#         if self.x > 1:
+#             self.createSurf(self.integratedTouchscreen.interpolatedDataMatrix)
+#             self.x = 0
+#         self.x += 1
+# =============================================================================
+            
+    def createSurf(self, data):
+        # create figure with subplots
+        self.fig, self.ax = plt.subplots(subplot_kw={"projection": "3d"})
+        x = np.arange(100)#self.integratedTouchscreen.nSensorColumns)
+        y = np.arange(100)#self.integratedTouchscreen.nSensorRows)
+        
+        Y, X = np.meshgrid(x,y)
+        
+        self.surf = self.ax.plot_surface(X,Y, data, vmin=0, vmax=20, cmap=cm.tab10)
+        
+        # Add a color bar
+        self.fig.colorbar(self.surf, aspect=5)
+        
+        self.ax.set_zlim(0, 20)
+        self.ax.view_init(azim=-20, elev=45)
+        plt.show()
+        
+        
+    def update_plot(self, new_data):
+        # Update the data array
+        self.data[:] = new_data
+    
+        # Update the surface plot
+        self.surf.set_array(self.data.ravel())
+        self.fig.canvas.draw()
+        self.ax.figure.canvas.draw_idle()
+# =============================================================================
+#         x = np.arange(100)#self.integratedTouchscreen.nSensorColumns)
+#         y = np.arange(100)#self.integratedTouchscreen.nSensorRows)
+#         
+#         Y, X = np.meshgrid(x,y)
+#         
+#         self.surf = self.ax.plot_surface(X,Y, self.data, vmin=0, vmax=20, cmap=cm.tab10)
+#         plt.draw()
+#         plt.show()
+# =============================================================================
+
         
     def generateRedDots(self):
-        self.generateTouchPointList()
+        # find the touch points from the integrated touch screen
+        self.touchOverlay.touchPointList = self.integratedTouchscreen.findTouchPoints()
         
         # needs to be improved by creating a layer 2
-        triggeredList = np.argwhere(self.integratedTouchscreen.integratedDataMatrix > 4)
-        
-        
+        triggeredList = np.argwhere(self.integratedTouchscreen.integratedDataMatrix > 0)
         
         # create red dot for each point in center of mass
         for point in triggeredList:
             # get the Qlabel at the index
             redDot = self.gridLayout.itemAtPosition(int(point[0]),int(point[1]))
+            sensorValue = self.integratedTouchscreen.integratedDataMatrix[int(point[0])][int(point[1])]
+            colorValue = int(255 - 255*(sensorValue*6/255))
+            if colorValue > 250:
+                colorValue = 255
+            #print(colorValue)
             redDot = redDot.widget()
             redDot.setStyleSheet("border: 5 px solid red")
             # Set the background color to red
             palette = qg.QPalette()
-            palette.setColor(qg.QPalette.Background, qg.QColor("lightgray"))
+            palette.setColor(qg.QPalette.Background, qg.QColor(colorValue, colorValue, colorValue))
             redDot.setAutoFillBackground(True)
             redDot.setPalette(palette)
         
-    def generateTouchPointList(self):
-        # get the center of mass of the integratedDataMatrix
-        dataMatrix = self.integratedTouchscreen.integratedDataMatrix
-        
-        def lessThan(x):
-            if x < 5:
-                return 0
-            else:
-                return x
-        
-        dataMatrix = np.vectorize(lessThan)(dataMatrix)
-        #print(dataMatrix)
-        lbl = ndimage.label(dataMatrix)[0]
-        rawTouchPointList= [(-1,-1),(-1,-1),(-1,-1),(-1,-1),(-1,-1),(-1,-1),(-1,-1),(-1,-1),(-1,-1),(-1,-1)]
-        for iCenterOfMass in range(0,10):
-            rawTouchPointList[iCenterOfMass] = (ndimage.center_of_mass(dataMatrix, lbl, iCenterOfMass))
-            #print(self.touchPointList[-1])
-            
-        # remove NaNs from list
-        for iPoint,point in enumerate(rawTouchPointList):
-            if np.isnan(point[0]):
-                # get the current position 
-                rawTouchPointList[iPoint] = (-1, -1)
-        
-        self.checkDistance(rawTouchPointList)#self.exponentialSmoothing(self.touchOverlay.touchPointList, rawTouchPointList, 0.7)
-        #print(rawTouchPointList)
-        #centerOfMass = ndimage.center_of_mass(dataMatrix)
-        
-        
     def checkDistance(self, newValueList):
-        for i in range(0,10):
+        for i in range(0,len(newValueList)):
             oldValue = self.touchOverlay.touchPointList[i]
             newValue = newValueList[i]
             
@@ -150,91 +210,6 @@ class IntegratedTouchscreenVisualizer(vm.Visualization):
             
             if distance > 0.04:
                 self.touchOverlay.touchPointList[i] = newValue
-
-# =============================================================================
-#     def lowPassFilter(self, newTouchPoints):
-#         # remove the oldest set of points and add a new one
-#         print(self.touchOverlay.touchPointHistory)
-#         self.touchOverlay.touchPointHistory.pop()
-#         self.touchOverlay.touchPointHistory.insert(0,newTouchPoints)
-#         
-#         meanElements = []
-# 
-#         for i in range(0,10):
-#         
-#             first_elements = [sub_list[i] for sub_list in self.touchOverlay.touchPointHistory]
-#         
-#             
-#             meanElements.append(statistics.mean(first_elements))
-#     
-#         
-#         return meanElements
-# =============================================================================
-    def exponentialSmoothing(self, currentDataList, filteredRawDataList, alpha):
-        
-# =============================================================================
-#         # if new data is nothing just pop
-#         for iPoint,point in enumerate(filteredRawDataList):
-#             if point[0] == -1:
-#                 # if the new data is empty then set to -1
-#                 if len(currentDataList) > 0:
-#                     try:
-#                         currentDataList.pop(iPoint)
-#                     except:
-#                         pass
-#             else:
-#                 
-#                 # if there is a value there 
-#                 if len(currentDataList) > iPoint:
-#                     pass
-#                 
-#                 # if no value exists add it
-#                 else:
-#                 
-#                     currentDataList.append(filteredRawDataList[iPoint])
-# =============================================================================
-        shouldSmooth = False        
-
-
-        for iPoint,point in enumerate(currentDataList):
-            if point[0] == -1:
-                # if the old data is empty then set to new data
-                currentDataList[iPoint] = (filteredRawDataList[iPoint][0],filteredRawDataList[iPoint][1]) 
-
-
-        
-
-        # print an error if a -1 makes it through
-        for iPoint,point in enumerate(currentDataList):
-            if point[0] == -1:
-                # if the new data is empty then set to -1
-                pass
-            else:
-                shouldSmooth = True
-                
-
-        if shouldSmooth:
-                
-            currentDataMatrix = np.array(currentDataList)
-            filteredRawDataMatrix = np.array(filteredRawDataList)
-            
-            # implement if -1 then just set to -1
-            
-            filteredDataMatrix = alpha * filteredRawDataMatrix + (1 - alpha) * currentDataMatrix
-            filteredDataList = filteredDataMatrix.tolist()
-            
-        else:
-            filteredDataList = currentDataList
-
-        for iPoint,point in enumerate(filteredRawDataList):
-            if point[0] == -1:
-                # if the new data is empty then set to -1
-                filteredDataList[iPoint] = (-1,-1) 
-        
-        
-        
-        return filteredDataList
-    
         
 class touchWindowView(QGraphicsView):
     
@@ -255,12 +230,6 @@ class touchWindowView(QGraphicsView):
         
         # create the list of touch points
         self.touchPointList = [(-1,-1),(-1,-1),(-1,-1),(-1,-1),(-1,-1),(-1,-1),(-1,-1),(-1,-1),(-1,-1),(-1,-1)]
-        
-# =============================================================================
-#         self.touchPointHistory = []
-#         for i in range(0,4):
-#             self.touchPointHistory.append([(-1,-1),(-1,-1),(-1,-1),(-1,-1),(-1,-1),(-1,-1),(-1,-1),(-1,-1),(-1,-1),(-1,-1)])
-# =============================================================================
 
     def paintEvent(self, event):
         # paint the blueDots into the graphics view
@@ -271,7 +240,7 @@ class touchWindowView(QGraphicsView):
         # fill the entire widget with a background color
         painter.eraseRect(self.rect())#, qg.QColor("white"))
         
-        painter.setPen(qg.QPen(qc.Qt.red, 3))
+        painter.setPen(qg.QPen(qc.Qt.red, 5))
         
         for point in self.touchPointList:
             newPoint = qc.QPointF(point[1]*57.75 + 10,point[0]*68 + 10)
