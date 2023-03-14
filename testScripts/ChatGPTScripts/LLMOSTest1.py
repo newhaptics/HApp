@@ -11,11 +11,11 @@ import openai
 
 class LLMOS():
 
-    def __init__(self, systemPrompt, intialQuery, intialResponse):
+    def __init__(self, key, systemPrompt, intialQuery, intialResponse):
         # create the operating system for the HApp
         
         # store the api key
-        self.apiKey = "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"
+        self.apiKey = key
         openai.api_key = self.apiKey
         
         # store the systemPrompt
@@ -84,7 +84,8 @@ intialResponse = """$Notepad$ started
 
 UserQuery = "Let me play pong."
 
-Cave = LLMOS(systemPrompt, intialQuery, intialResponse)
+
+Cave = LLMOS(key, systemPrompt, intialQuery, intialResponse)
 
 Cave.generateResponse(UserQuery)
 
