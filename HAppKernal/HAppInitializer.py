@@ -33,8 +33,7 @@ if __name__ == '__main__':
     app = qw.QApplication([])
     
     MainWindow = hm.HAppMainWindow(HAppPathManager)
-    
-    MainWindow.show()
+
     
     #filename = 'C:/Users/derek/OneDrive/NewHaptics Shared/HapticOS/FC_GUI_API/APIv0.7-Coeus/v0.764-Coeus/ROMs/FileNavigator/FileNavigatorReady.rom'
     

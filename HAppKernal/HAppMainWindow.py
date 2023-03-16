@@ -33,7 +33,6 @@ import NHAPI as nh
 import TouchStateVisualizer as tsv
 import RealTimeStateVisualizer as rtsv
 
-import HAppOperations as ho
 import ControlCenter as cc
 import RomOperation as ro
 import RomLauncher as rl
@@ -44,16 +43,28 @@ import sys
 
 import time
 
+import LLMOS as llm
+
 """ HApp MainWindow """
 
 class HAppMainWindow(qw.QMainWindow):
-    
+
     """ intialization functions """
 
     def __init__(self, PathManager, parent = None):
         
         self.flashSplash()
         super().__init__(parent)
+        
+        # create the llmOS
+        self.CaveJohnson = llm.LLMOS(openAIKey, elevenLabsKey)
+        self.CaveJohnson.openGnome("Start Rom")
+
+        # create a dock widget to communicate with Cave
+        self.commandBox = qw.QTextEdit()
+        self.commandDock = qw.QDockWidget("llmOS Commands", self, qc.Qt.Widget)
+        self.commandDock.setWidget(self.commandBox)
+        self.addDockWidget(qc.Qt.LeftDockWidgetArea, self.commandDock, qc.Qt.Vertical)
         
         # set the mouse cursor to always be tracked
         self.setMouseTracking(True)
@@ -69,16 +80,11 @@ class HAppMainWindow(qw.QMainWindow):
         
         # an extra widget
         
-        self.ARCSLabel = qw.QLabel(self)#qw.QWidget(self)
+        self.ARCSLabel = qw.QLabel(self)
         
         self.ARCSDock = qw.QDockWidget("ARCS Monitor", self, qc.Qt.Widget)
         self.ARCSDock.setWidget(self.ARCSLabel)
         self.addDockWidget(qc.Qt.RightDockWidgetArea, self.ARCSDock, qc.Qt.Vertical)
-        
-# =============================================================================
-#         self.TactileDisplay.connect("COM12", 0)
-#         self.TactileDisplay.connectTouch("COM7")
-# =============================================================================
         
         # display and define logo
         FCIcon = qg.QIcon(":main_symbol")
@@ -88,14 +94,6 @@ class HAppMainWindow(qw.QMainWindow):
         # self.color = style
         self.setStyleSheet("border: 1px solid blue;")
         
-# =============================================================================
-#         style guide
-#         rgb(85,216,211) -> light turquoise
-#         rgb(41,178,170) -> dark turquoise
-#         rgb(37,64,143) -> reflex blue
-#         rgb(65,67,77) -> persian nights
-# =============================================================================
-        
         # Create window
         self.setWindowTitle("HApp Main Window")
         self.setWindowIcon(FCIcon)
@@ -103,10 +101,6 @@ class HAppMainWindow(qw.QMainWindow):
         # Create status bar with the status and haptic engine
         self.statusBar = qw.QStatusBar()
         self.setStatusBar(self.statusBar)
-        
-        # Create the ARCS Control Center
-        self.HAppControlCenter = cc.ControlCenter(PathManager)
-        self.HAppPathManager = self.HAppControlCenter.PathManager
         
         # Build a default keyboard
         self.DefaultKeyboardHandles = dk.DefaultKeyboardHandles()
@@ -158,11 +152,16 @@ class HAppMainWindow(qw.QMainWindow):
         # Close SplashScreen after 2 seconds (2000 ms)
         qc.QTimer.singleShot(2000, self.splash.close)
         
-        
     """ Keyboard related functions """
     
     def keyPressEvent(self, event):
         event.ignore()
+        
+        if event.key() == qc.Qt.Key_F1:
+            prompt = self.commandBox.toPlainText()
+            print(prompt)
+            self.llmOSCommand(prompt)
+            self.commandBox.clear()
         
         # Connect to KeyboardPeripheral class key press event
         self.KeyboardPeripheral.handleKeyPressEvent(event)
@@ -186,9 +185,9 @@ class HAppMainWindow(qw.QMainWindow):
         
         # Handle the mouse press event using the handlers in the peripheral
         self.MousePeripheral.handleMouseEvent(event)
-        
+
     """ actions which can be performed when selecting options """
-        
+
     def __createActions(self):
         #create the icons for the tools
         fillIcon = qg.QIcon(":fill")
@@ -206,8 +205,7 @@ class HAppMainWindow(qw.QMainWindow):
         polygonIcon = qg.QIcon(":polygon")
         brailleIcon = qg.QIcon(":braille")
         txtsizeIcon = qg.QIcon(":textTitle")
-
-
+        
         #cursor tools
         self.erase = qw.QAction("Input", self)
         self.erase.triggered.connect(lambda: self.__toolSelected("erase","({on/off-E})"))
@@ -238,28 +236,6 @@ class HAppMainWindow(qw.QMainWindow):
 
         #character tools
         self.braille = qw.QAction(brailleIcon, "Braille", self)
-        #self.braille.triggered.connect(lambda: self.__toolSelected("braille","({coord1},{text})"))
-        #self.brailleBox = qw.QLineEdit(self)
-        #self.brailleBox.setMaximumWidth(100)
-        
-# =============================================================================
-#         def toolType():
-#             if not self.__commandDict["command"] == "latin":
-#                 self.__toolSelected("braille","({coord1},{text})")
-# =============================================================================
-
-        #self.brailleBox.textChanged.connect(toolType)
-        #self.brailleBox.textChanged.connect(lambda: self.__optionUpdated("coord1", self.__coordHist[-1]))
-        #self.brailleBox.textChanged.connect(lambda t: self.__optionUpdated("text", '"{0}"'.format(t)))
-        #self.brailleBox.textChanged.connect(lambda t: self.__optionUpdated("font", '"Arial"'))
-        
-# =============================================================================
-#         self.brailleBox.returnPressed.connect(lambda: self.__toolSelected("braille","({coord1},{text})"))
-#         self.brailleBox.returnPressed.connect(lambda: self.__optionUpdated("coord1", self.__coordHist[-1]))
-#         self.brailleBox.returnPressed.connect(lambda: self.__optionUpdated("text", '"{0}\\n"'.format(self.brailleBox.text())))
-# =============================================================================
-
-        #self.brailleBox.returnPressed.connect(lambda: self.brailleBox.insert("\\n"))
 
         #file actions
         self.FileManager = fm.FileManagement(self)
@@ -280,17 +256,8 @@ class HAppMainWindow(qw.QMainWindow):
         self.times = qw.QAction("Times", self)
         self.times.triggered.connect(lambda: self.__toolSelected("times","({now})"))
         
-# =============================================================================
-#         self.timesStepper = qw.QSpinBox()
-#         self.timesStepper.setRange(0,100000)
-#         self.timesStepper.setSingleStep(100)
-# =============================================================================
-
-        #self.timesStepper.valueChanged.connect(lambda: self.__toolSelected("times", "({now})"))
-        # self.timesStepper.valueChanged.connect(lambda: self.__optionUpdated("now", self.timesStepper.value()))
         self.setMat = qw.QAction("Set Matrix", self)
         self.setMat.triggered.connect(lambda: self.__toolSelected("setMat","({matrix})"))
-
 
         #board actions
         self.connect = qw.QAction("Connect", self)
@@ -322,42 +289,6 @@ class HAppMainWindow(qw.QMainWindow):
         #misc actions
         self.BoardIntializer = qw.QAction("Initialize Board", self)
         self.BoardIntializer.triggered.connect(lambda: self.intializeBoard())
-        
-# =============================================================================
-#         self.onOFF = qw.QPushButton("on/off")
-#         self.onOFF.setCheckable(True)
-#         #self.onOFF.clicked.connect(lambda: self.__optionUpdated("on/off", self.onOFF.isChecked()))
-#         self.onOFF.setFocusPolicy(qc.Qt.NoFocus)
-#         self.strokeLabel = qw.QLabel("stroke size")
-#         self.strokeSize = qw.QSpinBox()
-#         self.strokeSize.setMinimum(1)
-#         #self.strokeSize.valueChanged.connect(lambda: self.__toolSelected("stroke","({stroke size})"))
-#         #self.strokeSize.valueChanged.connect(lambda: self.__optionUpdated("stroke size", self.strokeSize.value()))
-#         self.strokeSize.setFocusPolicy(qc.Qt.NoFocus)
-#         self.space = qw.QLabel(" " * 5)
-#         self.fontLabel = qw.QLabel("font size")
-#         self.fontSize = qw.QSpinBox()
-#         self.fontSize.setMinimum(8)
-#         self.fontSize.setFocusPolicy(qc.Qt.NoFocus)
-#         #self.fontSize.valueChanged.connect(lambda: self.__optionUpdated("font size", self.fontSize.value()))
-#         self.space2 = qw.QLabel(" " * 5)
-#         self.directOnOFF = ts.ToggleSwitch("       Direct\n\n\n")
-#         self.directOnOFF.setCheckable(True)
-#         #self.directOnOFF.clicked.connect(lambda: self.__toolSelected("direct", "({on/off-D})"))
-#         #self.directOnOFF.clicked.connect(lambda: self.__optionUpdated("on/off-D", self.directOnOFF.isChecked()))
-#         self.directOnOFF.setFocusPolicy(qc.Qt.NoFocus)
-#         self.eraseOnOFF = ts.ToggleSwitch("        Input\n\n\n")
-#         self.eraseOnOFF.setCheckable(True)
-#         #self.eraseOnOFF.clicked.connect(lambda: self.__toolSelected("erase", "({on/off-E})"))
-#         #self.eraseOnOFF.clicked.connect(lambda: self.__optionUpdated("on/off-E", self.eraseOnOFF.isChecked()))
-#         self.eraseOnOFF.setFocusPolicy(qc.Qt.NoFocus)
-#         self.fillOnOFF = ts.ToggleSwitch("         Fill\n\n\n")
-#         self.fillOnOFF.setCheckable(True)
-#         #self.fillOnOFF.clicked.connect(lambda: self.__toolSelected("fill", "({on/off-F})"))
-#         #self.fillOnOFF.clicked.connect(lambda: self.__optionUpdated("on/off-F", self.fillOnOFF.isChecked()))
-#         self.fillOnOFF.setFocusPolicy(qc.Qt.NoFocus)
-#         self.space3 = qw.QLabel(" " * 5)
-# =============================================================================
         
     """ menu related functions to loading roms """
     
@@ -497,7 +428,20 @@ class HAppMainWindow(qw.QMainWindow):
         menuBar.addMenu(controlMenu)
         menuBar.addMenu(boardMenu)
         
-
+    def llmOSCommand(self, prompt):
+        self.CaveJohnson.generateResponse(prompt)
+        genericResponse = self.CaveJohnson.decodeResponse()
+        print(genericResponse[1])
+        self.initializeRom("{1}ROMs//{0}//{0}.rom".format(genericResponse[0], self.HAppPathManager.rootSoftwarePath))
+        
+# =============================================================================
+#         # use cave to intialize notepad
+#         genericResponse, voiceResponse = self.CaveJohnson.speakCommand("I would like to play avalanche")
+#         print(genericResponse[0])
+#         print(genericResponse[1])
+#         print(voiceResponse)
+# =============================================================================
+        
     """ connect the display and touch """
     def connectDisplay(self, comString):
         self.TactileDisplay = nh.NHAPI("NewHaptics Display SarissaV1")
@@ -531,7 +475,10 @@ class HAppMainWindow(qw.QMainWindow):
         #self.ARCSLabel.setText(self.HAppControlCenter.debugPrintAllResources())
         
         self.setCentralWidget(self.StateVisualizer)
-    
+        
+        
+        
+
     def connectTouchscreen(self, comString):
         self.TactileDisplay.connectTouch("NewHaptics Touchscreen KausiaV1", comString)
         
@@ -624,7 +571,7 @@ class HAppMainWindow(qw.QMainWindow):
         
         self.ThisRom.stopEvent.set()
         
-        
+        self.CaveJohnson.openGnome("End Rom")
         
 
     """ connection subroutines """

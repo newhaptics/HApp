@@ -107,7 +107,7 @@ class AvalancheGraphicsRender(rs.RomOperation):
         y = 0
         for i in range(0,self.GameFlag.score):
             x += 3
-            if x > 41:
+            if x > self.GameFlag.nColumns:
                 x = 0
                 y += 4
             self.TactileDisplay.rect((y,x),(y+2,x+1))
@@ -136,8 +136,12 @@ class GameStateFlag(rs.RomFlag):
         super().__init__(name)
         self.debugString = "This flag indicates where the pong and cursor is."
         self.gameState = "Start Menu"
-	  self.defaultDifficulty = difficulty
+        self.defaultDifficulty = difficulty
         self.resetGame()
+        
+        # store the display size
+        self.nColumns = 0
+        self.nRows = 0
         
     def resetGame(self):
         
@@ -146,7 +150,7 @@ class GameStateFlag(rs.RomFlag):
         self.yIncrement = 1
         self.difficultyIncrement = 1
         self.difficulty = self.defaultDifficulty
-	  self.score = 0
+        self.score = 0
         
         """ initializing game physics """
         self.pongPosition = [0,0]

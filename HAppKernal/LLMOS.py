@@ -20,19 +20,18 @@ class LLMOS(im.Imprint):
         
     def speakCommand(self, command):
         self.openGnome("Start Rom")
-        response = self.generateResponse(command)
-        response = self.decodeResponse()
-        print(response[0])
+        genericResponse = self.generateResponse(command)
+        genericResponse = self.decodeResponse()
         
         # turn the response into Cave Johnson
         self.openGnome("Cave Johnson")
         
         userString = "User-" + command
-        AIString = "AI assistant-" + response[1]
+        AIString = "AI assistant-" + genericResponse[1]
         
-        response = self.generateResponse(userString + "\n" + AIString)
-        
-        print(response)
-        
-        self.Voice.synthVoice(response)
+        voiceResponse = self.generateResponse(userString + "\n" + AIString)
+                
+        self.Voice.synthVoice(voiceResponse)
         self.Voice.playSound()
+        
+        return genericResponse, voiceResponse

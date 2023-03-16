@@ -12,13 +12,16 @@ import AvalancheOperations as ao
 
 class AvalancheModel:
     
-    def __init__(self, GameFlag, debug):
+    def __init__(self, GameFlag, displaySize, debug):
         """ initializing rom resources """
         
         self.GameFlag = GameFlag
 
-        self.nRows = 19#displaySize[0]
-        self.nColumns = 41#displaySize[1]
+        self.nRows = displaySize[0]
+        self.nColumns = displaySize[1]
+        
+        self.GameFlag.nColumns = self.nColumns
+        self.GameFlag.nRows = self.nRows
         
         self.difficultySetting = self.GameFlag.difficulty
         self.startNewGame()
@@ -35,7 +38,6 @@ class AvalancheModel:
         self.timingControls()
         
         self.timingCalculations()
-
 
     def gameDifficultyCalculation(self):
         """ game difficulty calculation """
@@ -103,15 +105,18 @@ class AvalancheModel:
         
     def moveDown(self):
         pongPosition = self.GameFlag.pongPosition
+        cursorPosition = self.GameFlag.cursorPosition
         if pongPosition[1] < 17:
-            pongPosition[1] += 1
+            pongPosition[1] = 17
+            self.GameFlag.setPongPosition(pongPosition)
+            pongPosition = self.avalanchePhysics(pongPosition, cursorPosition)
             self.GameFlag.setPongPosition(pongPosition)
         else:
             pass        
         
     def moveRight(self):
         cursorPosition = self.GameFlag.cursorPosition
-        if cursorPosition[0] < 37:
+        if cursorPosition[0] < (self.nColumns - 3):
             cursorPosition[0] += 3
             self.GameFlag.setCursorPosition(cursorPosition)
         else:
@@ -165,7 +170,7 @@ class AvalancheModel:
             self.GameFlag.yIncrement = 1
             
         if (pongY in yValues) and (pongX in lineValues):
-            pongX = random.randint(0,13)*3
+            pongX = random.randint(0,int(self.nColumns/3))*3
             pongY = 0
             """
             if difficulty == 3:

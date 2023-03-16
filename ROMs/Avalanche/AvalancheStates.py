@@ -69,7 +69,8 @@ class AvalancheGame(rs.RomState):
         #create a text editor object for this state
         print('Text Editor Begin')
         # create avalanche model
-        self.AvalancheModel = am.AvalancheModel(self.GameFlag, 0)
+        size = self.TactileDisplay.return_displaySize()
+        self.AvalancheModel = am.AvalancheModel(self.GameFlag, size, 0)
         
         # create the keyboard that operates on the avalanche model
         self.AvalancheKeyboardHandles.addAvalancheModel(self.AvalancheModel)
