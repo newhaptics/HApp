@@ -147,8 +147,8 @@ class StateVisualizerOperation(om.Operation):
         
     def execute(self):
         # get the state from the firmware
-        state = self.TactileDisplay.state()
-        #state = self.TactileDisplay.return_currentState()
+        #state = self.TactileDisplay.state()
+        state = self.TactileDisplay.return_currentState()
         
         # update the pin position 
         xCursorCoordinate = self.MousePeripheral.xCoordinate

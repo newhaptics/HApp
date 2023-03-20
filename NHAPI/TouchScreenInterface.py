@@ -6,9 +6,9 @@ Created on Tue Oct  4 11:09:02 2022
 """
 
 import serial
-import PeripheralManager as pm
+import PeripheralDevice as pd
 
-class TouchScreenInterface(pm.PeripheralDevice):
+class TouchScreenInterface(pd.PeripheralDevice):
     
      # the touch screen interface object contains a serial port connection object and commands to communicate with hardware
 

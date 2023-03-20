@@ -7,9 +7,9 @@ Created on Wed Oct 26 13:32:03 2022
 
 from PyQt5 import QtCore as qc
 
-import PeripheralManager as pm
+import PeripheralDevice as pd
 
-class KeyboardPeripheral(pm.PeripheralDevice):
+class KeyboardPeripheral(pd.PeripheralDevice):
     
     def __init__(self, name, KeyBoardHandles):
         super().__init__(name)

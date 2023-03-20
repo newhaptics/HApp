@@ -9,51 +9,36 @@ Created on Thu Feb  9 10:52:11 2023
 import RomReader as rr
 import RomVisualization as rv
 
+class RomLauncher():
 
-class RomLauncher(rr.RomReader):
-    
-    def __init__(self, romFilePath, HAppControlCenter):
-        super().__init__(romFilePath)
-        
-        # save the path to the rom file
-        self.romFilePath = romFilePath
-        
-        # add the HApp control center to the class
-        self.HAppControlCenter = HAppControlCenter
-        
-        # add the Roms containing folder to the python path
-        self.addROMFolderToPath()
-        
-        # get the ROMs settings and description
-        self.interruptDictionary = self.createInterruptDictionary()
-        
-        # load the address of the Control center into the rom settings
-        OperationsControlAddress = id(self.HAppControlCenter)
-        self.romSettings['OperationsControlAddress'] = OperationsControlAddress
-        
+    def __init__(self, HapticsEngine, romDictionary):
 
-    def startRom(self):
-        # passes all necessary values to the rom in order to start it
-        self.setSettings(self.romSettings)
-        
-        self.RomVisualization = rv.RomVisualization("RomVisualizer", self.HAppControlCenter)
-        self.HAppControlCenter.addVisualization(self.RomVisualization)
-                
-        print("rom settings are {}".format(self.romSettings))
-        self.executeRom()
-        
-        
-        
-    def addROMFolderToPath(self):
-        print("Adding ROM folders to path...")
-        #add the rom to the python path
-        fileFolderList = self.romFilePath.split("/")
+        # add the haptics engine
+        self.HapticsEngine = HapticsEngine
 
-        folderDirectory = ""
+        # create the Rom List
+        self.romDictionary = romDictionary
 
-        for folder in fileFolderList[:-1]:
-            folderDirectory = folderDirectory + folder + "//"
-            
-        print(folderDirectory)
+    def launchRom(self, romFilePath):
+        self.RomReader = rr.RomReader(romFilePath)
+        self.RomReader.romSettings["HapticsEngineAddress"] = id(self.HapticsEngine)
+        self.romDictionary[romFilePath] = self.RomReader
 
-        self.HAppControlCenter.PathManager.addDirectory(folderDirectory)
+    def startRom(self, romString):
+        # gets the path of the rom to start
+        # launches that rom using the rom reader
+        self.launchRom(self.romDictionary[romString])
+        print(self.RomReader.romSettings["HapticsEngineAddress"])
+        
+        if romString == "Slides":
+            self.RomVisualization = rv.RomVisualization("RomVisualizer", self.HapticsEngine)
+            self.RomVisualization.show()
+            self.HapticsEngine.addVisualization(self.RomVisualization)
+            #print("Starting the {} ROM".format(romString))
+        self.RomReader.stopEvent.set()
+        self.RomReader.executeRom()
+
+    def endRom(self):
+        # ends the rom and closes everything related to the rom freeing up resources
+        #print("Ending the ROM")
+        self.HapticsEngine.exitEvent = 1

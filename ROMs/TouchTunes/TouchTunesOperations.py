@@ -91,14 +91,14 @@ class TunesGraphicsRender(rs.RomOperation):
         self.TactileDisplay.braille((0,0),"Bye-Bye")
         self.TactileDisplay.desired()
         self.TactileDisplay.refresh()
-        self.TactileDisplay.state()
+        self.TactileDisplay.return_currentState()
         
     def updateDisplay(self):
         """ communicate with peripherals """
         self.TactileDisplay.desired()
         self.TactileDisplay.refresh()
         
-        self.TactileDisplay.state()
+        self.TactileDisplay.return_currentState()
         
     def stopOperation(self):
         # delete the timer for the operation by running the super class function

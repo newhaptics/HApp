@@ -7,9 +7,9 @@ Created on Thu Dec 15 10:15:15 2022
 """
 
 from PyQt5 import QtCore as qc
-import PeripheralManager as pm
+import PeripheralDevice as pd
 
-class MousePeripheral(pm.PeripheralDevice):
+class MousePeripheral(pd.PeripheralDevice):
     
     def __init__(self, name, MouseHandles):
         super().__init__(name)

@@ -6,7 +6,6 @@ Created on Mon Feb 20 16:09:17 2023
 
 """
 
-
 import RomAPI as rs
 import TouchTunesModel as tm
 import TouchTunesOperations as to
@@ -18,10 +17,11 @@ class TunesStartMenu(rs.RomState):
         # get the needed resources from the Control Center
         super().__init__(Controller)
         self.HAppControlCenter = self.Controller.HAppControlCenter
-        self.TactileDisplay = self.HAppControlCenter.getPeripheral("NewHaptics Display SarissaV1")
+        self.TactileDisplay = self.HAppControlCenter.getPeripheral("Fourplex")
         
     def startState(self):
         # create the flag
+        print("starting touchtunes state")
         self.TunesFlag = to.TunesFlag("Touch Tunes Flag")
         self.HAppControlCenter.addFlag(self.TunesFlag)
         

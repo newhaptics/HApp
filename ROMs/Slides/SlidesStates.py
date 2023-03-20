@@ -34,25 +34,7 @@ class SlidesStartMenu(rs.RomState):
 
     def getNextState(self):
         #get values for the truth table
-        romContinue = self.Controller.getInterruptFlagTrigger('romContinue')
-        romEscape = self.Controller.getInterruptFlagTrigger('romEscape')
-        
-        #truth table for start Menu
-        if romContinue:
-            #exit the current state and rom entirely 
-            
-            return 'Text Editor'
-        
-        elif romEscape:
-            
-            print("hi")
-            
-            return 'Start Menu'
-        
-        else:
-            #continue with program execution
-        
-            return 'Text Editor'
+        return 'Text Editor'
         
 class SlidesTool(rs.RomState):
     
@@ -62,24 +44,10 @@ class SlidesTool(rs.RomState):
         self.BrailleDisplay = self.Controller.HAppControlCenter.getPeripheral("NewHaptics Display SarissaV1")
         self.displayText = ""
 
-        #self.counter = 0
-
     def stepState(self):
         #redefined by user in the appropriate subclass
         #print('Editor running')
         pass
-# =============================================================================
-#         if len(self.TextEditor.inputCommand) > 0:
-#             try:        
-#                 output = self.Controller.OperationsController.matlabEvaluate(self.TextEditor.inputCommand)
-#                 print(output)
-#             except:
-#                 print("failed to execute matlab operation")
-#             self.TextEditor.inputCommand = ""
-#             
-#         else:
-#             pass
-# =============================================================================
             
     def startState(self):
         
@@ -102,27 +70,16 @@ class SlidesTool(rs.RomState):
                 
     def closeState(self):
         #clear the screen of all information and shut down start screen processes
-        
         print('End Menu Close')
 
     def getNextState(self):
-        #get values for the truth table
-        romContinue = self.Controller.getInterruptFlagTrigger('romContinue')
-        romEscape = self.Controller.getInterruptFlagTrigger('romEscape')
-        
-        #truth table for start Menu
-        if romContinue:
-            #exit the current state and rom entirely 
-            
-            return 'Start Menu'
-        
-        elif romEscape:
-            
+        if self.Controller.HAppControlCenter.exitEvent:
+
             return 'Exit Rom'
-            
+
         else:
             #continue with program execution
-        
+
             return 'Text Editor'
         
 class SlidesExitState(rs.RomState):
@@ -133,24 +90,27 @@ class SlidesExitState(rs.RomState):
 
     def stepState(self):
         #redefined by user in the appropriate subclass
-        #print('state running')
-        #print('Exit State Print')
         pass
-        #print("disconnected")
     
     def startState(self):
         #display the start screen
-        #self.Controller.addEngineFunction(self.bootMenu)
         print('Exit State Began')
+        # remove the resources of the rom
+        self.Controller.HAppControlCenter.killOperation("Update Slides Operation")
         
+        # set the mouse handler for the rom
+        MousePeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Mouse")
+        MousePeripheral.setNewMouseHandler(rs.RomMouseHandles())
         
+        # reset keyboard handles
+        KeyboardPeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Keyboard")
+        KeyboardPeripheral.setNewKeyboardHandler(rs.RomKeyboardHandles())
+
     def closeState(self):
         #clear the screen of all information and shut down start screen processes
         print('Exit State Close')
 
-
     def getNextState(self):
         #get values for the truth table
-        self.Controller.setInterruptFlag('romEnd',1)
         
         return 'Exit Rom'

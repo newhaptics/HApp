@@ -49,7 +49,7 @@ class AvalancheGame(rs.RomState):
         #user can make custom state intialization
         super().__init__(Controller)
         self.HAppControlCenter = self.Controller.HAppControlCenter
-        self.TactileDisplay = self.HAppControlCenter.getPeripheral("NewHaptics Display SarissaV1")
+        self.TactileDisplay = self.HAppControlCenter.getPeripheral("Fourplex")
         self.GameFlag = self.Controller.GameFlag
         self.AvalancheGraphicsRender = self.Controller.AvalancheGraphicsRender
         self.AvalancheKeyboardHandles = self.Controller.AvalancheKeyboardHandles
@@ -67,7 +67,7 @@ class AvalancheGame(rs.RomState):
             
     def startState(self):
         #create a text editor object for this state
-        print('Text Editor Begin')
+        print('Avalanche Begin')
         # create avalanche model
         size = self.TactileDisplay.return_displaySize()
         self.AvalancheModel = am.AvalancheModel(self.GameFlag, size, 0)
@@ -117,6 +117,10 @@ class AvalancheExitState(rs.RomState):
         print('Exit State Began')
         self.GameFlag.setState(1)
         
+        # reset keyboard handles
+        KeyboardPeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Keyboard")
+        KeyboardPeripheral.setNewKeyboardHandler(rs.RomKeyboardHandles())
+
     def closeState(self):
         #clear the screen of all information and shut down start screen processes
         print('Exit State Close')
@@ -124,6 +128,5 @@ class AvalancheExitState(rs.RomState):
 
     def getNextState(self):
         #get values for the truth table
-        self.Controller.setInterruptFlag('romEnd',1)
         
         return 'Exit Rom'

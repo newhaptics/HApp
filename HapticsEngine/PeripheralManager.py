@@ -7,24 +7,18 @@ Created on Tue Jan 10 13:09:37 2023
 """
 
 from PyQt5.QtWidgets import QLabel
+import serial.tools.list_ports
+import PeripheralDevice as pd
 
-class PeripheralDevice:
-    def __init__(self, name):
-        self.name = name
-        self.debugString = ""
-    
-    def connect(self):
-        pass
-    
-    def disconnect(self):
-        pass
-    
-    def getStatus(self):
-        return self.debugString
+# need to import the files for all the potential peripherals
+import NHAPI as nh
 
 class PeripheralManager:
     def __init__(self):
         self.peripheralDictionary = {}
+        # create a list of available peripherals
+        self.availablePeripherals = [ "NewHaptics Display", "NewHaptics Touchscreen" ]
+        self.currentPeripheral = ""
         
     def addPeripheral(self, Peripheral):
         self.peripheralDictionary[Peripheral.name] = Peripheral
@@ -37,6 +31,9 @@ class PeripheralManager:
         
     def getAllDevices(self):
         return self.peripheralDictionary.values()
+                
+    def disconnectDevice(self, peripheralName):
+        self.peripheralDictionary[peripheralName].disconnect()
     
     def connectAll(self):
         for peripheral in self.peripheralDictionary.values():
@@ -61,35 +58,60 @@ class PeripheralManager:
         return peripheralDebugText
     
     def getPeripheralLabels(self):
-        # create a list of labels for the peripherals
+        # Create a list of labels for the peripherals
         peripheralLabelList = []
 
         for Peripheral in self.peripheralDictionary.values():
-            # for each peripheral make a label
+            # For each peripheral make a label
             Label = QLabel(Peripheral.name)
             
-            # set the tooltip for this label to be the debug text of the peripheral
+            # Set the tooltip for this label to be the debug text of the peripheral
             Label.setToolTip(Peripheral.debugString)
             
-            # add the perihperal label to the list
+            # Add the peripheral label to the list
             peripheralLabelList.append(Label)
 
         return peripheralLabelList
-# =============================================================================
-# if __name__ == '__main__':
-#     
-#     peripheral_manager = PeripheralManager()
-# 
-#     peripheral1 = Peripheralperipheral("peripheral1", "Model1", "Vendor1")
-#     peripheral2 = PeripheralDevice("peripheral2", "Model2", "Vendor2")
-#     
-#     peripheral_manager.add_device(device1)
-#     peripheral_manager.add_device(device2)
-#     
-#     print(peripheral_manager.get_all_devices())
-#     # Output: [<__main__.PeripheralDevice object at 0x7f1c1d4e7dd8>, <__main__.PeripheralDevice object at 0x7f1c1d4e7e48>]
-#     
-#     peripheral_manager.remove_device("Device1")
-#     print(peripheral_manager.get_all_devices())
-#     # Output: [<__main__.PeripheralDevice object at 0x7f1c1d4e7e48>]
-# =============================================================================
+    
+    # New additions for llmOS
+    
+    # List all the comports for the device
+    def getAvailbleComports(self):
+        connections = list(serial.tools.list_ports.comports())
+        comportList = []
+        for comport in connections:
+            comportList.append(comport.device)
+            
+        return comportList
+    
+    def connectPeripheral(self, peripheralType, peripheralName, comPort):
+            
+            try:
+                
+                if peripheralType == "Display":
+
+                    self.TactileDisplay = nh.NHAPI(peripheralName)
+
+                    self.TactileDisplay.connect(comPort)
+
+                    self.addPeripheral(self.TactileDisplay)
+
+                elif peripheralType == "Touchscreen":
+                    print("wow such touchscreen")
+
+                else:
+                    print("error no device named {}".format(peripheralName))
+                    
+            except Exception as e:
+                print("unable to connect device {0} at comport {1}.".format(peripheralType, comPort))
+                print(e)
+                
+    def disconnectPeripheral(self, peripheralName):
+            
+            try:
+                self.disconnectDevice(peripheralName)
+                self.removePeripheral(peripheralName)
+                    
+            except Exception as e:
+                print("unable to disconnect device {0}.".format(peripheralName))
+                print(e)

@@ -6,7 +6,6 @@ Created on Tue Nov 15 15:12:55 2022
 """
 
 import RomAPI as rs
-import time
 
 class TactileDisplayRefreshOperation(rs.RomOperation):
     
@@ -22,7 +21,7 @@ class TactileDisplayRefreshOperation(rs.RomOperation):
         self.outputDictionary[self.TactileDisplay.name] = self.TactileDisplay
         
         # provide a description
-        self.description = "This operation refreshs the display when keys are typed. It's execution is interupt based."
+        self.description = "This operation refreshs the display when keys are typed. It's execution is interrupt based."
         
         self.executable = self.execute
         
@@ -118,7 +117,7 @@ class BlinkCursorOperation(rs.RomOperation):
         self.outputDictionary["Text Editor"] = self.TextEditor
         
         # outputs to the operation
-        self.TactileDisplay = Controller.HAppControlCenter.getPeripheral("NewHaptics Display SarissaV1")
+        self.TactileDisplay = Controller.HAppControlCenter.getPeripheral("Fourplex")
         self.outputDictionary[self.TactileDisplay.name] = self.TactileDisplay
         
         # provide a description

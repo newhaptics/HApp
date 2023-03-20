@@ -10,7 +10,6 @@ import NotePadOperations as no
 import FileNavigatorEditor as fn
 #import RomRunner as rr
 
-
 class NotePadStartMenu(rs.RomState):
     
     def __init__(self, Controller):
@@ -33,33 +32,15 @@ class NotePadStartMenu(rs.RomState):
 
 
     def getNextState(self):
-        #get values for the truth table
-        romContinue = self.Controller.getInterruptFlagTrigger('romContinue')
-        romEscape = self.Controller.getInterruptFlagTrigger('romEscape')
         
-        #truth table for start Menu
-        if romContinue:
-            #exit the current state and rom entirely 
-            
-            return 'Text Editor'
-        
-        elif romEscape:
-            
-            print("hi")
-            
-            return 'Start Menu'
-        
-        else:
-            #continue with program execution
-        
-            return 'Text Editor'
+        return 'Text Editor'
         
 class NotePadTextEditor(rs.RomState):
     
     def __init__(self, Controller):
         #user can make custom state intialization 
         super().__init__(Controller)
-        self.TactileDisplay = self.Controller.HAppControlCenter.getPeripheral("NewHaptics Display SarissaV1")
+        self.TactileDisplay = self.Controller.HAppControlCenter.getPeripheral("Fourplex")
         self.displayText = ""
 
         #self.counter = 0
@@ -67,18 +48,20 @@ class NotePadTextEditor(rs.RomState):
     def stepState(self):
         #redefined by user in the appropriate subclass
         #print('Editor running')
-        if len(self.TextEditor.inputCommand) > 0:
-            try:        
-                output = self.Controller.HAppControlCenter.matlabEvaluate(self.TextEditor.inputCommand)
-                print(output)
-            except:
-                print("failed to execute matlab operation")
-            self.TextEditor.inputCommand = ""
-            
-        else:
-            pass
-            
-            
+        pass
+# =============================================================================
+#         if len(self.TextEditor.inputCommand) > 0:
+#             try:        
+#                 output = self.Controller.HAppControlCenter.matlabEvaluate(self.TextEditor.inputCommand)
+#                 print(output)
+#             except:
+#                 print("failed to execute matlab operation")
+#             self.TextEditor.inputCommand = ""
+#             
+#         else:
+#             pass
+# =============================================================================
+
     def startState(self):
         #create a text editor object for this state
         print('Text Editor Begin')
@@ -89,14 +72,6 @@ class NotePadTextEditor(rs.RomState):
         displaySize = self.TactileDisplay.return_displaySize()
         nRows = displaySize[0]
         nColumns = displaySize[1]
-        
-        #create an operation that tracks the editor cursor and decides where it is
-        
-        #create an operation that grabs state from the touch screen
-# =============================================================================
-#         self.TouchScreenOperation = no.GetTouchScreenOperation(self.Controller, self.TextEditor)
-#         self.Controller.HAppControlCenter.setOperation("TouchScreenOperation", self.TouchScreenOperation)
-# =============================================================================
         
         # create the Text Editor model for editing files
         self.TextEditor = fn.FileNavigatorEditor(nRows, nColumns, self.Controller.HAppControlCenter)
@@ -118,40 +93,18 @@ class NotePadTextEditor(rs.RomState):
     def closeState(self):
         #clear the screen of all information and shut down start screen processes
         
-# =============================================================================
-#         #close all state operations
-#         self.Controller.HAppControlCenter.pauseExecutingOperations()
-#         self.Controller.HAppControlCenter.stopExecutingOperation("TouchScreenOperation")
-#         self.Controller.HAppControlCenter.stopExecutingOperation("BlinkCursorOperation")
-#         self.Controller.HAppControlCenter.stopExecutingOperation("TactileDisplayRefreshOperation")
-#         self.Controller.HAppControlCenter.resumeExecutingOperations()
-#         
-#         # revert to default keyboard handler
-#         self.Controller.HAppControlCenter.KeyboardHandler.revertToDefaultHandler()
-# =============================================================================
-        
         print('End Menu Close')
 
     def getNextState(self):
-        #get values for the truth table
-        romContinue = self.Controller.getInterruptFlagTrigger('romContinue')
-        romEscape = self.Controller.getInterruptFlagTrigger('romEscape')
-        
-        #truth table for start Menu
-        if romContinue:
-            #exit the current state and rom entirely 
-            
-            return 'Start Menu'
-        
-        elif romEscape:
-            
+        if self.Controller.HAppControlCenter.exitEvent:
+
             return 'Exit Rom'
-            
+
         else:
             #continue with program execution
-        
+
             return 'Text Editor'
-        
+
 class NotePadExitState(rs.RomState):
     
     def __init__(self, Controller):
@@ -164,24 +117,26 @@ class NotePadExitState(rs.RomState):
         #print('Exit State Print')
         pass
         #print("disconnected")
-    
+
     def startState(self):
         #display the start screen
-        #self.Controller.addEngineFunction(self.bootMenu)
         print('Exit State Began')
+        # remove the resources of the rom
+        #self.Controller.HAppControlCenter.removeOperation("TactileDisplayRefreshOperation")
+        self.Controller.HAppControlCenter.killOperation("BlinkCursorOperation")
         
+        # reset keyboard handles
+        KeyboardPeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Keyboard")
+        KeyboardPeripheral.setNewKeyboardHandler(rs.RomKeyboardHandles())
         
     def closeState(self):
         #clear the screen of all information and shut down start screen processes
         print('Exit State Close')
 
-
     def getNextState(self):
         #get values for the truth table
-        self.Controller.setInterruptFlag('romEnd',1)
-        
         return 'Exit Rom'
-    
+
 # =============================================================================
 #     
 # class TextEditorUpdater():

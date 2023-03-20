@@ -6,14 +6,14 @@ Created on Thu Nov  5 10:43:20 2020
 
 """
 
-import HapticsEngine as he
+import TactileDisplay as td
 import GraphicsEngine as ge
 
-class NHAPI(he.HapticsEngine):
+class NHAPI(td.TactileDisplay):
 
     def __init__(self, name):
-        #create the backend haptics engine
-        
+        # create the backend haptics engine
+
         # Get the number of rows and columns of the tactile display
         super().__init__(name)
         
@@ -192,6 +192,7 @@ class NHAPI(he.HapticsEngine):
 
     def refresh(self):
         self.push_desiredState()
+        self.display_matrix(self.return_currentState(), 0)
         self.__apiPrint("refreshed")
         
     def cursorPos(self):

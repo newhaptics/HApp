@@ -66,7 +66,6 @@ class AvalancheGraphicsRender(rs.RomOperation):
         else:
             self.renderExitScreen()
             
-            
         # communincate to refresh the display
         self.updateDisplay()
         
@@ -88,7 +87,7 @@ class AvalancheGraphicsRender(rs.RomOperation):
         self.TactileDisplay.braille((0,0),"press space key to start")
         self.TactileDisplay.desired()
         self.TactileDisplay.refresh()
-        self.TactileDisplay.state()
+        self.TactileDisplay.return_currentState()
         
     def renderExitScreen(self):
         """ exit screen  """
@@ -97,7 +96,7 @@ class AvalancheGraphicsRender(rs.RomOperation):
         self.TactileDisplay.braille((0,0),"you lose score is {}".format(self.GameFlag.score))
         self.TactileDisplay.desired()
         self.TactileDisplay.refresh()
-        self.TactileDisplay.state()
+        self.TactileDisplay.return_currentState()
         
     def renderScoreScreen(self):
         """ displays score """
@@ -113,14 +112,14 @@ class AvalancheGraphicsRender(rs.RomOperation):
             self.TactileDisplay.rect((y,x),(y+2,x+1))
         self.TactileDisplay.desired()
         self.TactileDisplay.refresh()
-        self.TactileDisplay.state()
+        self.TactileDisplay.return_currentState()
         
     def updateDisplay(self):
         """ communicate with peripherals """
         self.TactileDisplay.desired()
         self.TactileDisplay.refresh()
         
-        self.TactileDisplay.state()
+        self.TactileDisplay.return_currentState()
         
         
     def stopOperation(self):

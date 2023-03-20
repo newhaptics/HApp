@@ -3,44 +3,43 @@
 Created on Wed Jul 22 12:25:03 2020
 
 @author: Derek Joslin
+
 """
 
 import copy
 import BoardCom as bc
 import TouchScreenInterface as ts
-import PeripheralManager as pm
+import PeripheralDevice as pd
 
+class TactileDisplay(pd.PeripheralDevice):
 
-class HapticsEngine(pm.PeripheralDevice):
-
-    # Haptics Engine creates a COM port connection to the embedded processor.
+    # Tactile Display creates a COM port connection to the embedded processor.
     # HE maintains two primary arrays, currentState and desiredState. 
     #   - currentState is populated with the current emebedded state of dot matrix by using pull_currentState. 
     #   - desiredState is sent to the embedded processor using push_desiredState
     #   - return_currentState and return_desiredState prints the respective arrays for viewing
 
-    #haptics engine can also contain a cursor
-
+    #Tactile Display can also contain a cursor
     def __init__(self, name, port = ''):
         
         super().__init__(name)
-        
+        self.com = bc.BoardCom()
+
         #initialize a cursor position
         self.__pinCursorPosition = [0,0]
         self.__inputCursorPosition = [0,0]
         self.isLinkingCursor = False
         self.TouchScreenList = []
         self.TouchPosition = []
-        
+
         #create default desired and current state
         self.__numRows = 19
         self.__numColumns = 41
         self.__currentState = [[False for i in range(0,self.__numColumns)] for j in range(0,self.__numRows)]
         self.__desiredState = [[False for i in range(0,self.__numColumns)] for j in range(0,self.__numRows)]
-        
+
         self.debugString = "size: rows:{} columns:{}".format(self.__numRows, self.__numColumns)
-        
-        
+
         if port == '':
             self.__comLink = False
             self.__touchLink = False
@@ -170,10 +169,8 @@ class HapticsEngine(pm.PeripheralDevice):
                 self.com.set_row(rowIndex,desiredRowData)
             rowIndex += 1  
         
-    
-
     def comLink_on(self, COM, *args):
-        """ creates connection to embedded side and initializes dot matrix size"""  
+        """ creates connection to embedded side and initializes dot matrix size"""
         if len(args) > 0:
             if args[0] == 1:
                 onOff = 1
@@ -182,7 +179,8 @@ class HapticsEngine(pm.PeripheralDevice):
         else:
             onOff = 0
         
-        self.com = bc.BoardCom(COM, onOff)
+        self.com.connect(COM, 57600, 3)
+        self.com.getSize()
         self.pull_displaySize()
         self.__comLink = True
 
@@ -195,7 +193,6 @@ class HapticsEngine(pm.PeripheralDevice):
     def comLink_check(self):
         """ checks connection to embedded side """  
         return self.__comLink
-    
     
     def setInputCursorPosition(self, position):
         self.__inputCursorPosition[0] = position[0]

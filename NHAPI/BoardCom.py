@@ -6,16 +6,13 @@ Created on Fri Jul 31 11:39:32 2020
 """
 
 import serial
-import time
 
 class BoardCom:
     
      #the Board Com object contains a serial port connection object and commands to communicate with hardware
 
-    def __init__(self, port, *args):
-        #115200 for the embedded board
-        self.port = serial.Serial(port, 57600, timeout=3)
-                
+    def __init__(self, *args):
+        # wait for further instruction
         if len(args) > 0:
             if args[0] == 1:
                 self.__echo = 1
@@ -23,13 +20,15 @@ class BoardCom:
                 self.__echo = 0
         else:
             self.__echo = 0
-        self.__recieveBuffer = self.port.read_until(b'\xFF')
+        #self.__recieveBuffer = self.port.read_until(b'\xFF')
         
         if self.__echo:
             print(self.__recieveBuffer)
         else:
             pass
 
+
+    def getSize(self):
         self.numRows = self.get_numRows()
         self.numCols = self.get_numCols()
         self.numBytesPerRow = self.get_numBytesPerRow()
@@ -42,9 +41,11 @@ class BoardCom:
             self.__echo = 0
     
     #opens the serial port
-    def open(self):
-        self.port.open()
-        self.__readSerialResponse()
+# =============================================================================
+#     def open(self):
+#         self.port.open()
+#         self.__readSerialResponse()
+# =============================================================================
 
     #closes the serial port
     def close(self):
@@ -71,8 +72,12 @@ class BoardCom:
             print(read)
         else:
             pass
-
     
+    # create a connection to a port
+    def connect(self, comString, baudRate, timeoutTime):
+        #115200 for the embedded board
+        self.port = serial.Serial(comString, baudRate, timeout=timeoutTime)
+        
     # Function 1: Sets state of a row on the chip
     def set_row(self, rowIndex, rowData):
         #create list with required parameters

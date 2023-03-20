@@ -10,20 +10,22 @@ import OperationsManager as om
 import FlagManager as fm
 import PeripheralManager as pm
 import VisualizationManager as vm
+import FileManager as fi
 from PyQt5.QtCore import QTimer 
-from PyQt5.QtWidgets import QLabel, QVBoxLayout
+#from PyQt5.QtWidgets import QLabel, QVBoxLayout
 import time
 
 """ A class for an object which controls when operations execute and in what order they execute according to the flags set in the application """
 
-class ControlCenter:
-    def __init__(self, PathManager):
+class HapticsEngine:
+    def __init__(self):
         self.FlagManager = fm.FlagManager()
         self.OperationManager = om.OperationManager()
         self.PeripheralManager = pm.PeripheralManager()
         self.VisualizationManager = vm.VisualizationManager()
-        self.PathManager = PathManager
-        
+        self.FileManager = fi.FileManager()
+        self.exitEvent = 0
+
         # list for holding roms
         self.romList = []
         
@@ -63,6 +65,7 @@ class ControlCenter:
         self.OperationManager.addOperation(Operation)
         
     def killOperation(self, operationName):
+        print("Killing {}".format(operationName))
         Operation = self.OperationManager.getOperation(operationName)
         Operation.isStopped = 1
         self.stopExecutingOperation(Operation)
@@ -303,11 +306,11 @@ class OperationTimer(QTimer):
     
 class UpdateMonitorOperation(om.Operation):
     
-    def __init__(self, name, ControlCenter, ARCSLabel):
+    def __init__(self, name, HapticsEngine, ARCSLabel):
         super().__init__(name)
         # inputs to the operation
-        self.ControlCenter = ControlCenter
-        self.inputDictionary["ControlCenter"] = self.ControlCenter
+        self.HapticsEngine = HapticsEngine
+        self.inputDictionary["HapticsEngine"] = self.HapticsEngine
         
         # outputs to the operation
         self.ARCSLabel = ARCSLabel
@@ -332,9 +335,9 @@ class UpdateMonitorOperation(om.Operation):
     
     def execute(self):
         # update the ARCS status label
-        #ARCSLayout = self.ControlCenter.debugGetResourceLabels()
+        #ARCSLayout = self.HapticsEngine.debugGetResourceLabels()
         #self.ARCSLabel.setLayout(ARCSLayout)
-        self.ARCSLabel.setText(self.ControlCenter.debugPrintAllResources())
+        self.ARCSLabel.setText(self.HapticsEngine.debugPrintAllResources())
         
         
 # =============================================================================
@@ -347,7 +350,7 @@ class UpdateMonitorOperation(om.Operation):
 #     
 # if __name__ == '__main__':
 #     
-#     HAppControlCenter = ControlCenter()
+#     HAppHapticsEngine = HapticsEngine()
 #     
 #     # create the flags
 #     
@@ -372,25 +375,25 @@ class UpdateMonitorOperation(om.Operation):
 #     Peripheral2 = pm.PeripheralDevice("peripheral2")
 #     
 #     # add the resources to the Control Center
-#     HAppControlCenter.addFlag(Flag1)
-#     HAppControlCenter.addFlag(Flag2)
-#     HAppControlCenter.addOperation(Operation1)
-#     HAppControlCenter.addOperation(Operation2)
-#     HAppControlCenter.addPeripheral(Peripheral1)
-#     HAppControlCenter.addPeripheral(Peripheral2)
+#     HAppHapticsEngine.addFlag(Flag1)
+#     HAppHapticsEngine.addFlag(Flag2)
+#     HAppHapticsEngine.addOperation(Operation1)
+#     HAppHapticsEngine.addOperation(Operation2)
+#     HAppHapticsEngine.addPeripheral(Peripheral1)
+#     HAppHapticsEngine.addPeripheral(Peripheral2)
 #     
-#     FlagList = HAppControlCenter.getAllFlags()
+#     FlagList = HAppHapticsEngine.getAllFlags()
 #     for Flag in FlagList:
 #         print(Flag.name)
 #         print(Flag.getCondition())
 #         
-#     OperationList = HAppControlCenter.getAllOperations()
+#     OperationList = HAppHapticsEngine.getAllOperations()
 #     for Operation in OperationList:
 #         print(Operation.name)
 #         print(Operation.flagDependencies)
 #         print(Operation.function)
 #     
-#     PeripheralList = HAppControlCenter.getAllPeripherals()
+#     PeripheralList = HAppHapticsEngine.getAllPeripherals()
 #     for Peripheral in PeripheralList:
 #         print(Peripheral.name)
 #         

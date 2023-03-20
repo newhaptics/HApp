@@ -8,7 +8,6 @@ Created on Wed Nov  9 12:52:45 2022
 import NotePadKeyboard as nk
 import time
 
-
 class TextEditor():
 
     def __init__(self, nDotRows, nDotColumns, HAppControlCenter):

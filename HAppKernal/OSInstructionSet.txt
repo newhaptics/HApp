@@ -1,0 +1,20 @@
+Peripheral Management
+Connect
+peripheralType: Display, Touchscreen
+peripheralName: any string
+comPort: any comport ex. "COM3"
+
+Disconnect
+peripheralName: any string name of connected device
+
+
+
+Rom Control
+StartRom
+RomName: any string with the name of a rom ex "Slides"
+
+EndRom:
+
+
+PeripheralManagement Connect Display Fourplex COM3
+RomControl StartRom Notepad
