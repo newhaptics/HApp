@@ -21,7 +21,7 @@ class SlidesController(rs.RomController):
     def __init__(self, HapticsEngineAddress, stopEvent):
 
         super().__init__(HapticsEngineAddress, stopEvent)
-        
+
         #initialize all state objects and pass in the controller
         self.SlidesStartMenu = ns.SlidesStartMenu(self)
         
@@ -37,11 +37,9 @@ class SlidesController(rs.RomController):
                                    'Text Editor' : self.SlidesTool,
                                    'Exit Rom' : self.EndRom}
 
-        self.demoNumber = romSettings['demoNumber']
-        
     def exitRom(self):
         self.stateKey = 'Exit Rom'
         print("disconnected")
 
-ThisRom = PongController(HapticsEngineAddress, stopEvent)
+ThisRom = SlidesController(HapticsEngineAddress, stopEvent)
 ThisRom.runRom()

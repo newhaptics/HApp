@@ -19,24 +19,24 @@ class SlidesMaster():
         
         self.Controller = Controller
         
-        self.TactileDisplay = self.Controller.HAppControlCenter.getPeripheral("NewHaptics Display SarissaV1")
+        self.TactileDisplay = self.Controller.HAppControlCenter.getPeripheral("Fourplex")
         self.displaySize = self.TactileDisplay.return_displaySize()
         
         # create the ability to navigate and load slides
-        self.FileManager = sfm.SlidesFileManagement(self.Controller.HAppControlCenter.PathManager)
+        self.FileManager = sfm.SlidesFileManagement(self.Controller.HAppControlCenter.FileManager)
 
         # Create the tool flag
         self.ToolFlag = so.ToolFlag("ToolFlag")
         self.Controller.HAppControlCenter.addFlag(self.ToolFlag)
-        
+
         # Create the state flag
         self.DisplayFlag = so.DisplayFlag("DisplayFlag")
         self.Controller.HAppControlCenter.addFlag(self.DisplayFlag)
         
-        # Create main operations"C://Users//derek//OneDrive//NewHaptics Shared//HapticOS//FC_GUI_API//APIv0.7-Coeus//v0.769-Coeus//testScripts//SlidesTestScripts//SlidesTest3"
+        # Create main operations
         self.ToolExecuterOperation = so.ToolExecutionOperation("ToolExecuterOperation", self.TactileDisplay, self.ToolFlag)
         self.Controller.HAppControlCenter.addOperation(self.ToolExecuterOperation)
-        
+
         # Operation for opening and loading slides
         self.SlideOperation = so.LoadSlideOperation("SlideOperation", self.TactileDisplay, self.DisplayFlag)
         self.Controller.HAppControlCenter.addOperation(self.SlideOperation)
@@ -44,13 +44,12 @@ class SlidesMaster():
         #Create the handlers
         self.MouseHandles = sm.SlidesMouseHandles(self)
         self.KeyboardHandles = sk.SlidesKeyboardHandles(self)
-        
+
         # initialize the super class with the toolKeyList and the toolParameterDictionary
-        
-        
+
         # Implement the panning feature for loading the csv
-        self.CanvasNavigation = scn.SlidesCanvasNav((19,41))
-        
+        self.CanvasNavigation = scn.SlidesCanvasNav((self.displaySize[0],self.displaySize[1]))
+
         # slide data storage
         self.nSlides = 0
         self.currentSlide = 0

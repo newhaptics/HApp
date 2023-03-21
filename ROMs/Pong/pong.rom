@@ -60,9 +60,11 @@ class PongController(rs.RomController):
                                    'Exit Rom' : self.EndRom}
 
     def exitRom(self):
+        self.HAppControlCenter.removeFlag("Game State Flag")
+        self.HAppControlCenter.killOperation("PongGraphicsRender")
+        self.HAppControlCenter.removeOperation("PongGraphicsRender")
         self.stateKey = 'Exit Rom'
         print("disconnected")
-
 
 ThisRom = PongController(HapticsEngineAddress, stopEvent)
 ThisRom.runRom()

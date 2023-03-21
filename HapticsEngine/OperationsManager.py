@@ -85,7 +85,7 @@ class Operation():
     def checkFlagConditions(self):
         return True
     
-    def setExecutionParameters(self, parameters: dict[str , any]):
+    def setExecutionParameters(self, parameters):
         for key, value in parameters.items():
             if key in self.executionParameters:
                 self.executionParameters[key] = value

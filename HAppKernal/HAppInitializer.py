@@ -6,10 +6,8 @@ Created on Mon Nov 14 11:23:43 2022
 
 """
 
-import pyqtconsole
 import cairo
 import serial
-from pyqtconsole.console import PythonConsole
 import LLMOS as llm
 import sys
 

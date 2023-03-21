@@ -191,7 +191,7 @@ class UpdateSlidesGuiOperation(rs.RomOperation):
         self.MasterModel = MasterModel
         
         # inputs to the operation
-        self.TactileDisplay = self.Controller.HAppControlCenter.getPeripheral("NewHaptics Display SarissaV1")
+        self.TactileDisplay = self.Controller.HAppControlCenter.getPeripheral("Fourplex")
         self.inputDictionary[self.TactileDisplay.name] = self.TactileDisplay
         
         # outputs to the operation

@@ -12,13 +12,16 @@ import PongOperations as ao
 
 class PongModel:
     
-    def __init__(self, GameFlag, debug):
+    def __init__(self, GameFlag, displaySize, debug):
         """ initializing rom resources """
         
         self.GameFlag = GameFlag
 
-        self.nRows = 19#displaySize[0]
-        self.nColumns = 41#displaySize[1]
+        self.nRows = displaySize[0]
+        self.nColumns = displaySize[1]
+        
+        self.GameFlag.nColumns = self.nColumns
+        self.GameFlag.nRows = self.nRows
         
         self.difficultySetting = self.GameFlag.difficulty
         self.startNewGame()
@@ -117,7 +120,7 @@ class PongModel:
         
     def moveRight(self):
         cursorPosition = self.GameFlag.cursorPosition
-        if cursorPosition[0] < 37:
+        if cursorPosition[0] < (self.nColumns - 3):
             cursorPosition[0] += 3
             self.GameFlag.setCursorPosition(cursorPosition)
         else:

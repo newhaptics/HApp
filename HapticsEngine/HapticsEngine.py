@@ -65,11 +65,14 @@ class HapticsEngine:
         self.OperationManager.addOperation(Operation)
         
     def killOperation(self, operationName):
-        print("Killing {}".format(operationName))
-        Operation = self.OperationManager.getOperation(operationName)
-        Operation.isStopped = 1
-        self.stopExecutingOperation(Operation)
-        
+        try:
+            print("Killing {}".format(operationName))
+            Operation = self.OperationManager.getOperation(operationName)
+            Operation.isStopped = 1
+            self.stopExecutingOperation(Operation)
+        except:
+            print("can't close {}".format(operationName))
+            
     def removeOperation(self, operationName):
         self.OperationManager.removeOperation(operationName)
         
@@ -111,8 +114,10 @@ class HapticsEngine:
         self.VisualizationManager.addVisualization(Visualization)
         
     def removeVisualization(self, visualizationName):
-        self.VisualizationManager.removeVisualization(visualizationName)
-        
+        try:
+            self.VisualizationManager.removeVisualization(visualizationName)
+        except:
+            print("Cannot close {}".format(visualizationName))
     def getVisualization(self, visualizationName):
         return self.VisualizationManager.getVisualization(visualizationName)
         

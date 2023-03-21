@@ -10,9 +10,8 @@ import RomAPI as rs
 import SlidesOperations as no
 import SlidesMaster as sm
 
-
 class SlidesStartMenu(rs.RomState):
-    
+
     def __init__(self, Controller):
         #user can make custom state intialization 
         super().__init__(Controller)
@@ -26,11 +25,9 @@ class SlidesStartMenu(rs.RomState):
         #self.Controller.addEngineFunction(self.bootMenu)
         print('Start Menu Began')
         
-        
     def closeState(self):
         #clear the screen of all information and shut down start screen processes
         print('Start Menu Close')
-
 
     def getNextState(self):
         #get values for the truth table
@@ -41,7 +38,7 @@ class SlidesTool(rs.RomState):
     def __init__(self, Controller):
         #user can make custom state intialization 
         super().__init__(Controller)
-        self.BrailleDisplay = self.Controller.HAppControlCenter.getPeripheral("NewHaptics Display SarissaV1")
+        self.BrailleDisplay = self.Controller.HAppControlCenter.getPeripheral("Fourplex")
         self.displayText = ""
 
     def stepState(self):
@@ -50,27 +47,32 @@ class SlidesTool(rs.RomState):
         pass
             
     def startState(self):
-        
         #create a text editor object for this state
         print('Slides Tools Begin')
         self.MasterModel = sm.SlidesMaster(self.Controller)
         self.MasterModel.selectTool("drawDot")
-        
+
         # set the mouse handler for the rom
         MousePeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Mouse")
         MousePeripheral.setNewMouseHandler(self.MasterModel.MouseHandles)
-        
+
         # set the keyboard handler for the rom
         KeyboardPeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Keyboard")
         KeyboardPeripheral.setNewKeyboardHandler(self.MasterModel.KeyboardHandles)
-        
+
         # set the visualization for the rom
         self.UpdateSlidesGuiOperation = no.UpdateSlidesGuiOperation("Update Slides Operation", self.Controller, self.MasterModel)
         self.Controller.HAppControlCenter.addOperation(self.UpdateSlidesGuiOperation)
-                
+
     def closeState(self):
         #clear the screen of all information and shut down start screen processes
         print('End Menu Close')
+        self.Controller.HAppControlCenter.removeFlag(self.MasterModel.ToolFlag.name)
+        self.Controller.HAppControlCenter.removeFlag(self.MasterModel.DisplayFlag.name)
+        self.Controller.HAppControlCenter.killOperation("ToolExecuterOperation")
+        self.Controller.HAppControlCenter.removeOperation("ToolExecuterOperation")
+        self.Controller.HAppControlCenter.killOperation("SlideOperation")
+        self.Controller.HAppControlCenter.removeOperation("SlideOperation")
 
     def getNextState(self):
         if self.Controller.HAppControlCenter.exitEvent:
@@ -95,9 +97,11 @@ class SlidesExitState(rs.RomState):
     def startState(self):
         #display the start screen
         print('Exit State Began')
-        # remove the resources of the rom
-        self.Controller.HAppControlCenter.killOperation("Update Slides Operation")
-        
+        # visualization
+        romVisualization = self.Controller.HAppControlCenter.getVisualization("RomVisualizer")
+        romVisualization.close()
+        self.Controller.HAppControlCenter.removeVisualization("RomVisualizer")
+                
         # set the mouse handler for the rom
         MousePeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Mouse")
         MousePeripheral.setNewMouseHandler(rs.RomMouseHandles())

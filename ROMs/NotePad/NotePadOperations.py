@@ -27,7 +27,6 @@ class TactileDisplayRefreshOperation(rs.RomOperation):
         
         self.createDebugString()
         
-        
     def execute(self):
         self.TactileDisplay.braille((0,0),self.TextEditor.editorMatrixOutput())
         

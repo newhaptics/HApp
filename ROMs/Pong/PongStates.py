@@ -63,7 +63,8 @@ class PongGame(rs.RomState):
         #create a text editor object for this state
         print('Text Editor Begin')
         # create Pong model
-        self.PongModel = am.PongModel(self.GameFlag, 0)
+        size = self.TactileDisplay.return_displaySize()
+        self.PongModel = am.PongModel(self.GameFlag, size, 0)
         
         # create the keyboard that operates on the Pong model
         self.PongKeyboardHandles.addPongModel(self.PongModel)
@@ -109,6 +110,8 @@ class PongExitState(rs.RomState):
         #self.Controller.addEngineFunction(self.bootMenu)
         print('Exit State Began')
         self.GameFlag.setState(1)
+        KeyboardPeripheral = self.HAppControlCenter.getPeripheral("Master Keyboard")
+        KeyboardPeripheral.setNewKeyboardHandler(rs.RomKeyboardHandles)
         
     def closeState(self):
         #clear the screen of all information and shut down start screen processes
@@ -117,6 +120,5 @@ class PongExitState(rs.RomState):
 
     def getNextState(self):
         #get values for the truth table
-        self.Controller.setInterruptFlag('romEnd',1)
         
         return 'Exit Rom'

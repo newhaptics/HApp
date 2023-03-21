@@ -14,19 +14,14 @@ class SlidesVisualizationHandles(rs.RomVisualizationHandles):
         
         self.MasterModel = MasterModel
         self.FileManager = self.MasterModel.FileManager
-        
+
         self.MasterModel.nSlides = 0
         self.MasterModel.currentSlide = 0
         self.MasterModel.slidesDictionary = {}
-        
+
         self.RomExplorer = RomExplorer
         self.RomExplorer.setWindowTitle("Slides Rom Window")
-# =============================================================================
-#         # create a slide button for a files in slides path
-#         self.createSlideButtons(self.FileManager.currentNumSlides())
-# =============================================================================
-        
-        
+
     def createActionsHandler(self):
         print("Create Slides Actions")
         # create qw.QAction objects here and use QAction.triggered.connect to connect custom functions
@@ -36,8 +31,7 @@ class SlidesVisualizationHandles(rs.RomVisualizationHandles):
         self.RomExplorer.loadAction.triggered.connect(self.loadFile)
         self.RomExplorer.saveAction = qw.QAction("Save", self.RomExplorer)
         self.RomExplorer.saveAction.triggered.connect(self.saveFile)
-        
-        
+
     def createButtonsHandler(self):
         print("Create Slides Buttons")
         

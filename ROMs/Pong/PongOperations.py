@@ -142,8 +142,12 @@ class GameStateFlag(rs.RomFlag):
         super().__init__(name)
         self.debugString = "This flag indicates where the pong and cursor is."
         self.gameState = "Start Menu"
-        self.difficulty = difficulty
+        self.defaultDifficulty = difficulty
         self.resetGame()
+        
+        # store the display size
+        self.nColumns = 0
+        self.nRows = 0
         
     def resetGame(self):
         
@@ -151,6 +155,7 @@ class GameStateFlag(rs.RomFlag):
         self.xIncrement = 0
         self.yIncrement = 1
         self.difficultyIncrement = 1
+        self.difficulty = self.defaultDifficulty
         self.score = 0
         
         """ initializing game physics """
