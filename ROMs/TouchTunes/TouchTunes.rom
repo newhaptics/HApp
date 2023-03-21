@@ -17,7 +17,7 @@ import RomAPI as rs
 import TouchTunesStates as avs
 
 class TunesController(rs.RomController):
-    
+
     def __init__(self, HapticsEngineAddress, stopEvent):
 
         super().__init__(HapticsEngineAddress, stopEvent)
@@ -25,9 +25,9 @@ class TunesController(rs.RomController):
         #initialize all state objects and pass in the controller
         print("testing rom")
         self.TunesStartMenu = avs.TunesStartMenu(self)
-        
+
         self.EndRom = rs.RomOperation(self)
-        
+
         #current state of rom (user can intialize a default state)
         self.stateKey = 'Start Menu'
 
@@ -37,9 +37,13 @@ class TunesController(rs.RomController):
 
     def exitRom(self):
         self.stateKey = 'Exit Rom'
+        self.HAppControlCenter.removeFlag("Touch Tunes Flag")
+        self.HAppControlCenter.killOperation("TouchTunesGraphicsRender")
+        self.HAppControlCenter.removeOperation("TouchTunesGraphicsRender")
+        self.KeyboardPeripheral = self.HAppControlCenter.getPeripheral("Master Keyboard")
+        self.KeyboardPeripheral.setNewKeyboardHandler(rs.RomKeyboardHandles())
         print("disconnected")
 
-
 ThisRom = TunesController(HapticsEngineAddress, stopEvent)
-print(ThisRom.TunesStartMenu.TunesFlag)
-#ThisRom.runRom()
+ThisRom.startCurrentState()
+ThisRom.runRom()

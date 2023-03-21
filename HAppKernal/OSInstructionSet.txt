@@ -15,6 +15,12 @@ RomName: any string with the name of a rom ex "Slides"
 
 EndRom:
 
-
 PeripheralManagement Connect Display Fourplex COM3
 RomControl StartRom Notepad
+RomControl EndRom Notepad
+RomControl StartRom Pong
+RomControl EndRom Pong
+RomControl StartRom Avalanche
+RomControl EndRom Avalanche
+RomControl StartRom TouchTunes
+RomControl EndRom TouchTunes

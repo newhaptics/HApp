@@ -15,7 +15,7 @@ class LLMOS(im.Imprint):
     
     def __init__(self, openAIKey, elevenLabsKey):
         # create the imprint of llmOS
-        super().__init__(openAIKey, "C://Users//Derek Joslin//Documents//GitHub//HApp//HAppKernal//gnomes//LLMOS.gnome")
+        super().__init__(openAIKey, "C://Users//derek//Documents//HApp//HAppKernal//gnomes//LLMOS.gnome")
 
         # create the control center for llmOS resources
         self.HapticsEngine = he.HapticsEngine()
@@ -52,10 +52,8 @@ class LLMOS(im.Imprint):
 
         print(voiceResponse)
         self.gnome = tempgnome
-# =============================================================================
-#         self.Voice.synthVoice(voiceResponse)
-#         self.Voice.playSound()
-# =============================================================================
+        self.Voice.synthVoice(voiceResponse)
+        self.Voice.playSound()
 
         return genericResponse, voiceResponse
 
@@ -103,6 +101,7 @@ class LLMOS(im.Imprint):
             self.openGnome("EndRom")
 
         elif "EndRom" == components[1]:
+            print("llmos endRom")
             self.RomLauncher.endRom()
             
             # open the appropriate gnome

@@ -17,11 +17,11 @@ class TouchTunesModel:
     def setBarLength(self, newLength):
         if self.barIndex >= 0 and self.barIndex < self.nColumns:
             self.bars[self.barIndex] = newLength
-            
+
     def selectBar(self, newBarIndex):
         self.TunesFlag.barSelectedIndex = newBarIndex
         if newBarIndex >= 0 and newBarIndex < self.nRows:
             self.barIndex = newBarIndex
-            
+
     def getBarLength(self):
         return self.bars[self.barIndex]

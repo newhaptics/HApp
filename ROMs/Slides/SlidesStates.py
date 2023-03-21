@@ -66,7 +66,7 @@ class SlidesTool(rs.RomState):
 
     def closeState(self):
         #clear the screen of all information and shut down start screen processes
-        print('End Menu Close')
+        print('Slides Tools Close')
         self.Controller.HAppControlCenter.removeFlag(self.MasterModel.ToolFlag.name)
         self.Controller.HAppControlCenter.removeFlag(self.MasterModel.DisplayFlag.name)
         self.Controller.HAppControlCenter.killOperation("ToolExecuterOperation")
