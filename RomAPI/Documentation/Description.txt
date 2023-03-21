@@ -1,0 +1,7 @@
+This code is for a modular and extensible state machine-based system called RomController. It can be used to manage various states and their transitions in a software application or a simulation. The states can represent different phases or modes of operation, and this system allows for a smooth transition between these states based on certain conditions or user inputs.
+
+The code is designed to be generic and easily customizable, with users expected to redefine or extend the provided classes to suit their specific needs. The system is built using a RomController class, which serves as the main controller, managing the current state and the state transitions. Each state is represented by a RomState object, which contains methods for stepping through the state, starting the state, closing the state, and determining the next state to transition to.
+
+In addition to the core state management functionality, the code also includes various utility classes for handling keyboard input (RomKeyboardHandles), mouse input (RomMouseHandles), operations (RomOperation), flags (RomFlag), and visualization (RomVisualizationHandles). These classes can be extended or customized to fit the specific requirements of the application using the RomController system.
+
+The RomController's runRom() method serves as the main execution loop, managing state transitions and ensuring that the appropriate state-related functions are called at the appropriate times. It continues to execute until an exit condition is met, at which point the system shuts down gracefully.

@@ -1,0 +1,212 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Mar 13 22:21:03 2023
+
+@author: Derek Joslin
+
+"""
+
+import Imprint as im
+import VoiceSynthesizer as vs
+import HapticsEngine as he
+import RomLauncher as rl
+import threading
+import RomReader as rr
+import RomVisualization as rv
+
+class LLMOS(im.Imprint):
+
+    def __init__(self, openAIKey, elevenLabsKey):
+        # create the imprint of llmOS
+        super().__init__(openAIKey, "C://Users//derek//Documents//HApp//HAppKernal//gnomes//LLMOS.gnome")
+
+        # create the control center for llmOS resources
+        self.HapticsEngine = he.HapticsEngine()
+
+        self.PeripheralManager = self.HapticsEngine.PeripheralManager
+        self.FileManager = self.HapticsEngine.FileManager
+
+        # create the cave johnson voice
+        self.Voice = vs.VoiceSynthesizer(elevenLabsKey)
+
+        # create the RomLauncher
+        self.romDictionary = self.FileManager.createRomDirectory()
+        self.RomLauncher = rl.RomLauncher(self.HapticsEngine, self.romDictionary)
+
+        self.openGnome("StartRom")
+
+    def addMainWindow(self, MainWindow):
+        # pass in the MainWindow
+        self.MainWindow = MainWindow
+
+    def speakCommand(self, command):
+        genericResponse = self.generateResponse(command)
+        genericResponse = self.decodeResponse()
+
+        tempgnome = self.gnome
+
+        # turn the response into Cave Johnson
+        self.openGnome("Cave Johnson")
+
+        userString = "User-" + command
+        AIString = "AI assistant-" + genericResponse[1]
+
+        voiceResponse = self.generateResponse(userString + "\n" + AIString)
+
+        print(voiceResponse)
+        self.gnome = tempgnome
+        self.Voice.synthVoice(voiceResponse)
+        self.Voice.playSound()
+
+        return genericResponse, voiceResponse
+
+    def llmOSCommand(self, prompt):
+        genericResponse,voiceResponse = self.speakCommand(prompt)
+
+        inputCommand = "RomControl {}".format(genericResponse[0])
+        # only the Rom Control commands are available for now
+        self.osDecider(inputCommand)
+
+    def osDecider(self, instruction):
+        # decide the class of command
+        components = instruction.split(" ")
+
+
+        if components[0] == "RomControl":
+            # enact the commands for rom control
+            self.RomControl(instruction)
+
+        elif components[0] == "PeripheralManagement":
+            # enact the commands for connecting peripherals
+            self.PeripheralManagement(instruction)
+
+        else:
+            print("{0} instruction class not recognized".format(components[0]))
+
+    def RomControl(self, instruction):
+        components = instruction.split(" ")
+
+        print(components)
+
+        if "StartRom" == components[1]:
+            # add the rom to the path
+            romFile = self.romDictionary[components[2]]
+            romFolder = romFile.split("//{}.rom".format(components[2]))
+            print(romFolder)
+            self.FileManager.addDirectory(romFolder[0])
+
+            self.RomLauncher.startRom(components[2])
+            # open the appropriate gnome
+            self.openGnome("EndRom")
+
+        elif "EndRom" == components[1]:
+            print("llmos endRom")
+            self.RomLauncher.endRom()
+
+            # open the appropriate gnome
+            self.openGnome("StartRom")
+
+        else:
+            print("{} is not a valid instruction".format(components[1]))
+
+    def PeripheralManagement(self, instruction):
+
+        components = instruction.split(" ")
+
+        if "Connect" == components[1]:
+            self.PeripheralManager.connectPeripheral(components[2], components[3], components[4])
+            self.MainWindow.renderDisplay(self.PeripheralManager.TactileDisplay)
+
+        elif "Disconnect" == components[1]:
+            self.PeripheralManager.disconnectPeripheral(components[2])
+
+        else:
+            print("{} is not a valid instruction".format(components[1]))
+
+class RomReader(threading.Thread):
+
+    def __init__(self, filename):
+        super().__init__()
+        self.lock = threading.Lock()
+        self.stopEvent = threading.Event()
+
+        #open the rom
+        self.rom = open(filename)
+        self.romString = self.rom.read()
+
+        thisCode = self.romString
+        start = thisCode.find('@RomInputsBegin') + 17
+        end = thisCode.find('@RomInputsEnd')
+
+        inputCode = thisCode[start:end]
+
+        settingList = inputCode.split('#')
+
+        self.interruptDictionary = {}
+        self.romSettings = {}
+        self.commentList = []
+
+        for settingLine in settingList:
+            commentList = settingLine.split('\n')
+            valuesList = commentList[1].split('=')
+            self.commentList.append(commentList[0])
+            valuesList[1] = valuesList[1].replace(" ", "")
+            self.romSettings[valuesList[0].replace(" ", "")] = valuesList[1].replace('"', "")
+
+    def getSettings(self):
+        return self.romSettings
+
+    def getDescriptions(self):
+        return self.commentList
+
+    def setSettings(self, settingDict):
+        self.romSettings = settingDict
+
+    def executeRom(self):
+        self.start()
+        return self.is_alive()
+
+    def endRom(self):
+        self.join()
+
+    def run(self):
+        self.romSettings['stopEvent'] = self.stopEvent
+        with self.lock:
+            # block simultanous execution of shared variables
+            exec(self.romString,self.romSettings)
+
+  class RomLauncher():
+
+      def __init__(self, HapticsEngine, romDictionary):
+
+          # add the haptics engine
+          self.HapticsEngine = HapticsEngine
+
+          # create the Rom List
+          self.romDictionary = romDictionary
+
+      def launchRom(self, romFilePath):
+          self.RomReader = rr.RomReader(romFilePath)
+          self.RomReader.romSettings["HapticsEngineAddress"] = id(self.HapticsEngine)
+          self.romDictionary[romFilePath] = self.RomReader
+
+      def startRom(self, romString):
+          # gets the path of the rom to start
+          # launches that rom using the rom reader
+          self.launchRom(self.romDictionary[romString])
+          print(self.RomReader.romSettings["HapticsEngineAddress"])
+
+          if romString == "Slides":
+              self.RomVisualization = rv.RomVisualization("RomVisualizer", self.HapticsEngine)
+              self.RomVisualization.show()
+              self.HapticsEngine.addVisualization(self.RomVisualization)
+              #print("Starting the {} ROM".format(romString))
+          self.RomReader.stopEvent.set()
+          self.RomReader.executeRom()
+
+      def endRom(self):
+          # ends the rom and closes everything related to the rom freeing up resources
+          print("Ending the ROM")
+          self.HapticsEngine.exitEvent = 1
+
+Using PlantText UML make an extensive code diagram for this LLMOS.

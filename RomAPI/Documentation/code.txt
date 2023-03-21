@@ -1,0 +1,71 @@
+@startuml
+
+title Rom Controller System
+
+class RomController {
++init(HapticsEngineAddress, stopEvent)
++startCurrentState()
++stepCurrentState()
++decideNextState()
++getCurrentState()
++switchState(stateKey)
++exitRom()
++runRom()
+}
+
+class RomState {
++init(Controller)
++stepState()
++startState()
++closeState()
++getNextState(RomController)
+}
+
+class RomKeyboardHandles {
++init()
+}
+
+class RomMouseHandles {
++init()
+}
+
+class RomOperation {
++init(name)
+}
+
+class RomFlag {
++init(name)
+}
+
+class RomVisualizationHandles {
++init()
+}
+
+RomController *-- RomState
+RomState ..> RomController
+RomState <|-- RomKeyboardHandles
+RomState <|-- RomMouseHandles
+RomState <|-- RomOperation
+RomState <|-- RomFlag
+RomState <|-- RomVisualizationHandles
+
+@enduml
+
+@startuml
+
+title Generic State Machine Diagram
+
+(*) --> "Start Current State"
+"Start Current State" --> "Step Current State"
+"Step Current State" --> "Decide Next State"
+
+"Decide Next State" --> [New State] "Start New State"
+"Decide Next State" --> [No State Change] "Step Current State"
+
+"Start New State" --> "Step Current State"
+
+"Decide Next State" --> [Exit] "Exit Rom"
+
+"Exit Rom" --> (*)
+
+@enduml

@@ -1,0 +1,30 @@
+@startuml
+class LLMOS {
+    + __init__(self, openAIKey, elevenLabsKey)
+    + addMainWindow(self, MainWindow)
+    + speakCommand(self, command)
+    + llmOSCommand(self, prompt)
+    + osDecider(self, instruction)
+    + RomControl(self, instruction)
+    + PeripheralManagement(self, instruction)
+}
+class RomReader {
+    + __init__(self, filename)
+    + getSettings(self)
+    + getDescriptions(self)
+    + setSettings(self, settingDict)
+    + executeRom(self)
+    + endRom(self)
+    + run(self)
+}
+class RomLauncher {
+    + __init__(self, HapticsEngine, romDictionary)
+    + launchRom(self, romFilePath)
+    + startRom(self, romString)
+    + endRom(self)
+}
+
+LLMOS --> "1" RomLauncher
+LLMOS --> HapticsEngine
+RomLauncher --> "1" RomReader
+@enduml

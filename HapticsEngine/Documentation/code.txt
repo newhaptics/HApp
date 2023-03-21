@@ -1,0 +1,124 @@
+@startuml
+
+class HapticsEngine {
+-FlagManager: fm.FlagManager
+-OperationManager: om.OperationManager
+-PeripheralManager: pm.PeripheralManager
+-VisualizationManager: vm.VisualizationManager
+-FileManager: fi.FileManager
+-exitEvent: int
+-romList: list
+-operationTimerDictionary: dict
+-OperationsTimer: QTimer
++addRom(Rom: object): None
++pauseRoms(): None
++resumeRoms(): None
++startLaunchingOperations(interval: int): None
++addFlag(Flag: object): None
++removeFlag(flagName: str): None
++getFlag(flagName: str): object
++getAllFlags(): list
++addOperation(Operation: object): None
++killOperation(operationName: str): None
++removeOperation(operationName: str): None
++getOperation(operationName: str): object
++getAllOperations(): list
++interruptExecute(func: callable): None
++addPeripheral(Peripheral: object): None
++removePeripheral(peripheralName: str): None
++getPeripheral(peripheralName: str): object
++getAllPeripherals(): list
++getStatusAllDevices(): None
++addVisualization(Visualization: object): None
++removeVisualization(visualizationName: str): None
++getVisualization(visualizationName: str): object
++getAllVisualizations(): list
++showAllVisualizations(): None
++debugPrintAllResources(): str
+-launchOperations(): None
+-executeOperation(Operation: object): None
+-stopExecutingOperation(Operation: object): None
+}
+
+class FlagManager {
++addFlag(Flag: object): None
++removeFlag(flagName: str): None
++getFlag(flagName: str): object
++getAllFlags(): list
+}
+
+class OperationManager {
++addOperation(Operation: object): None
++removeOperation(operationName: str): None
++getOperation(operationName: str): object
++getAllOperations(): list
+}
+
+class PeripheralManager {
++addPeripheral(Peripheral: object): None
++removePeripheral(peripheralName: str): None
++getDevice(peripheralName: str): object
++getAllDevices(): list
++getStatusAll(): None
+}
+
+class VisualizationManager {
++addVisualization(Visualization: object): None
++removeVisualization(visualizationName: str): None
++getVisualization(visualizationName: str): object
++getAllVisualizations(): list
++showAll(): None
+}
+
+class FileManager {
+}
+
+class Operation {
+-name: str
+-description: str
+-executable: callable
+-inputDictionary: dict
+-outputDictionary: dict
+-executionParameters: dict
+-startTime: float
+-lastExecuteTime: float
+-currentExecuteTime: float
+-timeBetween: float
+-ExecutionTimer: QTimer
+-isStopped: bool
++execute(): None
++checkFlagConditions(): bool
++startOperation(): None
++stopOperation(): None
++setExecutionParameters(parameters: dict): None
++createDebugString(): None
+}
+
+class OperationTimer {
+-Operation: object
+-executerFunction: callable
+-executeDelay: int
+-executeContinuously: bool
+-executeIntervalTime: int
++launchOperation(): None
+}
+
+class UpdateMonitorOperation {
+-HapticsEngine: object
+-ARCSLabel
+: QLabel
++execute(): None
+}
+
+HapticsEngine --> FlagManager
+HapticsEngine --> OperationManager
+HapticsEngine --> PeripheralManager
+HapticsEngine --> VisualizationManager
+HapticsEngine --> FileManager
+HapticsEngine --> OperationTimer
+HapticsEngine --> UpdateMonitorOperation
+
+Operation <|-- UpdateMonitorOperation
+OperationTimer --> Operation
+
+@enduml

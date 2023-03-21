@@ -1,0 +1,69 @@
+Create a custom Rom in python using the following instructions:
+
+Respond to specific keyboard inputs for controlling the operation.
+Respond to mouse events for interacting with the visualization.
+Execute the custom operation when specified conditions are met.
+Use the custom flag to control the execution of the operation.
+Display the custom visualization representing the current state of the Rom.
+Please provide any additional details or requirements for the custom Rom.
+Subclass RomController, RomState, RomKeyboardHandles, RomMouseHandles, RomOperation, RomFlag, and RomVisualizationHandles.
+Implement state transition logic in your custom RomController and RomState classes.
+Implement custom keyboard and mouse event handling in your custom RomKeyboardHandles and RomMouseHandles classes.
+Define a custom operation in your custom RomOperation class, specifying conditions under which it should execute.
+Create a custom flag in your custom RomFlag class to control the execution of the operation.
+Implement a custom visualization in your custom RomVisualizationHandles class to represent the current state of the Rom.
+Create a custom Rom using the RomAPI, which should include custom keyboard and mouse handling, a custom operation, flag, and visualization. The RomAPI allows you to define and manage state transitions, peripheral interactions, and control logic. Follow these steps to create your custom Rom:
+Subclass RomController, RomState, RomKeyboardHandles, RomMouseHandles, RomOperation, RomFlag, and RomVisualizationHandles.
+
+class CustomRomController(RomController):
+    # Implement your custom controller logic here
+
+class CustomRomState(RomState):
+    # Implement your custom state logic here
+Implement state transition logic in your custom RomController and RomState classes.
+
+def decideNextState(self):
+    # Implement your custom state transition logic here
+Implement custom keyboard and mouse event handling in your custom RomKeyboardHandles and RomMouseHandles classes.
+
+class CustomRomKeyboardHandles(RomKeyboardHandles):
+    # Implement your custom keyboard event handling here
+
+class CustomRomMouseHandles(RomMouseHandles):
+    # Implement your custom mouse event handling here
+Define a custom operation in your custom RomOperation class, specifying conditions under which it should execute.
+
+class CustomRomOperation(RomOperation):
+    def execute(self):
+        # Implement your custom operation execution here
+Create a custom flag in your custom RomFlag class to control the execution of the operation.
+
+class CustomRomFlag(RomFlag):
+    # Implement your custom flag logic here
+Implement a custom visualization in your custom RomVisualizationHandles class to represent the current state of the Rom.
+
+class CustomRomVisualizationHandles(RomVisualizationHandles):
+    # Implement your custom visualization here
+
+Interact with the HAppControlCenter property of the RomController to add and remove RomKeyboardHandles, RomMouseHandles, RomOperation, RomFlag, and RomVisualizationHandles. Here are examples of how to do this:
+Instantiate your custom classes:
+custom_keyboard_handles = CustomRomKeyboardHandles()
+custom_mouse_handles = CustomRomMouseHandles()
+custom_operation = CustomRomOperation("custom_operation")
+custom_flag = CustomRomFlag("custom_flag")
+custom_visualization_handles = CustomRomVisualizationHandles()
+Add your custom keyboard and mouse event handling to the HAppControlCenter:
+controller = CustomRomController(HapticsEngineAddress, stopEvent)
+controller.HAppControlCenter.addKeyboardHandle(custom_keyboard_handles)
+controller.HAppControlCenter.addMouseHandle(custom_mouse_handles)
+Add your custom operation, flag, and visualization to the HAppControlCenter:
+controller.HAppControlCenter.addOperation(custom_operation)
+controller.HAppControlCenter.addFlag(custom_flag)
+controller.HAppControlCenter.addVisualization(custom_visualization_handles)
+Remove your custom keyboard and mouse event handling from the HAppControlCenter:
+controller.HAppControlCenter.removeKeyboardHandle(custom_keyboard_handles)
+controller.HAppControlCenter.removeMouseHandle(custom_mouse_handles)
+Remove your custom operation, flag, and visualization from the HAppControlCenter:
+controller.HAppControlCenter.removeOperation("custom_operation")
+controller.HAppControlCenter.removeFlag("custom_flag")
+controller.HAppControlCenter.removeVisualization(custom_visualization_handles)

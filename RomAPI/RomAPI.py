@@ -32,13 +32,13 @@ class RomController():
     def startCurrentState(self):
         #get the current rom that is running and run its step function
         currentState = self.getCurrentState()
-        
+
         currentState.startState()
-        
+
     def stepCurrentState(self):
         #get the current rom that is running and run its step function
         currentState = self.getCurrentState()
-        
+
         currentState.stepState()
 
     def decideNextState(self):
@@ -46,7 +46,7 @@ class RomController():
         #get the rom's current state
         currentState = self.getCurrentState()
         oldStateKey = self.stateKey
-        
+
         #calculate which state to go to next from current state
         newStateKey = currentState.getNextState()
 
@@ -54,27 +54,27 @@ class RomController():
         #switch to the next rom state or if the same state do nothing
         if oldStateKey == newStateKey:
             pass
-        
+
         else:
             #close all operations of the current state
             currentState.closeState()
-            
+
             #initialize all of the operations of the next state
             nextState = self.romStateDictionary[newStateKey]
             nextState.startState()
-            
+
             #switch to the next state
             self.switchState(newStateKey)
-            
+
     def getCurrentState(self):
         return self.romStateDictionary[self.stateKey]
 
     def switchState(self, stateKey):
         self.stateKey = stateKey
-        
+
     def exitRom(self):
         pass
-    
+
     def runRom(self):
         # Main loop of the Rom
         shouldRomEnd = self.HAppControlCenter.exitEvent
@@ -103,11 +103,11 @@ class RomController():
             self.HAppControlCenter.exitEvent = 0
 
 class RomState():
-    
+
     def __init__(self, Controller):
         #pass the rom controller into the state
         self.Controller = Controller
-    
+
     def stepState(self):
         #redefined by user in the appropriate subclass
         pass
@@ -116,7 +116,7 @@ class RomState():
         #display the start screen
         #self.Controller.addEngineFunction(self.bootMenu)
         pass
-        
+
     def closeState(self):
         #clear the screen of all information and shut down start screen processes
         pass
@@ -126,26 +126,26 @@ class RomState():
         pass
 
 class RomKeyboardHandles(dh.DefaultKeyboardHandles):
-    
+
     def __init__(self):
         super().__init__()
-        
+
 class RomMouseHandles(dm.DefaultMouseHandles):
-    
+
     def __init__(self):
         super().__init__()
-        
+
 class RomOperation(om.Operation):
-        
+
     def __init__(self, name):
         super().__init__(name)
-        
+
 class RomFlag(fm.Flag):
-    
+
     def __init__(self, name):
         super().__init__(name)
-        
+
 class RomVisualizationHandles(dr.DefaultRomVisualizationHandles):
-        
+
     def __init__(self):
         super().__init__()
