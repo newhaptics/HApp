@@ -12,7 +12,7 @@ import HapticsEngine as he
 import RomLauncher as rl
 
 class LLMOS(im.Imprint):
-    
+
     def __init__(self, openAIKey, elevenLabsKey):
         # create the imprint of llmOS
         super().__init__(openAIKey, "C://Users//derek//Documents//HApp//HAppKernal//gnomes//LLMOS.gnome")
@@ -124,7 +124,6 @@ class LLMOS(im.Imprint):
         else:
             print("{} is not a valid instruction".format(components[1]))
 
-        
 
 # =============================================================================
 #     def connectTouchscreen(self, comString):

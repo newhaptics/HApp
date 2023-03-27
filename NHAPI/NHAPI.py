@@ -43,10 +43,10 @@ class NHAPI(td.TactileDisplay):
 
     def erase(self, onOff):
         if onOff == "on":
-            self.graphics.set_output(False)
+            self.graphics.set_output(0)
             self.__apiPrint("erase on")
         else:
-            self.graphics.set_output(True)
+            self.graphics.set_output(1)
             self.__apiPrint("erase off")
 
     def fill(self, onOff):

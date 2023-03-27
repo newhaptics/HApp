@@ -29,7 +29,7 @@ class GraphicsEngine:
         surface = ca.ImageSurface.create_for_data(self.data, ca.FORMAT_A8, newDim[1], newDim[0])
         self.__ct = ca.Context(surface)
         self.__ct.set_operator(ca.OPERATOR_SOURCE)
-        self.__output = True
+        self.__output = 1
         self.test = 1
         
         #create the brailler

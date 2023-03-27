@@ -106,7 +106,7 @@ class SlidesTools():
 
     #control actions
     def clear(self):
-        self.BrailleDisplay.clear()
+        self.BrailleDisplay.Fclear()
     
     def Fclear(self):
         self.BrailleDisplay.Fclear()

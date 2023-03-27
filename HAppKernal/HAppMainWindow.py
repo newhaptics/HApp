@@ -124,7 +124,7 @@ class HAppMainWindow(qw.QMainWindow):
         
     def quickConnect(self):
         # ease of use
-        self.HapticOS.osDecider("PeripheralManagement Connect Display Fourplex COM3")
+        self.HapticOS.osDecider("PeripheralManagement Connect Display Fourplex COM14")
         #self.HapticOS.osDecider("RomControl StartRom Notepad")
 # =============================================================================
 #         self.HapticOS.osDecider("RomControl EndRom Notepad")
