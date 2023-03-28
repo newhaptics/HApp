@@ -156,8 +156,6 @@ class IntegratedTouchscreenPeripheral(pm.PeripheralDevice):
             return 0
         
         
-        
-    
     def printTheDataMatrix(self):
         print("TouchOut:")
         rowString = "|"

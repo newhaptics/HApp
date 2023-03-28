@@ -16,8 +16,8 @@ class TouchScreenPeripheral(pm.PeripheralDevice):
         super().__init__(name)
         
         # size of sensor array
-        self.nSensorRows = 2#5
-        self.nSensorColumns = 3#7 
+        self.nSensorRows = 5
+        self.nSensorColumns = 7 
         
         # intialize touchscreen data matrix to a default size
         self.sensorDataMatrix = np.ones([self.nSensorRows, self.nSensorColumns])    
