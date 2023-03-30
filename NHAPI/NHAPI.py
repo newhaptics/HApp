@@ -36,6 +36,7 @@ class NHAPI(td.TactileDisplay):
         self.__apiPrint('---------------------------\n')
 
     def displayMatrix(self, matrix):
+        print(matrix)
         print('---------------------------\n')
         print('\n'.join([' '.join(['{:4}'.format(item) for item in row])
                          for row in matrix]))
@@ -221,14 +222,11 @@ class NHAPI(td.TactileDisplay):
     def disconnect(self):
         self.comLink_off()
         self.__apiPrint("comLink check is {}".format(self.comLink_check()))
-        
-        
+
     def disconnectTouch(self):
         self.disconnectTouchScreen()
         self.__apiPrint("touchLink check is {}".format(self.checkTouchLink()))
 
-        
-        
     def __apiPrint(self, text):
         if self.echo:
             print(text)

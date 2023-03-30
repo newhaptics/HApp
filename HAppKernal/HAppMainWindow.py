@@ -22,8 +22,8 @@ import DefaultMouseHandles as dm
 import RomVisualizationHandler as rh
 import DefaultRomVisualizationHandles as drvh
 
-import TouchStateVisualizer as tsv
-import RealTimeStateVisualizer as rtsv
+#import TouchTactileDisplayVisualizer as tsv
+import TactileDisplayVisualizer as rtsv
 
 import HapticsEngine as he
 import RomOperation as ro
@@ -48,7 +48,6 @@ class HAppMainWindow(qw.QMainWindow):
         
         # create the llmOS
         self.HapticOS = HapticOS
-        self.HapticOS.addMainWindow(self)
 
         self.HapticsEngine = self.HapticOS.HapticsEngine
 
@@ -120,11 +119,15 @@ class HAppMainWindow(qw.QMainWindow):
         # begin executing HApp operations
         self.HapticsEngine.startLaunchingOperations(2)
         
+        # calculates the coordinates
+        self.HapticOS.addMainWindow(self)
+
         qc.QTimer.singleShot(1000, lambda: self.quickConnect())
         
     def quickConnect(self):
         # ease of use
-        self.HapticOS.osDecider("PeripheralManagement Connect Display Fourplex COM14")
+        self.HapticOS.osDecider("PeripheralManagement Connect Display Fourplex COM3")
+        print(self.TactileDisplayVisualizer.getCoordinateSystem())
         #self.HapticOS.osDecider("RomControl StartRom Notepad")
 # =============================================================================
 #         self.HapticOS.osDecider("RomControl EndRom Notepad")
@@ -326,36 +329,44 @@ class HAppMainWindow(qw.QMainWindow):
 
     """ connect the display and touch """
     def renderDisplay(self, TactileDisplay):
-    
-        
         # get the dimensions of the display
-        state = TactileDisplay.return_currentState()
         displaySize = TactileDisplay.size()
         
-        # Construction of visualization
-        self.StateVisualizer = rtsv.StateVisualizer("StateVisualizer", state, displaySize)
+        CoordinateSystem = self.HapticsEngine.CoordinateSystem
         
+        # Construction of visualization
+        self.TactileDisplayVisualizer = rtsv.TactileDisplayVisualizer("TactileDisplayVisualizer", displaySize)
+        self.setCentralWidget(self.TactileDisplayVisualizer)
+        self.TactileDisplayVisualizer.show()
         # Construction of Operation
-        self.StateVisualizerRefreshOperation = rtsv.StateVisualizerOperation("StateVisualizerRefreshOperation",  self.MousePeripheral, TactileDisplay, self.StateVisualizer)
+        self.TactileDisplayVisualizerRenderer = rtsv.TactileDisplayVisualizerRenderer("TactileDisplayVisualizerRenderer",  self.MousePeripheral, TactileDisplay, CoordinateSystem, self.TactileDisplayVisualizer)
         
         # Reimplement Keyboard
-        self.HAppKeyboardHandles = hk.HAppKeyboardHandles(self.StateVisualizerRefreshOperation)
+        self.HAppKeyboardHandles = hk.HAppKeyboardHandles(self.TactileDisplayVisualizerRenderer)
         self.KeyboardPeripheral.setDefaultHandler(self.HAppKeyboardHandles)
         
         # Reimplement Mouse
-        self.HAppMouseHandles = hm.HAppMouseHandles(self.StateVisualizerRefreshOperation)
+        self.HAppMouseHandles = hm.HAppMouseHandles(self.TactileDisplayVisualizerRenderer)
         self.MousePeripheral.setDefaultHandler(self.HAppMouseHandles)
         
         # add it as a visualization to the control center
-        self.HapticsEngine.addVisualization(self.StateVisualizer)
-        self.HapticsEngine.addOperation(self.StateVisualizerRefreshOperation)
+        self.HapticsEngine.addVisualization(self.TactileDisplayVisualizer)
+        self.HapticsEngine.addOperation(self.TactileDisplayVisualizerRenderer)
         
         # update the ARCS status label
         #self.ARCSLabel.setText(self.HapticsEngine.debugPrintAllResources())
         
-        self.setCentralWidget(self.StateVisualizer)
-    
-
+        self.setCentralWidget(self.TactileDisplayVisualizer)
+        self.TactileDisplayVisualizer.show()
+        
+        self.TactileDisplayVisualizer.addTouchOverlay()
+        
+        width = self.TactileDisplayVisualizer.getCoordinateSystem().width() - 20
+        height = self.TactileDisplayVisualizer.getCoordinateSystem().height() - 20
+        
+        self.HapticsEngine.addCoordinateSystem("TactileDisplayVisualizer", (width,height))
+        self.HapticsEngine.addCoordinateSystem("TactileDisplay", (displaySize[1],displaySize[0]))
+        print(self.HapticsEngine.CoordinateSystem.boundedRegions)
 
 # =============================================================================
 #     """ connection subroutines """

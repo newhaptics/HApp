@@ -46,21 +46,23 @@ class IntegratedTouchscreenVisualizer(vm.Visualization):
         
         # create figure with subplots
         # create figure with subplots
-        self.fig, self.ax = plt.subplots(subplot_kw={"projection": "3d"})
-        x = np.arange(100)#self.integratedTouchscreen.nSensorColumns)
-        y = np.arange(100)#self.integratedTouchscreen.nSensorRows)
-        
-        Y, X = np.meshgrid(x,y)
-        
-        self.data = np.random.rand(100,100)
-        
-        self.surf = self.ax.plot_surface(X,Y, self.data, vmin=0, vmax=20, cmap=cm.tab10)
-        
-        # Add a color bar
-        self.fig.colorbar(self.surf, aspect=5)
-        
-        self.ax.set_zlim(0, 20)
-        self.ax.view_init(azim=-20, elev=45)
+# =============================================================================
+#         self.fig, self.ax = plt.subplots(subplot_kw={"projection": "3d"})
+#         x = np.arange(100)#self.integratedTouchscreen.nSensorColumns)
+#         y = np.arange(100)#self.integratedTouchscreen.nSensorRows)
+#         
+#         Y, X = np.meshgrid(x,y)
+#         
+#         self.data = np.random.rand(100,100)
+#         
+#         self.surf = self.ax.plot_surface(X,Y, self.data, vmin=0, vmax=20, cmap=cm.tab10)
+#         
+#         # Add a color bar
+#         self.fig.colorbar(self.surf, aspect=5)
+#         
+#         self.ax.set_zlim(0, 20)
+#         self.ax.view_init(azim=-20, elev=45)
+# =============================================================================
         
         #self.ani = animation.FuncAnimation(self.fig, self.animate, interval=10)
         self.x = 0

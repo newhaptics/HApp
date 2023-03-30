@@ -139,31 +139,31 @@ class SlidesMaster():
             self.currentSlide += 1
             self.loadSlide(self.currentSlide)
         else:
-            print("can't load next slide")
+            self.loadSlide(1)
         
     def loadPreviousSlide(self):
         if self.currentSlide > 1:
             self.currentSlide -= 1
             self.loadSlide(self.currentSlide)
         else:
-            print("can't load previous slide")
-        
+            self.loadSlide(self.nSlides - 1)
 
     def loadSlide(self, slideNum):
         # grab a slide.csv from the cwd
-        self.currentSlide = slideNum
-        slideString = "Slide {}".format(slideNum)
-        print(slideString)
-        
-        #print(self.currentSlide)
-        canvas = self.FileManager.openSlide(slideString)
-        
-        # set the current canvas to the new slide
-        self.CanvasNavigation.setCanvas(canvas)
-        
-        # update the braille display with the new canvas
-        self.updateViewSpace()
-        
-        
+        try:
+            self.currentSlide = slideNum
+            slideString = "Slide {}".format(slideNum)
+            print(slideString)
+            
+            #print(self.currentSlide)
+            canvas = self.FileManager.openSlide(slideString)
+            
+            # set the current canvas to the new slide
+            self.CanvasNavigation.setCanvas(canvas)
+            
+            # update the braille display with the new canvas
+            self.updateViewSpace()
+        except Exception as e:
+            print(e)
         
         

@@ -10,13 +10,13 @@ from PyQt5.QtWidgets import QApplication
 
 import integratedTouchscreenPeripheral as itp
 import time
-#import serial.tools.list_portsq
+# import serial.tools.list_portsq
 import integratedTouchscreenVisualizer as itv
 import sys
 
 def generateTouchScreensList():
     # Get a list of available COM ports
-    comports = "waw"#list(serial.tools.list_ports.comports())
+    comports = "waw"
 
     # Check if any COM ports are available
     if not comports:
@@ -25,26 +25,25 @@ def generateTouchScreensList():
 
     Touchscreen = itp.IntegratedTouchscreenPeripheral("touch")
 
-    print(comports)
-    
-    Touchscreen.connectNewTouchscreen("COM7")
-    Touchscreen.connectNewTouchscreen("COM42")
-    Touchscreen.connectNewTouchscreen("COM34")
+    Touchscreen.connectNewTouchscreen("COM30")
     Touchscreen.connectNewTouchscreen("COM33")
-# =============================================================================
-#     for connection in comports:
-# 
-#         # Connect to the first available COM port
-#         port = connection.device
-#         
-#         Touchscreen.connectNewTouchscreen(port)
-# =============================================================================
-
+    Touchscreen.connectNewTouchscreen("COM7")
+    Touchscreen.connectNewTouchscreen("COM34")
+    
     return Touchscreen
 
 if __name__ == "__main__":
     Touchscreen = generateTouchScreensList()
-        
+
+# =============================================================================
+#     while 1:
+#         Touchscreen.writeDeltaCommand()
+#         
+#         Touchscreen.getDeltaValues()
+#         
+#         Touchscreen.printTheDataMatrix()
+#         time.sleep(0.1)
+# =============================================================================
     app = QApplication(sys.argv)
 
     Visualizer = itv.IntegratedTouchscreenVisualizer("wow vis", Touchscreen)

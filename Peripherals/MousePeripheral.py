@@ -38,7 +38,7 @@ class MousePeripheral(pd.PeripheralDevice):
         xCoordinate = MouseEvent.x()
         yCoordinate = MouseEvent.y()
         
-        yStart = 23
+        yStart = 0
         
         if yCoordinate > yStart:
             yCoordinate -= yStart
@@ -92,7 +92,7 @@ class MousePeripheral(pd.PeripheralDevice):
         xCoordinate = MouseEvent.x()
         yCoordinate = MouseEvent.y()
         
-        yStart = 23
+        yStart = 0
         
         if yCoordinate > yStart:
             yCoordinate -= yStart

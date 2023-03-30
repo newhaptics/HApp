@@ -16,6 +16,14 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
     def __init__(self, MasterModel):
         super().__init__()
         self.MasterModel = MasterModel
+        
+        # get the touchscreen
+        self.Touchscreen = self.MasterModel.Controller.HAppControlCenter.getPeripheral("Touchscreen")
+        
+        # get the coordinate system
+        self.CoordinateSystem = self.MasterModel.Controller.HAppControlCenter.CoordinateSystem
+       
+        
         # check if the touchscreen is attached or not
         VisualizerOperator = self.MasterModel.Controller.HAppControlCenter.getOperation("TouchVisualizerRefreshOperation")
         if VisualizerOperator is not None:
@@ -28,6 +36,35 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
             self.VisualizerOperator = VisualizerOperator
         else:
             print("no device attached")
+
+    def getTouchPoints(self):
+        # get the touchpoints for the touchscreen
+        self.Touchscreen.writeDeltaCommand()
+        self.Touchscreen.getDeltaValues()
+        touchPoints = self.Touchscreen.findTouchPoints()
+        
+        
+        
+        # convert to tactile coordinates
+        pinPointList = []
+        for touchPoint in touchPoints:
+            if touchPoint[0] == -1:
+                pass
+            else:
+                #print(touchPoint)
+                scaledDict = self.CoordinateSystem.scale(touchPoint[1],touchPoint[0],"Touchscreen")
+                
+                
+                xTouchPin = int(scaledDict["TactileDisplay"][0])
+                yTouchPin = int(scaledDict["TactileDisplay"][1])
+                
+                touchPinPoint = (xTouchPin,yTouchPin)
+                
+                pinPointList.append(touchPinPoint)
+            
+            
+        return pinPointList
+        
 
     def KeyLeftHandler(self):
         #perform cursor movement left
@@ -57,13 +94,13 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
         print(pinSelected)
         self.MasterModel.parameterClicked([int(pinSelected[1]), int(pinSelected[0])])
         
-    def KeyF1Handler(self):
+    def Key1Handler(self):
         self.MasterModel.selectTool("drawDot")
         
-    def KeyF2Handler(self):
+    def Key2Handler(self):
         self.MasterModel.selectTool("drawLine")
         
-    def KeyF3Handler(self):
+    def Key3Handler(self):
         self.MasterModel.selectTool("drawCurve")
         
 # =============================================================================
@@ -71,16 +108,16 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
 #         self.MasterModel.selectTool("drawCircle")
 # =============================================================================
         
-    def KeyF5Handler(self):
+    def Key5Handler(self):
         self.MasterModel.selectTool("drawRectangle")
 
-    def KeyF6Handler(self):
+    def Key6Handler(self):
         self.MasterModel.selectTool("drawTriangle")
         
-    def KeyF7Handler(self):
+    def Key7Handler(self):
         self.MasterModel.selectTool("drawPolygon")
 
-    def KeyF8Handler(self):
+    def Key8Handler(self):
         self.MasterModel.selectTool("selectClear")
 
     def KeyTabHandler(self):
@@ -91,3 +128,10 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
         
     def KeyPageDownHandler(self):
         self.MasterModel.loadPreviousSlide()
+
+    def KeyShiftHandler(self):
+        # get the current cursor position
+        pinPointList = self.getTouchPoints()
+        touchPoint = pinPointList[0]
+        if len(pinPointList) > 0:
+            self.MasterModel.parameterClicked((touchPoint[1], touchPoint[0]))

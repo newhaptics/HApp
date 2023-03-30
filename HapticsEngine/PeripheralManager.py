@@ -12,6 +12,8 @@ import PeripheralDevice as pd
 
 # need to import the files for all the potential peripherals
 import NHAPI as nh
+import IntegratedTouchscreenPeripheral as itp
+
 
 class PeripheralManager:
     def __init__(self):
@@ -84,7 +86,7 @@ class PeripheralManager:
             
         return comportList
     
-    def connectPeripheral(self, peripheralType, peripheralName, comPort):
+    def connectPeripheral(self, peripheralType, peripheralName, comPortList):
             
             try:
                 
@@ -92,18 +94,24 @@ class PeripheralManager:
 
                     self.TactileDisplay = nh.NHAPI(peripheralName)
 
-                    self.TactileDisplay.connect(comPort)
+                    self.TactileDisplay.connect(comPortList[0])
 
                     self.addPeripheral(self.TactileDisplay)
 
                 elif peripheralType == "Touchscreen":
                     print("wow such touchscreen")
+                    self.Touchscreen = itp.IntegratedTouchscreenPeripheral(peripheralName)
+
+                    for comport in comPortList:
+                        self.Touchscreen.connectNewTouchscreen(comport)
+                    
+                    self.addPeripheral(self.Touchscreen)
 
                 else:
                     print("error no device named {}".format(peripheralName))
                     
             except Exception as e:
-                print("unable to connect device {0} at comport {1}.".format(peripheralType, comPort))
+                print("unable to connect device {0} at comport {1}.".format(peripheralType, comPortList))
                 print(e)
                 
     def disconnectPeripheral(self, peripheralName):

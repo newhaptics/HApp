@@ -7,7 +7,7 @@ Created on Mon Mar 13 22:21:03 2023
 """
 
 import Imprint as im
-import VoiceSynthesizer as vs
+#import VoiceSynthesizer as vs
 import HapticsEngine as he
 import RomLauncher as rl
 
@@ -24,7 +24,7 @@ class LLMOS(im.Imprint):
         self.FileManager = self.HapticsEngine.FileManager
 
         # create the cave johnson voice
-        self.Voice = vs.VoiceSynthesizer(elevenLabsKey)
+        #self.Voice = vs.VoiceSynthesizer(elevenLabsKey)
 
         # create the RomLauncher
         self.romDictionary = self.FileManager.createRomDirectory()
@@ -33,7 +33,8 @@ class LLMOS(im.Imprint):
         self.openGnome("StartRom")
         
     def addMainWindow(self, MainWindow):
-        # pass in the MainWindow
+        # pass in the MainWindow and calculate the coordinates
+        MainWindow.show()
         self.MainWindow = MainWindow
         
     def speakCommand(self, command):
@@ -115,8 +116,23 @@ class LLMOS(im.Imprint):
         components = instruction.split(" ")
 
         if "Connect" == components[1]:
-            self.PeripheralManager.connectPeripheral(components[2], components[3], components[4])
-            self.MainWindow.renderDisplay(self.PeripheralManager.TactileDisplay)
+            self.PeripheralManager.connectPeripheral(components[2], components[3], components[4:])
+            
+            if components[2] == "Display":
+                self.MainWindow.renderDisplay(self.PeripheralManager.TactileDisplay)
+                
+                
+            if components[2] == "Touchscreen":
+                Touchscreen = self.HapticsEngine.getPeripheral(components[3])
+                Touchscreen.touchAlgorithm = "center of mass"
+                y = Touchscreen.nSensorRows - 1
+                x = Touchscreen.nSensorColumns - 1
+                self.HapticsEngine.addCoordinateSystem("Touchscreen", (x,y))
+                print(self.HapticsEngine.CoordinateSystem.boundedRegions)
+                
+                # add the touchscreen to the TactileDisplayVisualizerRenderer
+                displayRender = self.HapticsEngine.getOperation("TactileDisplayVisualizerRenderer")
+                displayRender.addTouchscreen(Touchscreen)
 
         elif "Disconnect" == components[1]:
             self.PeripheralManager.disconnectPeripheral(components[2])

@@ -41,8 +41,7 @@ class IntegratedTouchscreenPeripheral(pm.PeripheralDevice):
         self.interpolatedDataMatrix = []
         
         # filter settings
-        
-        
+
     def connectNewTouchscreen(self, comport):
         # create a new touch screen and add it to the list
         Touchscreen = tp.TouchScreenPeripheral(comport)
@@ -62,16 +61,16 @@ class IntegratedTouchscreenPeripheral(pm.PeripheralDevice):
 
         # resize the integrated Data matrix
         self.integratedDataMatrix = np.ones([self.nSensorRows, self.nSensorColumns])
-        
+
     def writeDeltaCommand(self):
         # write the delta command for each touchscreen
         for Touchscreen in self.TouchscreenList:
             Touchscreen.writeDeltaCommand()
-            
+
     def getDeltaValues(self):
-        
+
         rawDataMatrix = 0
-        
+
         # loop through each touch and collect their Deltas
         for i,Touchscreen in enumerate(self.TouchscreenList):
             Touchscreen.getDeltaValues()
@@ -81,21 +80,19 @@ class IntegratedTouchscreenPeripheral(pm.PeripheralDevice):
                 rawDataMatrix = np.hstack((rawDataMatrix, Touchscreen.sensorDataMatrix))
             else:
                 rawDataMatrix = Touchscreen.sensorDataMatrix
-                
-        
+
         # process the recieved delta values
         self.processDataValues(rawDataMatrix, self.integratedDataMatrix)
-                
+
         self.deltaValueList.append(self.integratedDataMatrix)
-        
+
         if len(self.deltaValueList) > 100:
             self.deltaValueList.pop(0)
-        
-         
+
     """ function that creates a new filtered matrix from raw and current data matrix values """
-                
+
     def processDataValues(self, rawDataMatrix, currentDataMatrix):
-        
+
         #rawDataMatrix = rawDataMatrix.astype(int)
         #currentDataMatrix = currentDataMatrix.astype(int)
         
@@ -104,7 +101,7 @@ class IntegratedTouchscreenPeripheral(pm.PeripheralDevice):
         
         # apply exponential smoothing to filtered raw data
         #filteredDataMatrix = rawDataMatrix
-        filteredDataMatrix = self.exponentialSmoothing(currentDataMatrix, rawDataMatrix, 0.1)
+        filteredDataMatrix = rawDataMatrix#self.exponentialSmoothing(currentDataMatrix, rawDataMatrix, 0.1)
         
         #filteredDataMatrix = rawDataMatrix
         
@@ -112,7 +109,7 @@ class IntegratedTouchscreenPeripheral(pm.PeripheralDevice):
         
         #sys.exit()
         self.integratedDataMatrix = filteredDataMatrix
-        
+
     def getInterpolation(self, resolution):
         # generate the interpolation matrix for the data
         
@@ -121,7 +118,7 @@ class IntegratedTouchscreenPeripheral(pm.PeripheralDevice):
         newY = np.linspace(0, self.integratedDataMatrix.shape[0] - 1, resolution[1])
         
         self.interpolatedDataMatrix = self.interpolate(self.integratedDataMatrix, newX, newY)
-        
+
     def interpolate(self, arr, x, y):
         # Generate a meshgrid of x and y values
         x_mesh, y_mesh = np.meshgrid(x, y)
@@ -142,8 +139,7 @@ class IntegratedTouchscreenPeripheral(pm.PeripheralDevice):
     def exponentialSmoothing(self, currentDataMatrix, rawDataMatrix, alpha):
         filteredDataMatrix = alpha * rawDataMatrix + (1 - alpha) * currentDataMatrix
         return filteredDataMatrix
-    
-    
+
     def findTouchPoints(self):
         # using either the delta values determine the touch points
         
@@ -154,8 +150,7 @@ class IntegratedTouchscreenPeripheral(pm.PeripheralDevice):
             return 1
         else:
             return 0
-        
-        
+
     def printTheDataMatrix(self):
         print("TouchOut:")
         rowString = "|"

@@ -14,6 +14,9 @@ class CoordinateScaler:
         self.scalesDictionary = {}
         
         self.calculateScalesDictionary()
+
+    def addBoundedRegion(self, name, boundedRegion):
+        self.boundedRegions[name] = boundedRegion
         
     def calculateScalesDictionary(self):
         # create a dictionary for each region
@@ -80,18 +83,20 @@ class CoordinateScaler:
 
 
     
-regions = { "pin" : (41, 19),
-            "touch" : (255*2, 255),
-            "visualizer" : (800, 500)
-           }
-
-
-scaler = CoordinateScaler(regions)  # create a scaler that scales coordinates based on the sizes of multiple bounded regions
-
-scaledDict = scaler.scale(5, 5, "pin")
-
-print(scaledDict)
-    
+# =============================================================================
+# regions = { "pin" : (41, 19),
+#             "touch" : (255*2, 255),
+#             "visualizer" : (800, 500)
+#            }
+# 
+# 
+# scaler = CoordinateScaler(regions)  # create a scaler that scales coordinates based on the sizes of multiple bounded regions
+# 
+# scaledDict = scaler.scale(5, 5, "pin")
+# 
+# print(scaledDict)
+#     
+# =============================================================================
 
 # =============================================================================
 # regions = { "bounded region 1" : (100, 200),

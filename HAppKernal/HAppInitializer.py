@@ -25,6 +25,5 @@ if __name__ == '__main__':
     app = qw.QApplication([])
 
     MainWindow = hm.HAppMainWindow(HapticOS)
-    MainWindow.show()
-
+    
     sys.exit(app.exec_())

@@ -11,6 +11,10 @@ import FlagManager as fm
 import PeripheralManager as pm
 import VisualizationManager as vm
 import FileManager as fi
+
+# coordinate scalar allows easy transformations between coordinate systems
+import CoordinateScalar as cs
+
 from PyQt5.QtCore import QTimer 
 #from PyQt5.QtWidgets import QLabel, QVBoxLayout
 import time
@@ -34,6 +38,17 @@ class HapticsEngine:
         self.OperationsTimer = QTimer()
         self.OperationsTimer.timeout.connect(self.launchOperations)
         
+        # create the coordinate scalar
+        regions = {}
+        self.CoordinateSystem = cs.CoordinateScaler(regions)
+
+    def addCoordinateSystem(self, name, boundedRegion):
+        self.CoordinateSystem.addBoundedRegion(name, boundedRegion)
+        self.CoordinateSystem.calculateScalesDictionary()
+        
+    def getScaledCoordinates(self, inputCoordinateSystem, inputCoordinateUnits):
+        transformationDictionary = self.CoordinateSystem.scale(inputCoordinateUnits[0], inputCoordinateUnits[1], inputCoordinateSystem)
+        return transformationDictionary
         
     def addRom(self, Rom):
         self.romList.append(Rom)

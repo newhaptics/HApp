@@ -169,19 +169,16 @@ class LoadSlideOperation(rs.RomOperation):
         self.isStopped = False
         
     def execute(self):
-        # print("update the display")
-        flagMatrix = self.DisplayFlag.matrix
-# =============================================================================
-#         print('---------------------------\n')
-#         print('\n'.join([' '.join(['{:4}'.format(item) for item in row])
-#                          for row in flagMatrix]))
-#         print('---------------------------\n')
-#         
-# =============================================================================
-        self.TactileDisplay.setMat(flagMatrix)
-        self.TactileDisplay.refresh()
-        
-        self.DisplayFlag.clearState()
+        # load the slide which is selected
+        try:
+            flagMatrix = self.DisplayFlag.matrix
+
+            self.TactileDisplay.setMat(flagMatrix)
+            self.TactileDisplay.refresh()
+
+            self.DisplayFlag.clearState()
+        except Exception as e:
+            print(e)
         
 class UpdateSlidesGuiOperation(rs.RomOperation):
     

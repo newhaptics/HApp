@@ -9,11 +9,17 @@ Created on Mon Mar 27 14:58:44 2023
 
 import NHAPI as nh
 
+def printCurrent():
+    # retrieve the current
+    Display.pull_currentState()
+    newMatrix = Display.return_currentState()
+    
+    print("changed State")
+    Display.displayMatrix(newMatrix)
 
 Display = nh.NHAPI("testDisplay")
 
 Display.connect("COM14")
-
 
 # draw line
 Display.line((0,0),(19,82))
@@ -30,9 +36,4 @@ Display.displayMatrix(desiredState)
 
 Display.refresh()
 
-# retrieve the current
-Display.pull_currentState()
-newMatrix = Display.return_currentState()
-
-print("changed State")
-Display.displayMatrix(newMatrix)
+printCurrent()

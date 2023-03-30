@@ -47,14 +47,13 @@ class TouchScreenPeripheral(pm.PeripheralDevice):
     def getDeltaValues(self):
         
         sensorValues = []
-        if self.serialPort.in_waiting > 15: #44 before  # Check if there are bytes in the input buffer
+        if self.serialPort.in_waiting > 44: #44 before  # Check if there are bytes in the input buffer
             # read all bytes
             while self.serialPort.in_waiting > 0:
                 # keep reading until no bytes
                 try:
                         
-                    byte = self.serialPort.read(16) #45  # Read a single byte from the serial port
-                    print(byte)
+                    byte = self.serialPort.read(45) #45  # Read a single byte from the serial port
                     #print(byte)
                     self.comportBuffer = list(bytearray(byte))  # Add the byte to the list
                 except Exception as e:
@@ -65,7 +64,7 @@ class TouchScreenPeripheral(pm.PeripheralDevice):
             
     def processTheRecieveByte(self):
         # check that the delta values are available on the comport buffer
-        if len(self.comportBuffer) == 16: #45 before
+        if len(self.comportBuffer) == 45: #45 before
             # throw out the extreneous bytes
             self.comportBuffer[0:7] = [] # 7 before
             self.comportBuffer[-3:-1] = [] # 3 before
@@ -86,4 +85,16 @@ class TouchScreenPeripheral(pm.PeripheralDevice):
     def printDeltaValues(self):
         print(self.name)
         print(self.sensorDataMatrix)
-            
+
+# =============================================================================
+# Touchscreen = TouchScreenPeripheral("test touch")
+# 
+# Touchscreen.connect("COM7")
+# 
+# Touchscreen.writeDeltaCommand()
+# 
+# Touchscreen.getDeltaValues()
+# 
+# Touchscreen.printDeltaValues()
+# 
+# =============================================================================

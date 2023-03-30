@@ -153,7 +153,7 @@ class TactileDisplay(pd.PeripheralDevice):
         """ sets a desired state of the dot matrix """
         for rowIndex,row in enumerate(newState):
             for elemIndex,elem in enumerate(row):
-                self.__desiredState[rowIndex][elemIndex] = copy.deepcopy(elem)
+                self.__desiredState[rowIndex][elemIndex] = copy.deepcopy(int(elem))
                 
     def push_desiredState(self):
         """ sends the desired state of the dot matrix to the embedded side resulting in a refresh"""     
