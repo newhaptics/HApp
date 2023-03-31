@@ -3,6 +3,7 @@
 Created on Wed Dec 14 09:17:50 2022
 
 @author: Derek Joslin
+
 """
 
 import SlidesToolSelector as sts
@@ -55,6 +56,17 @@ class SlidesMaster():
         self.currentSlide = 0
         self.slidesDictionary = {}
         #super().__init__(toolKeyList, toolParameterDictionary)
+        
+        
+        # get the touchscreen
+        self.Touchscreen = self.Controller.HAppControlCenter.getPeripheral("Touchscreen")
+        
+        self.TouchFlag = so.TouchFlag("TouchFlag")
+        self.Controller.HAppControlCenter.addFlag(self.TouchFlag)
+        
+        # get the coordinate system
+        self.CoordinateSystem = self.Controller.HAppControlCenter.CoordinateSystem
+        
         
     def selectTool(self, toolKey):
         # clear all options on the tool
@@ -133,6 +145,49 @@ class SlidesMaster():
 #     def getSlideData(self):
 #         return self.BrailleDisplay.desired()
 # =============================================================================
+
+    def beginAutoExecuteParameters(self):
+        # launch the operation
+        self.AutoExecuteParameterOperation = so.AutoExecuteParameterOperation("AutoExecuteParameterOperation", self, self.TouchFlag)
+        self.Controller.HAppControlCenter.addOperation(self.AutoExecuteParameterOperation)
+
+    def endAutoExecuteParameters(self):
+        # launch the operation
+        self.Controller.HAppControlCenter.killOperation(self.AutoExecuteParameterOperation)
+        self.Controller.HAppControlCenter.removeOperation("AutoExecuteParameterOperation")
+
+
+    def getTouchPoints(self):
+        # get the touchpoints for the touchscreen
+# =============================================================================
+#         self.Touchscreen.writeDeltaCommand()
+#         self.Touchscreen.getDeltaValues()
+# =============================================================================
+        touchPoints = self.Touchscreen.findTouchPoints()
+
+        # convert to tactile coordinates
+        pinPointList = []
+        for touchPoint in touchPoints:
+            if touchPoint[0] == -1:
+                pass
+            else:
+                #print(touchPoint)
+                scaledDict = self.CoordinateSystem.scale(touchPoint[1],touchPoint[0],"Touchscreen")
+                
+                xTouchPin = int(scaledDict["TactileDisplay"][0])
+                yTouchPin = int(scaledDict["TactileDisplay"][1])
+                
+                touchPinPoint = (xTouchPin,yTouchPin)
+                
+                pinPointList.append(touchPinPoint)
+
+        self.TouchFlag.state = pinPointList
+
+    def registerTouchParameters(self):
+        # get the touch points
+        pinPointList = self.TouchFlag.state
+        for pinPoint in pinPointList:
+            self.parameterClicked((pinPoint[1], pinPoint[0]))
 
     def loadNextSlide(self):
         if self.currentSlide < self.nSlides:

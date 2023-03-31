@@ -40,39 +40,47 @@ class ToolExecutionOperation(rs.RomOperation):
         self.createDebugString()
         
     def checkFlagConditions(self):
-        # grab the state of ToolFlag
-        selectedTool = self.ToolFlag.state
-        
-        # grab the parameters of ToolFlag
-        selectedParameters = self.ToolFlag.parameters
-        
-        # Using slidesTools determine the condition
-        toolFunctions = self.Toolchain.toolFunctions
-        
-        toolKeyList = []
-        for toolKey in toolFunctions:
-            toolKeyList.append(toolKey)
-        
-        # full copy this
-        toolParameterDictionary = self.Toolchain.toolParameters
-        
-        # if state is in toolKeyList it is a legitimate tool
-        if selectedTool in toolKeyList:
-            # tool is legitimate
-            neededParameters = toolParameterDictionary[selectedTool]
-            if len(selectedParameters) == len(neededParameters):
-                # if there are enough porameters to execute the tool then execute
-                # if the number of tool execution parameters is greater than 0
-                return True
-            elif len(selectedParameters) > len(neededParameters):
-                # check if the selected parameters are too numerous
-                print("error more parameters than needed")
-                return False
+        try:
+            # grab the state of ToolFlag
+            selectedTool = self.ToolFlag.state
+            
+            # grab the parameters of ToolFlag
+            selectedParameters = self.ToolFlag.parameters
+            
+            # Using slidesTools determine the condition
+            toolFunctions = self.Toolchain.toolFunctions
+            
+            toolKeyList = []
+            for toolKey in toolFunctions:
+                toolKeyList.append(toolKey)
+            
+            # full copy this
+            toolParameterDictionary = self.Toolchain.toolParameters
+            
+            # if state is in toolKeyList it is a legitimate tool
+            if selectedTool in toolKeyList:
+                # tool is legitimate
+                neededParameters = toolParameterDictionary[selectedTool]
+                self.ToolFlag.neededParameters = len(neededParameters)
+                if len(selectedParameters) == len(neededParameters):
+                    # if there are enough porameters to execute the tool then execute
+                    # if the number of tool execution parameters is greater than 0
+                    return True
+                elif len(selectedParameters) > len(neededParameters):
+                    # check if the selected parameters are too numerous
+                    print("error more parameters than needed")
+                    
+                    # auto clear the parameters
+                    self.ToolFlag.parameters = []
+                    return False
+                else:
+                    return False
             else:
+                # tool is not legitimate
                 return False
-        else:
-            # tool is not legitimate
-            return False
+        except Exception as e:
+            print(e)
+            self.ToolFlag.parameters = []
         
     def stopOperation(self):
         # delete the timer for the operation by running the super class function
@@ -82,42 +90,52 @@ class ToolExecutionOperation(rs.RomOperation):
         self.isStopped = False
         
     def execute(self):
-        # execute the proper tool
-        # grab the state of ToolFlag
-        selectedTool = self.ToolFlag.state
-        
-        # grab the parameters of ToolFlag
-        selectedParameters = self.ToolFlag.parameters
-        
-        # Using slidesTools determine the condition
-        toolFunctions = self.Toolchain.toolFunctions
-        
-        toolKeyList = []
-        for toolKey in toolFunctions:
-            toolKeyList.append(toolKey)
-        
-        # full copy this
-        toolParameterDictionary = self.Toolchain.toolParameters
-        
-        parameterKeys = toolParameterDictionary[selectedTool]
-        
-        print("tool executed {}".format(self.ToolFlag.state))
-        
-        funcHandle = toolFunctions[selectedTool]
-        toolParameterKwargs = dict(zip(parameterKeys, selectedParameters))
-        
-        self.Toolchain.setTool(funcHandle, toolParameterKwargs)
-        
-        self.Toolchain.executeSelectedTool()
-
-        self.TactileDisplay.refresh()
-        
-        if len(selectedParameters) == 0:
-            self.ToolFlag.clearState()
-            self.ToolFlag.clearParameters()
-        else:
-            self.ToolFlag.clearParameters()
+        try:
+            # execute the proper tool
+            # grab the state of ToolFlag
+            selectedTool = self.ToolFlag.state
             
+            # grab the parameters of ToolFlag
+            selectedParameters = self.ToolFlag.parameters
+            
+            # Using slidesTools determine the condition
+            toolFunctions = self.Toolchain.toolFunctions
+            
+            toolKeyList = []
+            for toolKey in toolFunctions:
+                toolKeyList.append(toolKey)
+            
+            # full copy this
+            toolParameterDictionary = self.Toolchain.toolParameters
+            
+            parameterKeys = toolParameterDictionary[selectedTool]
+            
+            print("tool executed {}".format(self.ToolFlag.state))
+            
+            funcHandle = toolFunctions[selectedTool]
+            toolParameterKwargs = dict(zip(parameterKeys, selectedParameters))
+            
+            # add in auto clear
+            if self.ToolFlag.autoClear:
+                clearHandle = toolFunctions["selectClear"]
+                self.Toolchain.setTool(clearHandle, {})
+                self.Toolchain.executeSelectedTool()
+            
+            
+            self.Toolchain.setTool(funcHandle, toolParameterKwargs)
+            
+            self.Toolchain.executeSelectedTool()
+    
+            self.TactileDisplay.refresh()
+            
+            if len(selectedParameters) == 0:
+                self.ToolFlag.clearState()
+                self.ToolFlag.clearParameters()
+            else:
+                self.ToolFlag.clearParameters()
+        except Exception as e:
+            print(e)
+            self.ToolFlag.parameters = []
 
 class LoadSlideOperation(rs.RomOperation):
     
@@ -201,7 +219,7 @@ class UpdateSlidesGuiOperation(rs.RomOperation):
         # execute the function continuously until otherwise
         executionParameters = {
             "executeDelay": 0, # a delay in milliseconds that starts the execution of the Operation after the flag dependencies have been met
-            "executeContinuously": False, # a boolean value that determines if the Operation will execute forever
+            "executeContinuously": False, # a boolean value that determines if the Operation will execute forever    
         }
         
         self.setExecutionParameters(executionParameters)
@@ -225,25 +243,107 @@ class UpdateSlidesGuiOperation(rs.RomOperation):
 
         self.RomVisualization.show()
 
+class AutoExecuteParameterOperation(rs.RomOperation):
+
+    def __init__(self, name, MasterModel, TouchFlag):
+        super().__init__(name)
+        
+# =============================================================================
+#         # inputs to the operation
+#         self.MasterModel = MasterModel
+#         self.inputDictionary[self.MasterModel.name] = self.MasterModel
+# =============================================================================
+        self.MasterModel = MasterModel        
+
+# =============================================================================
+#         # inputs to the operation
+#         self.Touchscreen = Touchscreen
+#         self.inputDictionary[self.Touchscreen.name] = self.Touchscreen
+# =============================================================================
+        
+        self.oldTouchPoints = self.MasterModel.getTouchPoints()
+        
+        # outputs to the ToolFlag
+        self.TouchFlag = TouchFlag
+        self.outputDictionary[self.TouchFlag.name] = self.TouchFlag
+        
+        # provide a description
+        self.description = "checks if the touch inputs have changed and then sets tool parameters to those changed touch inputs."
+        
+        # execute the function continuously until otherwise
+        executionParameters = {
+            "executeOnFlags": [self.TouchFlag], # a set of flag dependencies that when met start executing the Operation
+            "executeDelay": 0, # a delay in milliseconds that starts the execution of the Operation after the flag dependencies have been met
+        }
+        
+        self.setExecutionParameters(executionParameters)
+        
+        self.executable = self.execute
+        
+        self.createDebugString() 
+        
+        
+    def checkFlagConditions(self):
+        # grab the state of TouchFlag
+        self.MasterModel.getTouchPoints()
+        
+        # get the current state of the tactile display
+        #currentState = self.TactileDisplay.return_currentState()
+        if self.TouchFlag.state != self.oldTouchPoints:
+            # compare the flag matrix to the current state of the Tactile Display
+            self.oldTouchPoints = self.TouchFlag.state
+            print(self.oldTouchPoints)
+            return True
+        else:
+            # if they are not the same then return false
+            return False
+
+    def stopOperation(self):
+        # delete the timer for the operation by running the super class function
+        super().stopOperation()
+        
+        # mark isStopped as false so the function is not killed
+        self.isStopped = False
+
+    def execute(self):
+        # execute the touch points
+        self.MasterModel.registerTouchParameters()
+
+
+class TouchFlag(rs.RomFlag):
+    
+    def __init__(self, name):
+        super().__init__(name)
+        self.debugString = "create this flag to store the touch points of the touch screen as pin points"
+        self.state = []
+
 class ToolFlag(rs.RomFlag):
     
     def __init__(self, name):
         super().__init__(name)
         self.debugString = "This flag indicates the state of the selected tool and tool parameters"
+        self.neededParameters = 0
         self.parameters = []
+        self.autoClear = 0
+        
+        # auto execute mode
+        self.autoExecute = 0
         
     def clearState(self):
         self.state = 0
         self.parameters.clear()
         self.debugString = "parameters: {}".format(self.parameters)        
+        self.debugString += "\nparameter # {}".format(self.neededParameters)
         
     def clearParameters(self):
         self.parameters.clear()
         self.debugString = "parameters: {}".format(self.parameters)        
-        
+        self.debugString += "\nparameter # {}".format(self.neededParameters)
+
     def addParameter(self, param):
         self.parameters.append(param)
         self.debugString = "parameters: {}".format(self.parameters)
+        self.debugString += "\nparameter # {}".format(self.neededParameters)
 
         
 class DisplayFlag(rs.RomFlag):
@@ -259,5 +359,3 @@ class DisplayFlag(rs.RomFlag):
         
     def setMatrix(self, state):
         self.matrix = state
-
-

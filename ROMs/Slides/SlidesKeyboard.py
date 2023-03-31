@@ -16,14 +16,10 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
     def __init__(self, MasterModel):
         super().__init__()
         self.MasterModel = MasterModel
-        
-        # get the touchscreen
-        self.Touchscreen = self.MasterModel.Controller.HAppControlCenter.getPeripheral("Touchscreen")
-        
-        # get the coordinate system
-        self.CoordinateSystem = self.MasterModel.Controller.HAppControlCenter.CoordinateSystem
        
-        
+        # get the tool flag
+        self.ToolFlag = self.MasterModel.Controller.HAppControlCenter.getFlag("ToolFlag")
+ 
         # check if the touchscreen is attached or not
         VisualizerOperator = self.MasterModel.Controller.HAppControlCenter.getOperation("TouchVisualizerRefreshOperation")
         if VisualizerOperator is not None:
@@ -36,35 +32,6 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
             self.VisualizerOperator = VisualizerOperator
         else:
             print("no device attached")
-
-    def getTouchPoints(self):
-        # get the touchpoints for the touchscreen
-        self.Touchscreen.writeDeltaCommand()
-        self.Touchscreen.getDeltaValues()
-        touchPoints = self.Touchscreen.findTouchPoints()
-        
-        
-        
-        # convert to tactile coordinates
-        pinPointList = []
-        for touchPoint in touchPoints:
-            if touchPoint[0] == -1:
-                pass
-            else:
-                #print(touchPoint)
-                scaledDict = self.CoordinateSystem.scale(touchPoint[1],touchPoint[0],"Touchscreen")
-                
-                
-                xTouchPin = int(scaledDict["TactileDisplay"][0])
-                yTouchPin = int(scaledDict["TactileDisplay"][1])
-                
-                touchPinPoint = (xTouchPin,yTouchPin)
-                
-                pinPointList.append(touchPinPoint)
-            
-            
-        return pinPointList
-        
 
     def KeyLeftHandler(self):
         #perform cursor movement left
@@ -89,10 +56,12 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
     def KeySpaceHandler(self):
         # Space bar event for visualizer operator
         # self.VisualizerOperator.clickSelect(xCoordinate, yCoordinate)
-        
-        pinSelected = self.VisualizerOperator.getPinPosition()
-        print(pinSelected)
-        self.MasterModel.parameterClicked([int(pinSelected[1]), int(pinSelected[0])])
+        pass
+# =============================================================================
+#         pinSelected = self.VisualizerOperator.getPinPosition()
+#         print(pinSelected)
+#         self.MasterModel.parameterClicked([int(pinSelected[1]), int(pinSelected[0])])
+# =============================================================================
         
     def Key1Handler(self):
         self.MasterModel.selectTool("drawDot")
@@ -129,9 +98,28 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
     def KeyPageDownHandler(self):
         self.MasterModel.loadPreviousSlide()
 
+    def KeyCapsLockHandler(self):
+        if self.ToolFlag.autoExecute:
+            print("auto execute off")
+            self.ToolFlag.autoExecute = 0
+            self.MasterModel.endAutoExecuteParameters()
+        else:
+            print("auto execute on")
+            self.ToolFlag.autoExecute = 1
+            self.MasterModel.beginAutoExecuteParameters()
+
+    def Key0Handler(self):
+        if self.ToolFlag.autoClear:
+            print("auto clear off")
+            self.ToolFlag.autoClear = 0
+        else:
+            print("auto clear on")
+            self.ToolFlag.autoClear = 1
+            
+
     def KeyShiftHandler(self):
         # get the current cursor position
-        pinPointList = self.getTouchPoints()
-        touchPoint = pinPointList[0]
-        if len(pinPointList) > 0:
-            self.MasterModel.parameterClicked((touchPoint[1], touchPoint[0]))
+        print("registering touch")
+        self.MasterModel.getTouchPoints()
+        self.MasterModel.registerTouchParameters()
+        

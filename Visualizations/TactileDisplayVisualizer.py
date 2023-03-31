@@ -27,10 +27,10 @@ class TactileDisplayVisualizer(vm.Visualization):
         self.setAttribute(qc.Qt.WA_TransparentForMouseEvents, True)
 
         self.setStyleSheet("border: 1px dotted black;")
-        self.uniformDot = False
+        self.uniformDot = True
         self.highlightPin = (0,0)
         self.dotSize = 20
-        self.BrailleSize = 4
+        self.BrailleSize = 20
         self.setMouseTracking(True)
         # create display size and state stuff
         self.nRows = displaySize[0]

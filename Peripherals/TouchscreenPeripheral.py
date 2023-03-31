@@ -20,8 +20,8 @@ class TouchScreenPeripheral(pm.PeripheralDevice):
         self.nSensorColumns = 7 
         
         # intialize touchscreen data matrix to a default size
-        self.sensorDataMatrix = np.ones([self.nSensorRows, self.nSensorColumns])    
-        
+        self.sensorDataMatrix = np.ones([self.nSensorRows, self.nSensorColumns])
+
         # get the list of touch points
         self.touchPointList = []
 
@@ -39,29 +39,29 @@ class TouchScreenPeripheral(pm.PeripheralDevice):
 
         # assign the serial port of the touchscreen
         self.serialPort = serial.Serial(comString, baudrate, timeout=timeout)
-    
+
     def writeDeltaCommand(self):
         # write the command for the delta values to the port
         self.serialPort.write(self.deltaCommand)
-    
+
     def getDeltaValues(self):
-        
+
         sensorValues = []
         if self.serialPort.in_waiting > 44: #44 before  # Check if there are bytes in the input buffer
             # read all bytes
             while self.serialPort.in_waiting > 0:
                 # keep reading until no bytes
                 try:
-                        
+
                     byte = self.serialPort.read(45) #45  # Read a single byte from the serial port
                     #print(byte)
                     self.comportBuffer = list(bytearray(byte))  # Add the byte to the list
                 except Exception as e:
                     print(e)
-            
+
             # put bytes from comportBuffer into the data matrix
             self.processTheRecieveByte()
-            
+
     def processTheRecieveByte(self):
         # check that the delta values are available on the comport buffer
         if len(self.comportBuffer) == 45: #45 before
