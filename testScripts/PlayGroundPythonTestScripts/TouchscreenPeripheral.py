@@ -54,7 +54,7 @@ class TouchScreenPeripheral(pm.PeripheralDevice):
                 try:
                         
                     byte = self.serialPort.read(45) #45  # Read a single byte from the serial port
-                    #print(byte)
+                    print(byte)
                     self.comportBuffer = list(bytearray(byte))  # Add the byte to the list
                 except Exception as e:
                     print(e)

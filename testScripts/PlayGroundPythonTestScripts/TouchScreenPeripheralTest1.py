@@ -25,10 +25,10 @@ def generateTouchScreensList():
 
     Touchscreen = itp.IntegratedTouchscreenPeripheral("touch")
 
-    Touchscreen.connectNewTouchscreen("COM30")
-    Touchscreen.connectNewTouchscreen("COM33")
-    Touchscreen.connectNewTouchscreen("COM7")
-    Touchscreen.connectNewTouchscreen("COM34")
+    Touchscreen.connectNewTouchscreen("COM50")
+    Touchscreen.connectNewTouchscreen("COM42")
+    Touchscreen.connectNewTouchscreen("COM51")
+    Touchscreen.connectNewTouchscreen("COM52")
     
     return Touchscreen
 

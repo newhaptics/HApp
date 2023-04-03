@@ -7,7 +7,7 @@ Created on Mon Mar 13 22:21:03 2023
 """
 
 import Imprint as im
-#import VoiceSynthesizer as vs
+import VoiceSynthesizer as vs
 import HapticsEngine as he
 import RomLauncher as rl
 
@@ -24,7 +24,7 @@ class LLMOS(im.Imprint):
         self.FileManager = self.HapticsEngine.FileManager
 
         # create the cave johnson voice
-        #self.Voice = vs.VoiceSynthesizer(elevenLabsKey)
+        self.Voice = vs.VoiceSynthesizer(elevenLabsKey)
 
         # create the RomLauncher
         self.romDictionary = self.FileManager.createRomDirectory()

@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QWidget, QGridLayout,
 from PyQt5 import QtGui as qg
 from PyQt5 import QtCore as qc
 import VisualizationManager as vm
+import time
 import numpy as np
 import math
 
@@ -105,6 +106,7 @@ class IntegratedTouchscreenVisualizer(vm.Visualization):
         
     def getDeltaValues(self):
         self.integratedTouchscreen.writeDeltaCommand()
+        time.sleep(0.05)
         self.integratedTouchscreen.getDeltaValues()
         self.setSensorValues()
         

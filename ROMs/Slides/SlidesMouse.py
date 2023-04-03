@@ -27,15 +27,14 @@ class SlidesMouseHandles(rs.RomMouseHandles):
             self.VisualizerOperator = VisualizerOperator
         else:
             print("no device attached")
-                
-                
+
     def LeftButtonHandler(self, xCoordinate, yCoordinate):
         VisualizerOperation = self.MasterModel.Controller.HAppControlCenter.getOperation("TouchVisualizerRefreshOperation")
         if VisualizerOperation is not None:
             self.MasterModel.Controller.HAppControlCenter.interruptExecute(lambda x=xCoordinate,y=yCoordinate: VisualizerOperation.clickSelect(x, y))
         else:
             pass
-     
+
         
         # Mouse click event for visualizer operator
         scaler = self.VisualizerOperator.scaler

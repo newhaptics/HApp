@@ -92,10 +92,11 @@ class DisplaySerial(serial.Serial):
         byteList = [padList[n:n+N] for n in range(0, len(rowData), N)]
         
         for byte in byteList: 
-            msbString = ''.join(map(str, byte))
-            lsbString = '0b' + ''.join(reversed(msbString))
+            msbString = '0b' + ''.join(map(str, byte))
             
-            output.append(int(lsbString, base=2))
+            #lsbString = '0b' + ''.join(reversed(msbString))
+            
+            output.append(int(msbString, base=2))
         
 # =============================================================================
 #         print("row index to edit {}".format(rowIndex))

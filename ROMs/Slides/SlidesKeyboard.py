@@ -98,6 +98,19 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
     def KeyPageDownHandler(self):
         self.MasterModel.loadPreviousSlide()
 
+    def KeyF6Handler(self):
+        # decrease stroke
+        oldStroke = self.MasterModel.TactileDisplay.width
+        if oldStroke > 1:
+            self.MasterModel.TactileDisplay.stroke(oldStroke - 1)
+            print("stroke decreased to {}".format(oldStroke - 1))
+        
+    def KeyF7Handler(self):
+        # increase stroke
+        oldStroke = self.MasterModel.TactileDisplay.width
+        self.MasterModel.TactileDisplay.stroke(oldStroke + 1)
+        print("stroke increased to {}".format(oldStroke + 1))
+
     def KeyCapsLockHandler(self):
         if self.ToolFlag.autoExecute:
             print("auto execute off")

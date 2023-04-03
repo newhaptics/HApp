@@ -12,7 +12,7 @@ import LLMOS as llm
 import sys
 
 elevenLabsKey = "188c0f632906bc15892cf9955e3c1253"
-openAIKey = "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"
+openAIKey = "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"
 HapticOS = llm.LLMOS(openAIKey, elevenLabsKey)
 
 # import the remaining HapticOS Libraries

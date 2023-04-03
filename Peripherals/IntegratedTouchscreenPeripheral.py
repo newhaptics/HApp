@@ -107,6 +107,8 @@ class IntegratedTouchscreenPeripheral(pm.PeripheralDevice):
         
         #print(self.interpolatedDataMatrix)
         
+        filteredDataMatrix[filteredDataMatrix > 30] = 0
+        
         #sys.exit()
         self.integratedDataMatrix = filteredDataMatrix
 
