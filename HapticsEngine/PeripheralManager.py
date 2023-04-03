@@ -32,7 +32,7 @@ class PeripheralManager:
         return self.peripheralDictionary.get(peripheralName)
         
     def getAllDevices(self):
-        return self.peripheralDictionary.values()
+        return list(self.peripheralDictionary.values())
                 
     def disconnectDevice(self, peripheralName):
         self.peripheralDictionary[peripheralName].disconnect()

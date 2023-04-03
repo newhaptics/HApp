@@ -47,10 +47,19 @@ class SlidesTool(rs.RomState):
         pass
             
     def startState(self):
-        #create a text editor object for this state
+        # create the slides object
         print('Slides Tools Begin')
-        self.MasterModel = sm.SlidesMaster(self.Controller)
-        self.MasterModel.selectTool("drawDot")
+        if len(self.Controller.HAppControlCenter.getAllPeripherals()) < 2:
+            # touch screen not connected
+            print("touchscreen not connected")
+            self.MasterModel = sm.SlidesMaster(self.Controller)
+            self.MasterModel.selectTool("drawDot")
+        else:
+            # touch screen connected
+            print("touchscreen is connected")
+            self.MasterModel = sm.SlidesMaster(self.Controller)
+            self.MasterModel.touchscreenStartUp()
+            self.MasterModel.selectTool("drawDot")
 
         # set the mouse handler for the rom
         MousePeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Mouse")

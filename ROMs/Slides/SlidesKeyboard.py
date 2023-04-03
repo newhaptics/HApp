@@ -34,24 +34,53 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
             print("no device attached")
 
     def KeyLeftHandler(self):
-        #perform cursor movement left
+        # perform cursor movement left
         self.MasterModel.CanvasNavigation.moveLeft()
         self.MasterModel.updateViewSpace()
-        
+
     def KeyUpHandler(self):
-        #perform cursor movement up
+        # perform cursor movement up
         self.MasterModel.CanvasNavigation.moveUp()
         self.MasterModel.updateViewSpace()
-        
+
     def KeyRightHandler(self):
-        #perform cursor movement right
+        # perform cursor movement right
         self.MasterModel.CanvasNavigation.moveRight()
         self.MasterModel.updateViewSpace()
-        
+
     def KeyDownHandler(self):
-        #perform cursor movement down
+        # perform cursor movement down
         self.MasterModel.CanvasNavigation.moveDown()
         self.MasterModel.updateViewSpace()
+
+    def KeyWHandler(self):
+        # move the cursor around
+        if self.cursor[1] < self.MasterModel.displaySize[0]:
+            self.cursor[1] += 1
+            print("current cursor position {}".format(self.cursor))
+        else:
+            print("hit the bottom edge of screen")
+
+    def KeyAHandler(self):
+        if self.cursor[0] > self.MasterModel.displaySize[1]:
+            self.cursor[0] -= 1
+            print("current cursor position {}".format(self.cursor))
+        else:
+            print("hit the left edge of screen")
+
+    def KeySHandler(self):
+        if self.cursor[1] < self.MasterModel.displaySize[0]:
+            self.cursor[1] -= 1
+            print("current cursor position {}".format(self.cursor))
+        else:
+            print("hit the top edge of screen")
+
+    def KeyDHandler(self):
+        if self.cursor[0] < self.MasterModel.displaySize[1]:
+            self.cursor[0] += 1
+            print("current cursor position {}".format(self.cursor))
+        else:
+            print("hit the right edge of screen")
 
     def KeySpaceHandler(self):
         # Space bar event for visualizer operator
@@ -65,24 +94,19 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
         
     def Key1Handler(self):
         self.MasterModel.selectTool("drawDot")
-        
+
     def Key2Handler(self):
         self.MasterModel.selectTool("drawLine")
-        
+
     def Key3Handler(self):
         self.MasterModel.selectTool("drawCurve")
-        
-# =============================================================================
-#     def KeyF4Handler(self):
-#         self.MasterModel.selectTool("drawCircle")
-# =============================================================================
-        
+
     def Key5Handler(self):
         self.MasterModel.selectTool("drawRectangle")
 
     def Key6Handler(self):
         self.MasterModel.selectTool("drawTriangle")
-        
+
     def Key7Handler(self):
         self.MasterModel.selectTool("drawPolygon")
 
@@ -94,7 +118,7 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
 
     def KeyPageUpHandler(self):
         self.MasterModel.loadNextSlide()
-        
+
     def KeyPageDownHandler(self):
         self.MasterModel.loadPreviousSlide()
 
@@ -112,6 +136,7 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
         print("stroke increased to {}".format(oldStroke + 1))
 
     def KeyCapsLockHandler(self):
+        #if self.MasterModel.isTouchConnected:
         if self.ToolFlag.autoExecute:
             print("auto execute off")
             self.ToolFlag.autoExecute = 0
@@ -122,17 +147,20 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
             self.MasterModel.beginAutoExecuteParameters()
 
     def Key0Handler(self):
+        #if self.MasterModel.isTouchConnected:
         if self.ToolFlag.autoClear:
             print("auto clear off")
             self.ToolFlag.autoClear = 0
         else:
             print("auto clear on")
             self.ToolFlag.autoClear = 1
-            
 
     def KeyShiftHandler(self):
         # get the current cursor position
-        print("registering touch")
-        self.MasterModel.getTouchPoints()
-        self.MasterModel.registerTouchParameters()
-        
+        if self.MasterModel.isTouchConnected:
+            print("registering touch")
+            self.MasterModel.getTouchPoints()
+            self.MasterModel.registerTouchParameters()
+        else:
+            # use generic cursor
+            self.MasterModel.cursorClicked()

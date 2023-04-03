@@ -14,15 +14,18 @@ import SlidesCanvasNav as scn
 import SlidesFileManagement as sfm
 
 class SlidesMaster():
-    
+
     def __init__(self, Controller):
         #contains all classes required to run a slides rom
-        
+
         self.Controller = Controller
-        
+
         self.TactileDisplay = self.Controller.HAppControlCenter.getPeripheral("Fourplex")
         self.displaySize = self.TactileDisplay.return_displaySize()
-        
+
+        # create a cursor
+        self.cursor = [0,0]
+
         # create the ability to navigate and load slides
         self.FileManager = sfm.SlidesFileManagement(self.Controller.HAppControlCenter.FileManager)
 
@@ -33,7 +36,7 @@ class SlidesMaster():
         # Create the state flag
         self.DisplayFlag = so.DisplayFlag("DisplayFlag")
         self.Controller.HAppControlCenter.addFlag(self.DisplayFlag)
-        
+
         # Create main operations
         self.ToolExecuterOperation = so.ToolExecutionOperation("ToolExecuterOperation", self.TactileDisplay, self.ToolFlag)
         self.Controller.HAppControlCenter.addOperation(self.ToolExecuterOperation)
@@ -41,7 +44,7 @@ class SlidesMaster():
         # Operation for opening and loading slides
         self.SlideOperation = so.LoadSlideOperation("SlideOperation", self.TactileDisplay, self.DisplayFlag)
         self.Controller.HAppControlCenter.addOperation(self.SlideOperation)
-        
+
         #Create the handlers
         self.MouseHandles = sm.SlidesMouseHandles(self)
         self.KeyboardHandles = sk.SlidesKeyboardHandles(self)
@@ -55,96 +58,43 @@ class SlidesMaster():
         self.nSlides = 0
         self.currentSlide = 0
         self.slidesDictionary = {}
-        #super().__init__(toolKeyList, toolParameterDictionary)
-        
-        
+
+        self.isTouchConnected = 0
+
+    def touchscreenStartUp(self):
         # get the touchscreen
         self.Touchscreen = self.Controller.HAppControlCenter.getPeripheral("Touchscreen")
-        
+
         self.TouchFlag = so.TouchFlag("TouchFlag")
         self.Controller.HAppControlCenter.addFlag(self.TouchFlag)
-        
+
         # get the coordinate system
         self.CoordinateSystem = self.Controller.HAppControlCenter.CoordinateSystem
-        
-        
+        self.isTouchConnected = 1
+
     def selectTool(self, toolKey):
         # clear all options on the tool
         self.ToolFlag.clearState()
-        
         # set the state of the flag to the currently selected tool
         self.ToolFlag.setState(toolKey)
-        
-        #print(self.ToolFlag.getState())
-# =============================================================================
-#         super().selectTool(toolKey)
-#         # if there are no input parmeters auto execute
-#         print(self.parametersToExecute)
-#         if len(self.parametersToExecute) == 0:
-#             parameterKwargs = {}
-#             selectedTool = toolKey
-#             
-#             print(selectTool)
-#             print(parameterKwargs)
-#             
-#             self.executeTool(selectedTool,parameterKwargs)
-# =============================================================================
-        
+
     def parameterClicked(self, parameter):
         # add the parameter to the Tool Flag
         if self.ToolFlag.state:
             self.ToolFlag.addParameter(parameter)
         else:
             print("no tool selected")
-# =============================================================================
-#         executionResult = self.inputParameter(parameter)
-#         
-#         if executionResult != 0:
-#             # if result of click is not 0 then execute the braille display command
-#             selectedTool = executionResult[0]
-#             parameterKwargs = executionResult[1]
-#             self.executeTool(selectedTool,parameterKwargs)
-#         
-#         print("Result of click is {}".format(executionResult))
-# =============================================================================
-        
+
     def executeTool(self, selectedTool, parameterKwargs):
         print("{} has been executed with {}".format(selectedTool, parameterKwargs))
-        
+
         # temporary function to make a tool operation with appropriate parameters and execute in the kernal
-# =============================================================================
-#         self.Controller.HAppControlCenter.pauseExecutingOperations()
-#         
-#         # load the tool function and the parameters into the tool execution operation
-#         self.ToolExecuterOperation.setTool(selectedTool, parameterKwargs)
-# 
-#         # execute the tool operation
-#         self.Controller.HAppControlCenter.singleExecuteOperation(self.ToolExecuterOperation)
-#         
-#         self.Controller.HAppControlCenter.resumeExecutingOperations()
-# =============================================================================
-        
+
     def updateViewSpace(self):
         testMatrix = self.CanvasNavigation.extractViewSpace()
-        
+
         self.DisplayFlag.setState(1)
         self.DisplayFlag.setMatrix(testMatrix)
-        
-# =============================================================================
-#         # use matrix data to create an Operation which updates the display
-#         self.Controller.HAppControlCenter.pauseExecutingOperations()
-#         
-#         # create and set load slide operation
-#         self.LoadSlideOperation.setSlide(self.CanvasNavigation.extractViewSpace())
-#         self.Controller.HAppControlCenter.singleExecuteOperation(self.LoadSlideOperation)
-#         
-#         self.Controller.HAppControlCenter.resumeExecutingOperations()
-# =============================================================================
-        
-# =============================================================================
-#     def getSlideData(self):
-#         return self.BrailleDisplay.desired()
-# =============================================================================
 
     def beginAutoExecuteParameters(self):
         # launch the operation
@@ -156,13 +106,8 @@ class SlidesMaster():
         self.Controller.HAppControlCenter.killOperation(self.AutoExecuteParameterOperation)
         self.Controller.HAppControlCenter.removeOperation("AutoExecuteParameterOperation")
 
-
     def getTouchPoints(self):
         # get the touchpoints for the touchscreen
-# =============================================================================
-#         self.Touchscreen.writeDeltaCommand()
-#         self.Touchscreen.getDeltaValues()
-# =============================================================================
         touchPoints = self.Touchscreen.findTouchPoints()
 
         # convert to tactile coordinates
@@ -195,7 +140,7 @@ class SlidesMaster():
             self.loadSlide(self.currentSlide)
         else:
             self.loadSlide(1)
-        
+
     def loadPreviousSlide(self):
         if self.currentSlide > 1:
             self.currentSlide -= 1
@@ -209,16 +154,15 @@ class SlidesMaster():
             self.currentSlide = slideNum
             slideString = "Slide {}".format(slideNum)
             print(slideString)
-            
+
             #print(self.currentSlide)
             canvas = self.FileManager.openSlide(slideString)
-            
+
             # set the current canvas to the new slide
             self.CanvasNavigation.setCanvas(canvas)
-            
+
             # update the braille display with the new canvas
             self.updateViewSpace()
+
         except Exception as e:
             print(e)
-        
-        
