@@ -8,9 +8,9 @@ Created on Mon Feb 20 15:01:46 2023
 
 import RomAPI as rs
 
-import DefaultKeyboardHandles as dh
+#import DefaultKeyboardHandles as dh
 
-class PongKeyboardHandles(dh.DefaultKeyboardHandles):
+class PongKeyboardHandles(rs.RomKeyboardHandles):
     
     def __init__(self, GameFlag):
         super().__init__()

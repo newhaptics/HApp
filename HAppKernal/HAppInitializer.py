@@ -10,9 +10,10 @@ import cairo
 import serial
 import LLMOS as llm
 import sys
+from pynput import keyboard
 
 elevenLabsKey = "188c0f632906bc15892cf9955e3c1253"
-openAIKey = "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"
+openAIKey = "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"
 HapticOS = llm.LLMOS(openAIKey, elevenLabsKey)
 
 # import the remaining HapticOS Libraries
@@ -25,5 +26,13 @@ if __name__ == '__main__':
     app = qw.QApplication([])
 
     MainWindow = hm.HAppMainWindow(HapticOS)
+    
+    
+    key_listener = keyboard.Listener(on_press=HapticOS.onPress, on_release=HapticOS.onRelease)
+    key_listener.start()
+# =============================================================================
+#     with keyboard.Listener(on_press=HapticOS.onPress, on_release=HapticOS.onRelease, suppress=False) as listener:
+#         listener.join()
+# =============================================================================
     
     sys.exit(app.exec_())

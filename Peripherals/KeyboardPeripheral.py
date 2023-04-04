@@ -5,7 +5,7 @@ Created on Wed Oct 26 13:32:03 2022
 @author: Derek Joslin
 """
 
-from PyQt5 import QtCore as qc
+from pynput import keyboard
 
 import PeripheralDevice as pd
 
@@ -13,7 +13,7 @@ class KeyboardPeripheral(pd.PeripheralDevice):
     
     def __init__(self, name, KeyBoardHandles):
         super().__init__(name)
-        
+            
         # stores all the keys pressed and their order
         self.keyHistory = []
         
@@ -22,392 +22,401 @@ class KeyboardPeripheral(pd.PeripheralDevice):
         
         self.DefaultKeyboardHandles = KeyBoardHandles
         self.KeyboardHandles = KeyBoardHandles
-        
+
     def setNewKeyboardHandler(self, newKeyboardHandles):
 
         self.KeyboardHandles = newKeyboardHandles
-        
+
     def revertToDefaultHandler(self):
         
         self.KeyboardHandles = self.DefaultKeyboardHandles
-        
+
     def setDefaultHandler(self, DefaultKeyboardHandles):
         
         self.DefaultKeyboardHandles = DefaultKeyboardHandles
         self.KeyboardHandles = DefaultKeyboardHandles
-        
-      
-    def handleKeyPressEvent(self, keyPressEvent):
-        
-        key = keyPressEvent.key()
-      
+
+    def handleKeyPressEvent(self, key):
+
+        #key = keyPressEvent.key()
         try:
-            
-            self.debugString = "Key Pressed: {}".format(chr(key))
-            
+            if key.char:
+                
+                key = key.char
         except:
-            
+            pass
+        
+        try:
+
+            self.debugString = "Key Pressed: {}".format(chr(key))
+
+        except:
+
             self.debugString = "Key Pressed: {}".format(key)
-            
+
         # add the key to the key history list
         self.keyHistory.append(key)
-        
+
         # if more than 100 keys pressed pop
         if len(self.keyHistory) > 100:
             self.keyHistory.pop(0)
             
         if self.controlOn:
-            self.controlPressedHandlers(key)
+            #self.controlPressedHandlers(key)
+            pass
         else:
             try:
                 self.normalHandlers(key)
             except Exception as e:
                 print("key error: {}".format(e))
-            
+
     def normalHandlers(self, key):
-        
-        if key == qc.Qt.Key_Space:
+
+        if key == keyboard.Key.space:
             
             self.KeyboardHandles.KeySpaceHandler()
-            
-        elif key == qc.Qt.Key_Left:
-            
+
+        elif key == keyboard.Key.left:
+
             self.KeyboardHandles.KeyLeftHandler()
             
-        elif key == qc.Qt.Key_Up:
-            
+        elif key == keyboard.Key.up:
+
             self.KeyboardHandles.KeyUpHandler()
-        
-        elif key == qc.Qt.Key_Right:
-        
+
+        elif key == keyboard.Key.right:
+
             self.KeyboardHandles.KeyRightHandler()
-            
-        elif key == qc.Qt.Key_Down:
-        
+
+        elif key == keyboard.Key.down:
+
             self.KeyboardHandles.KeyDownHandler()
-            
-        elif key == qc.Qt.Key_A:
-        
+
+        elif key == 'a' or key == 'A':
+            #print("test")
+
             self.KeyboardHandles.KeyAHandler()
             
-        elif key == qc.Qt.Key_B:
+        elif key == 'b' or key == 'B':
         
             self.KeyboardHandles.KeyBHandler()
             
-        elif key == qc.Qt.Key_C:
+        elif key == 'c' or key == 'C':
         
             self.KeyboardHandles.KeyCHandler()
             
-        elif key == qc.Qt.Key_D:
+        elif key == 'd' or key == 'D':
         
             self.KeyboardHandles.KeyDHandler()
             
-        elif key == qc.Qt.Key_E:
+        elif key == 'e' or key == 'E':
         
             self.KeyboardHandles.KeyEHandler()
             
-        elif key == qc.Qt.Key_F:
+        elif key == 'f' or key == 'F':
         
             self.KeyboardHandles.KeyFHandler()
             
-        elif key == qc.Qt.Key_G:
+        elif key == 'g' or key == 'G':
         
             self.KeyboardHandles.KeyGHandler()
             
-        elif key == qc.Qt.Key_H:
+        elif key == 'h' or key == 'H':
         
             self.KeyboardHandles.KeyHHandler()
             
-        elif key == qc.Qt.Key_I:
+        elif key == 'i' or key == 'I':
         
             self.KeyboardHandles.KeyIHandler()
             
-        elif key == qc.Qt.Key_J:
+        elif key == 'j' or key == 'J':
         
             self.KeyboardHandles.KeyJHandler()
             
-        elif key == qc.Qt.Key_K:
+        elif key == 'k' or key == 'K':
         
             self.KeyboardHandles.KeyKHandler()
             
-        elif key == qc.Qt.Key_L:
+        elif key == 'l' or key == 'L':
         
             self.KeyboardHandles.KeyLHandler()
             
-        elif key == qc.Qt.Key_M:
+        elif key == 'm' or key == 'M':
         
             self.KeyboardHandles.KeyMHandler()
             
-        elif key == qc.Qt.Key_N:
+        elif key == 'n' or key == 'N':
         
             self.KeyboardHandles.KeyNHandler()
             
-        elif key == qc.Qt.Key_O:
+        elif key == 'o' or key == 'O':
         
             self.KeyboardHandles.KeyOHandler()
             
-        elif key == qc.Qt.Key_P:
+        elif key == 'p' or key == 'P':
         
             self.KeyboardHandles.KeyPHandler()
             
-        elif key == qc.Qt.Key_Q:
+        elif key == 'q' or key == 'Q':
         
             self.KeyboardHandles.KeyQHandler()
             
-        elif key == qc.Qt.Key_R:
+        elif key == 'r' or key == 'R':
         
             self.KeyboardHandles.KeyRHandler()
             
-        elif key == qc.Qt.Key_S:
+        elif key == 's' or key == 'S':
         
             self.KeyboardHandles.KeySHandler()
             
-        elif key == qc.Qt.Key_T:
+        elif key == 't' or key == 'T':
         
             self.KeyboardHandles.KeyTHandler()
             
-        elif key == qc.Qt.Key_U:
+        elif key == 'u' or key == 'U':
         
             self.KeyboardHandles.KeyUHandler()
             
-        elif key == qc.Qt.Key_V:
+        elif key == 'v' or key == 'V':
         
             self.KeyboardHandles.KeyVHandler()
             
-        elif key == qc.Qt.Key_W:
+        elif key == 'w' or key == 'W':
         
             self.KeyboardHandles.KeyWHandler()
             
-        elif key == qc.Qt.Key_X:
+        elif key == 'x' or key == 'X':
         
             self.KeyboardHandles.KeyXHandler()
             
-        elif key == qc.Qt.Key_Y:
+        elif key == 'y' or key == 'Y':
         
             self.KeyboardHandles.KeyYHandler()
             
-        elif key == qc.Qt.Key_Z:
+        elif key == 'z' or key == 'Z':
         
             self.KeyboardHandles.KeyZHandler()
             
-        elif key == qc.Qt.Key_Backspace:
-        
+        elif key == keyboard.Key.backspace:
+    
             self.KeyboardHandles.KeyBackSpaceHandler()
             
-        elif key == qc.Qt.Key_Enter:
+        elif key == keyboard.Key.enter:
         
             self.KeyboardHandles.KeyEnterHandler()
             
-        elif key == qc.Qt.Key_Return:
-        
-            self.KeyboardHandles.KeyReturnHandler()
-            
-        elif key == qc.Qt.Key_0:
+        elif key == '0':
             
             self.KeyboardHandles.Key0Handler()
         
-        elif key == qc.Qt.Key_1:
+        elif key == '1':
             
             self.KeyboardHandles.Key1Handler()
             
-        elif key == qc.Qt.Key_2:
+        elif key == '2':
             
             self.KeyboardHandles.Key2Handler()
             
-        elif key == qc.Qt.Key_3:
+        elif key == '3':
             
             self.KeyboardHandles.Key3Handler()
             
-        elif key == qc.Qt.Key_4:
+        elif key == '4':
             
             self.KeyboardHandles.Key4Handler()
             
-        elif key == qc.Qt.Key_5:
+        elif key == '5':
             
             self.KeyboardHandles.Key5Handler()
             
-        elif key == qc.Qt.Key_6:
+        elif key == '6':
             
             self.KeyboardHandles.Key6Handler()
             
-        elif key == qc.Qt.Key_7:
+        elif key == '7':
             
             self.KeyboardHandles.Key7Handler()
             
-        elif key == qc.Qt.Key_8:
+        elif key == '8':
             
             self.KeyboardHandles.Key8Handler()
             
-        elif key == qc.Qt.Key_9:
+        elif key == '9':
             
             self.KeyboardHandles.Key9Handler()
             
-        elif key == qc.Qt.Key_ParenLeft:
+        elif key == '(':
             
             self.KeyboardHandles.KeyParenLeftHandler()
             
-        elif key == qc.Qt.Key_ParenRight:
+        elif key == ')':
             
             self.KeyboardHandles.KeyParenRightHandler()
             
-        elif key == qc.Qt.Key_Comma:
+        elif key == ',':
             
             self.KeyboardHandles.KeyCommaHandler()
         
-        elif key == qc.Qt.Key_Plus:
+        elif key == '+':
             
             self.KeyboardHandles.KeyPlusHandler()
             
-        elif key == qc.Qt.Key_Minus:
+        elif key == '-':
             
             self.KeyboardHandles.KeyMinusHandler()
             
-        elif key == qc.Qt.Key_Asterisk:
+        elif key == '*':
             
             self.KeyboardHandles.KeyAsteriskHandler()
             
-        elif key == qc.Qt.Key_Period:
+        elif key == '.':
             
             self.KeyboardHandles.KeyPeriodHandler()
             
-        elif key == qc.Qt.Key_Slash:
+# =============================================================================
+#         elif key == '/':
+#             
+#             self.KeyboardHandles.Key key Handler()
+# =============================================================================
             
-            self.KeyboardHandles.KeySlashHandler()
-            
-        elif key == qc.Qt.Key_Colon:
+        elif key == ':':
             
             self.KeyboardHandles.KeyColonHandler()
             
-        elif key == qc.Qt.Key_Semicolon:
+        elif key == ';':
             
             self.KeyboardHandles.KeySemicolonHandler()
             
-        elif key == qc.Qt.Key_BracketLeft:
+        elif key == '[':
             
             self.KeyboardHandles.BracketLeftHandler()
             
-        elif key == qc.Qt.Key_BracketRight:
+        elif key == ']':
             
             self.KeyboardHandles.BracketRightHandler()
             
-        elif key == qc.Qt.Key_Equal:
+        elif key == '=':
             
             self.KeyboardHandles.EqualHandler()
             
-        elif key == qc.Qt.Key_Greater:
+        elif key == '>':
             
             self.KeyboardHandles.GreaterHandler()
             
-        elif key == qc.Qt.Key_Less:
+        elif key == '<':
             
             self.KeyboardHandles.LessHandler()
             
-        elif key == qc.Qt.Key_QuoteLeft:
+# =============================================================================
+#         elif key == keyboard.Key.QuoteLeft:
+#             
+#             self.KeyboardHandles.QuoteLeftHandler()
+#             
+#         elif key == keyboard.Key.QuoteDbl:
+#             
+#             self.KeyboardHandles.QuoteDblHandler()
+# =============================================================================
             
-            self.KeyboardHandles.QuoteLeftHandler()
-            
-        elif key == qc.Qt.Key_QuoteDbl:
-            
-            self.KeyboardHandles.QuoteDblHandler()
-            
-        elif key == qc.Qt.Key_PageUp:
+        elif key == keyboard.Key.page_up:
             
             self.KeyboardHandles.KeyPageUpHandler()
             
-        elif key == qc.Qt.Key_PageDown:
+        elif key == keyboard.Key.page_down:
             
             self.KeyboardHandles.KeyPageDownHandler()
             
-        elif key == qc.Qt.Key_F1:
+        elif key == keyboard.Key.f1:
             
             self.KeyboardHandles.KeyF1Handler()
             
-        elif key == qc.Qt.Key_F2:
+        elif key == keyboard.Key.f2:
             
             self.KeyboardHandles.KeyF2Handler()
             
-        elif key == qc.Qt.Key_F3:
+        elif key == keyboard.Key.f3:
         
             self.KeyboardHandles.KeyF3Handler()
             
-        elif key == qc.Qt.Key_F4:
+        elif key == keyboard.Key.f4:
         
             self.KeyboardHandles.KeyF4Handler()
             
-        elif key == qc.Qt.Key_F5:
+        elif key == keyboard.Key.f5:
             
             self.KeyboardHandles.KeyF5Handler()
             
-        elif key == qc.Qt.Key_F6:
+        elif key == keyboard.Key.f6:
         
             self.KeyboardHandles.KeyF6Handler()
             
-        elif key == qc.Qt.Key_F7:
+        elif key == keyboard.Key.f7:
             
             self.KeyboardHandles.KeyF7Handler()
             
-        elif key == qc.Qt.Key_F8:
+        elif key == keyboard.Key.f8:
             
             self.KeyboardHandles.KeyF8Handler()
             
-        elif key == qc.Qt.Key_F9:
+        elif key == keyboard.Key.f9:
         
             self.KeyboardHandles.KeyF9Handler()
             
-        elif key == qc.Qt.Key_F10:
+        elif key == keyboard.Key.f10:
             
             self.KeyboardHandles.KeyF10Handler()
             
-        elif key == qc.Qt.Key_F11:
+        elif key == keyboard.Key.f11:
             
             self.KeyboardHandles.KeyF11Handler()
             
-        elif key == qc.Qt.Key_F12:
+        elif key == keyboard.Key.f12:
         
             self.KeyboardHandles.KeyF12Handler()
             
-        elif key == qc.Qt.Key_End:
+        elif key == keyboard.Key.end:
             
             self.KeyboardHandles.KeyEndHandler()
             
-        elif key == qc.Qt.Key_Delete:
+        elif key == keyboard.Key.delete:
         
             self.KeyboardHandles.KeyDeleteHandler()
             
-        elif key == qc.Qt.Key_Tab:
+        elif key == keyboard.Key.tab:
             
             self.KeyboardHandles.KeyTabHandler()
             
-        elif key == qc.Qt.Key_Shift:
+        elif key == keyboard.Key.shift:
             
             self.KeyboardHandles.KeyShiftHandler()
             
-        elif key == qc.Qt.Key_CapsLock:
+        elif key == keyboard.Key.caps_lock:
             
             self.KeyboardHandles.KeyCapsLockHandler()
             
         #ai generated
-        elif key == qc.Qt.Key_Slash:
+# =============================================================================
+#         elif key == keyboard.Key.slash:
+#             
+#             self.KeyboardHandles.KeypadSlashHandler()
+#             
+#         elif key == keyboard.Key.asterisk:
+#             
+#             self.KeyboardHandles.KeypadAsteriskHandler()
+# =============================================================================
             
-            self.KeyboardHandles.KeypadSlashHandler()
-            
-        elif key == qc.Qt.Key_Asterisk:
-            
-            self.KeyboardHandles.KeypadAsteriskHandler()
-            
-        elif key == qc.Qt.Key_Minus:
+        elif key == '-':
             
             self.KeyboardHandles.KeypadMinusHandler()
             
-        elif key == qc.Qt.Key_Plus:
-            
+        elif key == '+':
+
             self.KeyboardHandles.KeypadPlusHandler()
             
-        elif key == qc.Qt.Key_Enter:
+        elif key == keyboard.Key.enter:
             
             self.KeyboardHandles.KeypadEnterHandler()
-            
-        elif key == qc.Qt.Key_Period:
+
+        elif key == '.':
             
             self.KeyboardHandles.KeypadPeriodHandler()
             
@@ -453,785 +462,788 @@ class KeyboardPeripheral(pd.PeripheralDevice):
 #             self.KeyboardHandles.Keypad9Handler()
 #             
 # =============================================================================
-            
-        elif key == qc.Qt.Key_ParenLeft:
-            
-            self.KeyboardHandles.KeypadParenLeftHandler()
-            
-        elif key == qc.Qt.Key_ParenRight:
-        
-            self.KeyboardHandles.KeypadParenRightHandler()
-            
-        elif key == qc.Qt.Key_BracketLeft:
-            
-            self.KeyboardHandles.KeypadBracketLeftHandler()
-            
-        elif key == qc.Qt.Key_BracketRight:
-        
-            self.KeyboardHandles.KeypadBracketRightHandler()
-            
-        elif key == qc.Qt.Key_BraceLeft:
-            
-            self.KeyboardHandles.KeypadBraceLeftHandler()
-            
-        elif key == qc.Qt.Key_BraceRight:
-        
-            self.KeyboardHandles.KeypadBraceRightHandler()
-            
-        elif key == qc.Qt.Key_Bar:
-            
-            self.KeyboardHandles.KeypadBarHandler()
-            
-        elif key == qc.Qt.Key_Backslash:
-        
-            self.KeyboardHandles.KeypadBackslashHandler()
-            
-        elif key == qc.Qt.Key_Colon:
-            
-            self.KeyboardHandles.KeypadColonHandler()
-            
-        elif key == qc.Qt.Key_QuoteDbl:
-        
-            self.KeyboardHandles.KeypadQuoteDblHandler()
-            
-        elif key == qc.Qt.Key_Apostrophe:
-            
-            self.KeyboardHandles.KeypadApostropheHandler()
-            
-        elif key == qc.Qt.Key_Less:
-        
-            self.KeyboardHandles.KeypadLessHandler()
-            
-        elif key == qc.Qt.Key_Greater:
-            
-            self.KeyboardHandles.KeypadGreaterHandler()
-            
-        elif key == qc.Qt.Key_Question:
-        
-            self.KeyboardHandles.KeypadQuestionHandler()
-            
-        elif key == qc.Qt.Key_Exclam:
-            
-            self.KeyboardHandles.KeypadExclamHandler()
-            
-        elif key == qc.Qt.Key_At:
-        
-            self.KeyboardHandles.KeypadAtHandler()
-            
-        elif key == qc.Qt.Key_NumberSign:
-            
-            self.KeyboardHandles.KeypadNumberSignHandler()
-            
-        elif key == qc.Qt.Key_Dollar:
-        
-            self.KeyboardHandles.KeypadDollarHandler()
-            
-        elif key == qc.Qt.Key_Percent:
-            
-            self.KeyboardHandles.KeypadPercentHandler()
-            
-        elif key == qc.Qt.Key_AsciiCircum:
-        
-            self.KeyboardHandles.KeypadAsciiCircumHandler()
-            
-        elif key == qc.Qt.Key_Ampersand:
-            
-            self.KeyboardHandles.KeypadAmpersandHandler()
-            
-        elif key == qc.Qt.Key_Apostrophe:
-        
-            self.KeyboardHandles.KeypadApostropheHandler()
-            
-        elif key == qc.Qt.Key_AsciiTilde:
-            
-            self.KeyboardHandles.KeypadAsciiTildeHandler()
-            
-        elif key == qc.Qt.Key_notsign:
-        
-            self.KeyboardHandles.KeypadNotHandler()
-            
-        elif key == qc.Qt.Key_Bar:
-            
-            self.KeyboardHandles.KeypadBarHandler()
-            
-        elif key == qc.Qt.Key_Control:
-            
-            self.controlOn = 1
-            print("control is on")
 # =============================================================================
-#         elif key == qc.Qt.Key_EuroSign:
+#             
+#         elif key == keyboard.Key.ParenLeft:
+#             
+#             self.KeyboardHandles.KeypadParenLeftHandler()
+#             
+#         elif key == keyboard.Key.ParenRight:
 #         
-#             self.KeyboardHandles.KeypadEuroSignHandler()
+#             self.KeyboardHandles.KeypadParenRightHandler()
 #             
-#         elif key == qc.Qt.Key_PoundSign:
+#         elif key == keyboard.Key.BracketLeft:
 #             
-#             self.KeyboardHandles.KeypadPoundSignHandler()
+#             self.KeyboardHandles.KeypadBracketLeftHandler()
 #             
-#         elif key == qc.Qt.Key_YenSign:
+#         elif key == keyboard.Key.BracketRight:
 #         
-#             self.KeyboardHandles.KeypadYenSignHandler()
+#             self.KeyboardHandles.KeypadBracketRightHandler()
 #             
-#         elif key == qc.Qt.Key_Para:
+#         elif key == keyboard.Key.BraceLeft:
 #             
-#             self.KeyboardHandles.KeypadParaHandler()
+#             self.KeyboardHandles.KeypadBraceLeftHandler()
 #             
-#         elif key == qc.Qt.Key_SectionSign:
+#         elif key == keyboard.Key.BraceRight:
 #         
-#             self.KeyboardHandles.KeypadSectionSignHandler()
+#             self.KeyboardHandles.KeypadBraceRightHandler()
 #             
-#         elif key == qc.Qt.Key_CentSign:
+#         elif key == keyboard.Key.Bar:
 #             
-#             self.KeyboardHandles.KeypadCentSignHandler()
+#             self.KeyboardHandles.KeypadBarHandler()
 #             
-#         elif key == qc.Qt.Key_DegreeSign:
+#         elif key == keyboard.Key.Backslash:
 #         
-#             self.KeyboardHandles.KeypadDegreeSignHandler()
+#             self.KeyboardHandles.KeypadBackslashHandler()
 #             
-#         elif key == qc.Qt.Key_PlusMinusSign:
+#         elif key == keyboard.Key.Colon:
 #             
-#             self.KeyboardHandles.KeypadPlusMinusSignHandler()
+#             self.KeyboardHandles.KeypadColonHandler()
 #             
-#         elif key == qc.Qt.Key_MicroSign:
+#         elif key == keyboard.Key.QuoteDbl:
 #         
-#             self.KeyboardHandles.KeypadMicroSignHandler()
+#             self.KeyboardHandles.KeypadQuoteDblHandler()
 #             
-#         elif key == qc.Qt.Key_RootSign:
+#         elif key == keyboard.Key.Apostrophe:
 #             
-#             self.KeyboardHandles.KeypadRootSignHandler()
+#             self.KeyboardHandles.KeypadApostropheHandler()
 #             
-#         elif key == qc.Qt.Key_ApproxSign:
+#         elif key == keyboard.Key.Less:
 #         
-#             self.KeyboardHandles.KeypadApproxSignHandler()
+#             self.KeyboardHandles.KeypadLessHandler()
 #             
-#         elif key == qc.Qt.Key_AcuteAccent:
+#         elif key == keyboard.Key.Greater:
 #             
-#             self.KeyboardHandles.KeypadAcuteAccentHandler()
+#             self.KeyboardHandles.KeypadGreaterHandler()
 #             
-#         elif key == qc.Qt.Key_AsciiTilde:
+#         elif key == keyboard.Key.Question:
 #         
-#             self.KeyboardHandles.KeypadAsciiTildeHandler()
+#             self.KeyboardHandles.KeypadQuestionHandler()
 #             
-#         elif key == qc.Qt.Key_Diaeresis:
+#         elif key == keyboard.Key.Exclam:
 #             
-#             self.KeyboardHandles.KeypadDiaeresisHandler()
+#             self.KeyboardHandles.KeypadExclamHandler()
 #             
-#         elif key == qc.Qt.Key_CircumflexAccent:
+#         elif key == keyboard.Key.At:
 #         
-#             self.KeyboardHandles.KeypadCircumflexAccentHandler()
+#             self.KeyboardHandles.KeypadAtHandler()
 #             
-#         elif key == qc.Qt.Key_GraveAccent:
+#         elif key == keyboard.Key.NumberSign:
 #             
-#             self.KeyboardHandles.KeypadGraveAccentHandler()
+#             self.KeyboardHandles.KeypadNumberSignHandler()
 #             
-#         elif key == qc.Qt.Key_Apostrophe:
+#         elif key == keyboard.Key.Dollar:
+#         
+#             self.KeyboardHandles.KeypadDollarHandler()
+#             
+#         elif key == keyboard.Key.Percent:
+#             
+#             self.KeyboardHandles.KeypadPercentHandler()
+#             
+#         elif key == keyboard.Key.AsciiCircum:
+#         
+#             self.KeyboardHandles.KeypadAsciiCircumHandler()
+#             
+#         elif key == keyboard.Key.Ampersand:
+#             
+#             self.KeyboardHandles.KeypadAmpersandHandler()
+#             
+#         elif key == keyboard.Key.Apostrophe:
 #         
 #             self.KeyboardHandles.KeypadApostropheHandler()
 #             
-#         elif key == qc.Qt.Key_AsciiCircum:
+#         elif key == keyboard.Key.AsciiTilde:
+#             
+#             self.KeyboardHandles.KeypadAsciiTildeHandler()
+#             
+#         elif key == keyboard.Key.notsign:
+#         
+#             self.KeyboardHandles.KeypadNotHandler()
+#             
+#         elif key == keyboard.Key.Bar:
+#             
+#             self.KeyboardHandles.KeypadBarHandler()
+# =============================================================================
+            
+        elif key == keyboard.Key.ctrl_l:
+            pass
+# =============================================================================
+#             self.controlOn = 1
+#             print("control is on")
+# =============================================================================
+# =============================================================================
+#         elif key == keyboard.Key.EuroSign:
+#         
+#             self.KeyboardHandles.KeypadEuroSignHandler()
+#             
+#         elif key == keyboard.Key.PoundSign:
+#             
+#             self.KeyboardHandles.KeypadPoundSignHandler()
+#             
+#         elif key == keyboard.Key.YenSign:
+#         
+#             self.KeyboardHandles.KeypadYenSignHandler()
+#             
+#         elif key == keyboard.Key.Para:
+#             
+#             self.KeyboardHandles.KeypadParaHandler()
+#             
+#         elif key == keyboard.Key.SectionSign:
+#         
+#             self.KeyboardHandles.KeypadSectionSignHandler()
+#             
+#         elif key == keyboard.Key.CentSign:
+#             
+#             self.KeyboardHandles.KeypadCentSignHandler()
+#             
+#         elif key == keyboard.Key.DegreeSign:
+#         
+#             self.KeyboardHandles.KeypadDegreeSignHandler()
+#             
+#         elif key == keyboard.Key.PlusMinusSign:
+#             
+#             self.KeyboardHandles.KeypadPlusMinusSignHandler()
+#             
+#         elif key == keyboard.Key.MicroSign:
+#         
+#             self.KeyboardHandles.KeypadMicroSignHandler()
+#             
+#         elif key == keyboard.Key.RootSign:
+#             
+#             self.KeyboardHandles.KeypadRootSignHandler()
+#             
+#         elif key == keyboard.Key.ApproxSign:
+#         
+#             self.KeyboardHandles.KeypadApproxSignHandler()
+#             
+#         elif key == keyboard.Key.AcuteAccent:
+#             
+#             self.KeyboardHandles.KeypadAcuteAccentHandler()
+#             
+#         elif key == keyboard.Key.AsciiTilde:
+#         
+#             self.KeyboardHandles.KeypadAsciiTildeHandler()
+#             
+#         elif key == keyboard.Key.Diaeresis:
+#             
+#             self.KeyboardHandles.KeypadDiaeresisHandler()
+#             
+#         elif key == keyboard.Key.CircumflexAccent:
+#         
+#             self.KeyboardHandles.KeypadCircumflexAccentHandler()
+#             
+#         elif key == keyboard.Key.GraveAccent:
+#             
+#             self.KeyboardHandles.KeypadGraveAccentHandler()
+#             
+#         elif key == keyboard.Key.Apostrophe:
+#         
+#             self.KeyboardHandles.KeypadApostropheHandler()
+#             
+#         elif key == keyboard.Key.AsciiCircum:
 #             
 #             self.KeyboardHandles.KeypadAsciiCircumHandler()
 #             
-#         elif key == qc.Qt.Key_Cedilla:
+#         elif key == keyboard.Key.Cedilla:
 #         
 #             self.KeyboardHandles.KeypadCedillaHandler()
 #             
-#         elif key == qc.Qt.Key_Hook:
+#         elif key == keyboard.Key.Hook:
 #             
 #             self.KeyboardHandles.KeypadHookHandler()
 # =============================================================================
             
         else:
             print("no handler for that key")
-            
-    def controlPressedHandlers(self, key):
-           if key == qc.Qt.Key_Space:
-               
-               self.KeyboardHandles.controlKeySpaceHandler()
-               
-           elif key == qc.Qt.Key_Left:
-               
-               self.KeyboardHandles.controlKeyLeftHandler()
-               
-           elif key == qc.Qt.Key_Up:
-               
-               self.KeyboardHandles.controlKeyUpHandler()
-           
-           elif key == qc.Qt.Key_Right:
-           
-               self.KeyboardHandles.controlKeyRightHandler()
-               
-           elif key == qc.Qt.Key_Down:
-           
-               self.KeyboardHandles.controlKeyDownHandler()
-               
-           elif key == qc.Qt.Key_A:
-           
-               self.KeyboardHandles.controlKeyAHandler()
-               
-           elif key == qc.Qt.Key_B:
-           
-               self.KeyboardHandles.controlKeyBHandler()
-               
-           elif key == qc.Qt.Key_C:
-           
-               self.KeyboardHandles.controlKeyCHandler()
-               
-           elif key == qc.Qt.Key_D:
-           
-               self.KeyboardHandles.controlKeyDHandler()
-               
-           elif key == qc.Qt.Key_E:
-           
-               self.KeyboardHandles.controlKeyEHandler()
-               
-           elif key == qc.Qt.Key_F:
-           
-               self.KeyboardHandles.controlKeyFHandler()
-               
-           elif key == qc.Qt.Key_G:
-           
-               self.KeyboardHandles.controlKeyGHandler()
-               
-           elif key == qc.Qt.Key_H:
-           
-               self.KeyboardHandles.controlKeyHHandler()
-               
-           elif key == qc.Qt.Key_I:
-           
-               self.KeyboardHandles.controlKeyIHandler()
-               
-           elif key == qc.Qt.Key_J:
-           
-               self.KeyboardHandles.controlKeyJHandler()
-               
-           elif key == qc.Qt.Key_K:
-           
-               self.KeyboardHandles.controlKeyKHandler()
-               
-           elif key == qc.Qt.Key_L:
-           
-               self.KeyboardHandles.controlKeyLHandler()
-               
-           elif key == qc.Qt.Key_M:
-           
-               self.KeyboardHandles.controlKeyMHandler()
-               
-           elif key == qc.Qt.Key_N:
-           
-               self.KeyboardHandles.controlKeyNHandler()
-               
-           elif key == qc.Qt.Key_O:
-           
-               self.KeyboardHandles.controlKeyOHandler()
-               
-           elif key == qc.Qt.Key_P:
-           
-               self.KeyboardHandles.controlKeyPHandler()
-               
-           elif key == qc.Qt.Key_Q:
-           
-               self.KeyboardHandles.controlKeyQHandler()
-               
-           elif key == qc.Qt.Key_R:
-           
-               self.KeyboardHandles.controlKeyRHandler()
-               
-           elif key == qc.Qt.Key_S:
-           
-               self.KeyboardHandles.controlKeySHandler()
-               
-           elif key == qc.Qt.Key_T:
-           
-               self.KeyboardHandles.controlKeyTHandler()
-               
-           elif key == qc.Qt.Key_U:
-           
-               self.KeyboardHandles.controlKeyUHandler()
-               
-           elif key == qc.Qt.Key_V:
-           
-               self.KeyboardHandles.controlKeyVHandler()
-               
-           elif key == qc.Qt.Key_W:
-           
-               self.KeyboardHandles.controlKeyWHandler()
-               
-           elif key == qc.Qt.Key_X:
-           
-               self.KeyboardHandles.controlKeyXHandler()
-               
-           elif key == qc.Qt.Key_Y:
-           
-               self.KeyboardHandles.controlKeyYHandler()
-               
-           elif key == qc.Qt.Key_Z:
-           
-               self.KeyboardHandles.controlKeyZHandler()
-               
-           elif key == qc.Qt.Key_Backspace:
-           
-               self.KeyboardHandles.controlKeyBackSpaceHandler()
-               
-           elif key == qc.Qt.Key_Enter:
-           
-               self.KeyboardHandles.controlKeyEnterHandler()
-               
-           elif key == qc.Qt.Key_Return:
-           
-               self.KeyboardHandles.controlKeyReturnHandler()
-               
-           elif key == qc.Qt.Key_0:
-               
-               self.KeyboardHandles.controlKey0Handler()
-           
-           elif key == qc.Qt.Key_1:
-               
-               self.KeyboardHandles.controlKey1Handler()
-               
-           elif key == qc.Qt.Key_2:
-               
-               self.KeyboardHandles.controlKey2Handler()
-               
-           elif key == qc.Qt.Key_3:
-               
-               self.KeyboardHandles.controlKey3Handler()
-               
-           elif key == qc.Qt.Key_4:
-               
-               self.KeyboardHandles.controlKey4Handler()
-               
-           elif key == qc.Qt.Key_5:
-               
-               self.KeyboardHandles.controlKey5Handler()
-               
-           elif key == qc.Qt.Key_6:
-               
-               self.KeyboardHandles.controlKey6Handler()
-               
-           elif key == qc.Qt.Key_7:
-               
-               self.KeyboardHandles.controlKey7Handler()
-               
-           elif key == qc.Qt.Key_8:
-               
-               self.KeyboardHandles.controlKey8Handler()
-               
-           elif key == qc.Qt.Key_9:
-               
-               self.KeyboardHandles.controlKey9Handler()
-               
-           elif key == qc.Qt.Key_ParenLeft:
-               
-               self.KeyboardHandles.controlKeyParenLeftHandler()
-               
-           elif key == qc.Qt.Key_ParenRight:
-               
-               self.KeyboardHandles.controlKeyParenRightHandler()
-               
-           elif key == qc.Qt.Key_Comma:
-               
-               self.KeyboardHandles.controlKeyCommaHandler()
-           
-           elif key == qc.Qt.Key_Plus:
-               
-               self.KeyboardHandles.controlKeyPlusHandler()
-               
-           elif key == qc.Qt.Key_Minus:
-               
-               self.KeyboardHandles.controlKeyMinusHandler()
-               
-           elif key == qc.Qt.Key_Asterisk:
-               
-               self.KeyboardHandles.controlKeyAsteriskHandler()
-               
-           elif key == qc.Qt.Key_Period:
-               
-               self.KeyboardHandles.controlKeyPeriodHandler()
-               
-           elif key == qc.Qt.Key_Slash:
-               
-               self.KeyboardHandles.controlKeySlashHandler()
-               
-           elif key == qc.Qt.Key_Colon:
-               
-               self.KeyboardHandles.controlKeyColonHandler()
-               
-           elif key == qc.Qt.Key_Semicolon:
-               
-               self.KeyboardHandles.controlKeySemicolonHandler()
-               
-           elif key == qc.Qt.Key_BracketLeft:
-               
-               self.KeyboardHandles.BracketLeftHandler()
-               
-           elif key == qc.Qt.Key_BracketRight:
-               
-               self.KeyboardHandles.BracketRightHandler()
-               
-           elif key == qc.Qt.Key_Equal:
-               
-               self.KeyboardHandles.EqualHandler()
-               
-           elif key == qc.Qt.Key_Greater:
-               
-               self.KeyboardHandles.GreaterHandler()
-               
-           elif key == qc.Qt.Key_Less:
-               
-               self.KeyboardHandles.LessHandler()
-               
-           elif key == qc.Qt.Key_QuoteLeft:
-               
-               self.KeyboardHandles.QuoteLeftHandler()
-               
-           elif key == qc.Qt.Key_QuoteDbl:
-               
-               self.KeyboardHandles.QuoteDblHandler()
-               
-           elif key == qc.Qt.Key_PageUp:
-               
-               self.KeyboardHandles.controlKeyPageUpHandler()
-               
-           elif key == qc.Qt.Key_PageDown:
-               
-               self.KeyboardHandles.controlKeyPageDownHandler()
-               
-           elif key == qc.Qt.Key_F1:
-               
-               self.KeyboardHandles.controlKeyF1Handler()
-               
-           elif key == qc.Qt.Key_F2:
-               
-               self.KeyboardHandles.controlKeyF2Handler()
-               
-           elif key == qc.Qt.Key_F3:
-           
-               self.KeyboardHandles.controlKeyF3Handler()
-               
-           elif key == qc.Qt.Key_F4:
-           
-               self.KeyboardHandles.controlKeyF4Handler()
-               
-           elif key == qc.Qt.Key_F5:
-               
-               self.KeyboardHandles.controlKeyF5Handler()
-               
-           elif key == qc.Qt.Key_F6:
-           
-               self.KeyboardHandles.controlKeyF6Handler()
-               
-           elif key == qc.Qt.Key_F7:
-               
-               self.KeyboardHandles.controlKeyF7Handler()
-               
-           elif key == qc.Qt.Key_F8:
-               
-               self.KeyboardHandles.controlKeyF8Handler()
-               
-           elif key == qc.Qt.Key_F9:
-           
-               self.KeyboardHandles.controlKeyF9Handler()
-               
-           elif key == qc.Qt.Key_F10:
-               
-               self.KeyboardHandles.controlKeyF10Handler()
-               
-           elif key == qc.Qt.Key_F11:
-               
-               self.KeyboardHandles.controlKeyF11Handler()
-               
-           elif key == qc.Qt.Key_F12:
-           
-               self.KeyboardHandles.controlKeyF12Handler()
-               
-           elif key == qc.Qt.Key_End:
-               
-               self.KeyboardHandles.controlKeyEndHandler()
-               
-           elif key == qc.Qt.Key_Delete:
-           
-               self.KeyboardHandles.controlKeyDeleteHandler()
-               
-           elif key == qc.Qt.Key_Tab:
-               
-               self.KeyboardHandles.controlKeyTabHandler()
-               
-           elif key == qc.Qt.Key_Shift:
-               
-               self.KeyboardHandles.controlKeyShiftHandler()
-               
-           elif key == qc.Qt.Key_CapsLock:
-               
-               self.KeyboardHandles.controlKeyCapsLockHandler()
-               
-           #ai generated
-           elif key == qc.Qt.Key_Slash:
-               
-               self.KeyboardHandles.controlKeypadSlashHandler()
-               
-           elif key == qc.Qt.Key_Asterisk:
-               
-               self.KeyboardHandles.controlKeypadAsteriskHandler()
-               
-           elif key == qc.Qt.Key_Minus:
-               
-               self.KeyboardHandles.controlKeypadMinusHandler()
-               
-           elif key == qc.Qt.Key_Plus:
-               
-               self.KeyboardHandles.controlKeypadPlusHandler()
-               
-           elif key == qc.Qt.Key_Enter:
-               
-               self.KeyboardHandles.controlKeypadEnterHandler()
-               
-           elif key == qc.Qt.Key_Period:
-               
-               self.KeyboardHandles.controlKeypadPeriodHandler()
-               
-   # =============================================================================
-   #         elif key == qc.Qt.Keypad_0:
-   #             
-   #             self.KeyboardHandles.controlKeypad0Handler()
-   #             
-   #         elif key == qc.Qt.Keypad_1:
-   #             
-   #             self.KeyboardHandles.controlKeypad1Handler()
-   #             
-   #         elif key == qc.Qt.Keypad_2:
-   #             
-   #             self.KeyboardHandles.controlKeypad2Handler()
-   #             
-   #         elif key == qc.Qt.Keypad_3:
-   #             
-   #             self.KeyboardHandles.controlKeypad3Handler()
-   #             
-   #         elif key == qc.Qt.Keypad_4:
-   #             
-   #             self.KeyboardHandles.controlKeypad4Handler()
-   #             
-   #         elif key == qc.Qt.Keypad_5:
-   #             
-   #             self.KeyboardHandles.controlKeypad5Handler()
-   #             
-   #         elif key == qc.Qt.Keypad_6:
-   #         
-   #             self.KeyboardHandles.controlKeypad6Handler()
-   #             
-   #         elif key == qc.Qt.Keypad_7:
-   #             
-   #             self.KeyboardHandles.controlKeypad7Handler()
-   #             
-   #         elif key == qc.Qt.Keypad_8:
-   #         
-   #             self.KeyboardHandles.controlKeypad8Handler()
-   #             
-   #         elif key == qc.Qt.Keypad_9:
-   #             
-   #             self.KeyboardHandles.controlKeypad9Handler()
-   #             
-   # =============================================================================
-               
-           elif key == qc.Qt.Key_ParenLeft:
-               
-               self.KeyboardHandles.controlKeypadParenLeftHandler()
-               
-           elif key == qc.Qt.Key_ParenRight:
-           
-               self.KeyboardHandles.controlKeypadParenRightHandler()
-               
-           elif key == qc.Qt.Key_BracketLeft:
-               
-               self.KeyboardHandles.controlKeypadBracketLeftHandler()
-               
-           elif key == qc.Qt.Key_BracketRight:
-           
-               self.KeyboardHandles.controlKeypadBracketRightHandler()
-               
-           elif key == qc.Qt.Key_BraceLeft:
-               
-               self.KeyboardHandles.controlKeypadBraceLeftHandler()
-               
-           elif key == qc.Qt.Key_BraceRight:
-           
-               self.KeyboardHandles.controlKeypadBraceRightHandler()
-               
-           elif key == qc.Qt.Key_Bar:
-               
-               self.KeyboardHandles.controlKeypadBarHandler()
-               
-           elif key == qc.Qt.Key_Backslash:
-           
-               self.KeyboardHandles.controlKeypadBackslashHandler()
-               
-           elif key == qc.Qt.Key_Colon:
-               
-               self.KeyboardHandles.controlKeypadColonHandler()
-               
-           elif key == qc.Qt.Key_QuoteDbl:
-           
-               self.KeyboardHandles.controlKeypadQuoteDblHandler()
-               
-           elif key == qc.Qt.Key_Apostrophe:
-               
-               self.KeyboardHandles.controlKeypadApostropheHandler()
-               
-           elif key == qc.Qt.Key_Less:
-           
-               self.KeyboardHandles.controlKeypadLessHandler()
-               
-           elif key == qc.Qt.Key_Greater:
-               
-               self.KeyboardHandles.controlKeypadGreaterHandler()
-               
-           elif key == qc.Qt.Key_Question:
-           
-               self.KeyboardHandles.controlKeypadQuestionHandler()
-               
-           elif key == qc.Qt.Key_Exclam:
-               
-               self.KeyboardHandles.controlKeypadExclamHandler()
-               
-           elif key == qc.Qt.Key_At:
-           
-               self.KeyboardHandles.controlKeypadAtHandler()
-               
-           elif key == qc.Qt.Key_NumberSign:
-               
-               self.KeyboardHandles.controlKeypadNumberSignHandler()
-               
-           elif key == qc.Qt.Key_Dollar:
-           
-               self.KeyboardHandles.controlKeypadDollarHandler()
-               
-           elif key == qc.Qt.Key_Percent:
-               
-               self.KeyboardHandles.controlKeypadPercentHandler()
-               
-           elif key == qc.Qt.Key_AsciiCircum:
-           
-               self.KeyboardHandles.controlKeypadAsciiCircumHandler()
-               
-           elif key == qc.Qt.Key_Ampersand:
-               
-               self.KeyboardHandles.controlKeypadAmpersandHandler()
-               
-           elif key == qc.Qt.Key_Apostrophe:
-           
-               self.KeyboardHandles.controlKeypadApostropheHandler()
-               
-           elif key == qc.Qt.Key_AsciiTilde:
-               
-               self.KeyboardHandles.controlKeypadAsciiTildeHandler()
-               
-           elif key == qc.Qt.Key_notsign:
-           
-               self.KeyboardHandles.controlKeypadNotHandler()
-               
-           elif key == qc.Qt.Key_Bar:
-               
-               self.KeyboardHandles.controlKeypadBarHandler()
-               
-           elif key == qc.Qt.Key_Control:
-               
-               self.controlOn = 1
-               print("control is on")
-   # =============================================================================
-   #         elif key == qc.Qt.Key_EuroSign:
-   #         
-   #             self.KeyboardHandles.controlKeypadEuroSignHandler()
-   #             
-   #         elif key == qc.Qt.Key_PoundSign:
-   #             
-   #             self.KeyboardHandles.controlKeypadPoundSignHandler()
-   #             
-   #         elif key == qc.Qt.Key_YenSign:
-   #         
-   #             self.KeyboardHandles.controlKeypadYenSignHandler()
-   #             
-   #         elif key == qc.Qt.Key_Para:
-   #             
-   #             self.KeyboardHandles.controlKeypadParaHandler()
-   #             
-   #         elif key == qc.Qt.Key_SectionSign:
-   #         
-   #             self.KeyboardHandles.controlKeypadSectionSignHandler()
-   #             
-   #         elif key == qc.Qt.Key_CentSign:
-   #             
-   #             self.KeyboardHandles.controlKeypadCentSignHandler()
-   #             
-   #         elif key == qc.Qt.Key_DegreeSign:
-   #         
-   #             self.KeyboardHandles.controlKeypadDegreeSignHandler()
-   #             
-   #         elif key == qc.Qt.Key_PlusMinusSign:
-   #             
-   #             self.KeyboardHandles.controlKeypadPlusMinusSignHandler()
-   #             
-   #         elif key == qc.Qt.Key_MicroSign:
-   #         
-   #             self.KeyboardHandles.controlKeypadMicroSignHandler()
-   #             
-   #         elif key == qc.Qt.Key_RootSign:
-   #             
-   #             self.KeyboardHandles.controlKeypadRootSignHandler()
-   #             
-   #         elif key == qc.Qt.Key_ApproxSign:
-   #         
-   #             self.KeyboardHandles.controlKeypadApproxSignHandler()
-   #             
-   #         elif key == qc.Qt.Key_AcuteAccent:
-   #             
-   #             self.KeyboardHandles.controlKeypadAcuteAccentHandler()
-   #             
-   #         elif key == qc.Qt.Key_AsciiTilde:
-   #         
-   #             self.KeyboardHandles.controlKeypadAsciiTildeHandler()
-   #             
-   #         elif key == qc.Qt.Key_Diaeresis:
-   #             
-   #             self.KeyboardHandles.controlKeypadDiaeresisHandler()
-   #             
-   #         elif key == qc.Qt.Key_CircumflexAccent:
-   #         
-   #             self.KeyboardHandles.controlKeypadCircumflexAccentHandler()
-   #             
-   #         elif key == qc.Qt.Key_GraveAccent:
-   #             
-   #             self.KeyboardHandles.controlKeypadGraveAccentHandler()
-   #             
-   #         elif key == qc.Qt.Key_Apostrophe:
-   #         
-   #             self.KeyboardHandles.controlKeypadApostropheHandler()
-   #             
-   #         elif key == qc.Qt.Key_AsciiCircum:
-   #             
-   #             self.KeyboardHandles.controlKeypadAsciiCircumHandler()
-   #             
-   #         elif key == qc.Qt.Key_Cedilla:
-   #         
-   #             self.KeyboardHandles.controlKeypadCedillaHandler()
-   #             
-   #         elif key == qc.Qt.Key_Hook:
-   #             
-   #             self.KeyboardHandles.controlKeypadHookHandler()
-   # =============================================================================
-               
-           else:
-               print("no handler for that key")
-    
-        
-        
-    def handleKeyReleaseEvent(self, keyReleaseEvent):
-        
-        
-        key = keyReleaseEvent.key()
-      
-        if key == qc.Qt.Key_Control:
-            
-            self.controlOn = 0
-            print("control is off")
-        
-        
-    
+
+# =============================================================================
+#     def controlPressedHandlers(self, key):
+#            if key == keyboard.Key.Space:
+#                
+#                self.KeyboardHandles.controlKeySpaceHandler()
+#                
+#            elif key == keyboard.Key.Left:
+#                
+#                self.KeyboardHandles.controlKeyLeftHandler()
+#                
+#            elif key == keyboard.Key.Up:
+#                
+#                self.KeyboardHandles.controlKeyUpHandler()
+#            
+#            elif key == keyboard.Key.Right:
+#            
+#                self.KeyboardHandles.controlKeyRightHandler()
+#                
+#            elif key == keyboard.Key.Down:
+#            
+#                self.KeyboardHandles.controlKeyDownHandler()
+#                
+#            elif key == keyboard.Key.A:
+#            
+#                self.KeyboardHandles.controlKeyAHandler()
+#                
+#            elif key == keyboard.Key.B:
+#            
+#                self.KeyboardHandles.controlKeyBHandler()
+#                
+#            elif key == keyboard.Key.C:
+#            
+#                self.KeyboardHandles.controlKeyCHandler()
+#                
+#            elif key == keyboard.Key.D:
+#            
+#                self.KeyboardHandles.controlKeyDHandler()
+#                
+#            elif key == keyboard.Key.E:
+#            
+#                self.KeyboardHandles.controlKeyEHandler()
+#                
+#            elif key == keyboard.Key.F:
+#            
+#                self.KeyboardHandles.controlKeyFHandler()
+#                
+#            elif key == keyboard.Key.G:
+#            
+#                self.KeyboardHandles.controlKeyGHandler()
+#                
+#            elif key == keyboard.Key.H:
+#            
+#                self.KeyboardHandles.controlKeyHHandler()
+#                
+#            elif key == keyboard.Key.I:
+#            
+#                self.KeyboardHandles.controlKeyIHandler()
+#                
+#            elif key == keyboard.Key.J:
+#            
+#                self.KeyboardHandles.controlKeyJHandler()
+#                
+#            elif key == keyboard.Key.K:
+#            
+#                self.KeyboardHandles.controlKeyKHandler()
+#                
+#            elif key == keyboard.Key.L:
+#            
+#                self.KeyboardHandles.controlKeyLHandler()
+#                
+#            elif key == keyboard.Key.M:
+#            
+#                self.KeyboardHandles.controlKeyMHandler()
+#                
+#            elif key == keyboard.Key.N:
+#            
+#                self.KeyboardHandles.controlKeyNHandler()
+#                
+#            elif key == keyboard.Key.O:
+#            
+#                self.KeyboardHandles.controlKeyOHandler()
+#                
+#            elif key == keyboard.Key.P:
+#            
+#                self.KeyboardHandles.controlKeyPHandler()
+#                
+#            elif key == keyboard.Key.Q:
+#            
+#                self.KeyboardHandles.controlKeyQHandler()
+#                
+#            elif key == keyboard.Key.R:
+#            
+#                self.KeyboardHandles.controlKeyRHandler()
+#                
+#            elif key == keyboard.Key.S:
+#            
+#                self.KeyboardHandles.controlKeySHandler()
+#                
+#            elif key == keyboard.Key.T:
+#            
+#                self.KeyboardHandles.controlKeyTHandler()
+#                
+#            elif key == keyboard.Key.U:
+#            
+#                self.KeyboardHandles.controlKeyUHandler()
+#                
+#            elif key == keyboard.Key.V:
+#            
+#                self.KeyboardHandles.controlKeyVHandler()
+#                
+#            elif key == keyboard.Key.W:
+#            
+#                self.KeyboardHandles.controlKeyWHandler()
+#                
+#            elif key == keyboard.Key.X:
+#            
+#                self.KeyboardHandles.controlKeyXHandler()
+#                
+#            elif key == keyboard.Key.Y:
+#            
+#                self.KeyboardHandles.controlKeyYHandler()
+#                
+#            elif key == keyboard.Key.Z:
+#            
+#                self.KeyboardHandles.controlKeyZHandler()
+#                
+#            elif key == keyboard.Key.Backspace:
+#            
+#                self.KeyboardHandles.controlKeyBackSpaceHandler()
+#                
+#            elif key == keyboard.Key.Enter:
+#            
+#                self.KeyboardHandles.controlKeyEnterHandler()
+#                
+#            elif key == keyboard.Key.Return:
+#            
+#                self.KeyboardHandles.controlKeyReturnHandler()
+#                
+#            elif key == keyboard.Key.0:
+#                
+#                self.KeyboardHandles.controlKey0Handler()
+#            
+#            elif key == keyboard.Key.1:
+#                
+#                self.KeyboardHandles.controlKey1Handler()
+#                
+#            elif key == keyboard.Key.2:
+#                
+#                self.KeyboardHandles.controlKey2Handler()
+#                
+#            elif key == keyboard.Key.3:
+#                
+#                self.KeyboardHandles.controlKey3Handler()
+#                
+#            elif key == keyboard.Key.4:
+#                
+#                self.KeyboardHandles.controlKey4Handler()
+#                
+#            elif key == keyboard.Key.5:
+#                
+#                self.KeyboardHandles.controlKey5Handler()
+#                
+#            elif key == keyboard.Key.6:
+#                
+#                self.KeyboardHandles.controlKey6Handler()
+#                
+#            elif key == keyboard.Key.7:
+#                
+#                self.KeyboardHandles.controlKey7Handler()
+#                
+#            elif key == keyboard.Key.8:
+#                
+#                self.KeyboardHandles.controlKey8Handler()
+#                
+#            elif key == keyboard.Key.9:
+#                
+#                self.KeyboardHandles.controlKey9Handler()
+#                
+#            elif key == keyboard.Key.ParenLeft:
+#                
+#                self.KeyboardHandles.controlKeyParenLeftHandler()
+#                
+#            elif key == keyboard.Key.ParenRight:
+#                
+#                self.KeyboardHandles.controlKeyParenRightHandler()
+#                
+#            elif key == keyboard.Key.Comma:
+#                
+#                self.KeyboardHandles.controlKeyCommaHandler()
+#            
+#            elif key == keyboard.Key.Plus:
+#                
+#                self.KeyboardHandles.controlKeyPlusHandler()
+#                
+#            elif key == keyboard.Key.Minus:
+#                
+#                self.KeyboardHandles.controlKeyMinusHandler()
+#                
+#            elif key == keyboard.Key.Asterisk:
+#                
+#                self.KeyboardHandles.controlKeyAsteriskHandler()
+#                
+#            elif key == keyboard.Key.Period:
+#                
+#                self.KeyboardHandles.controlKeyPeriodHandler()
+#                
+#            elif key == keyboard.Key.Slash:
+#                
+#                self.KeyboardHandles.controlKeySlashHandler()
+#                
+#            elif key == keyboard.Key.Colon:
+#                
+#                self.KeyboardHandles.controlKeyColonHandler()
+#                
+#            elif key == keyboard.Key.Semicolon:
+#                
+#                self.KeyboardHandles.controlKeySemicolonHandler()
+#                
+#            elif key == keyboard.Key.BracketLeft:
+#                
+#                self.KeyboardHandles.BracketLeftHandler()
+#                
+#            elif key == keyboard.Key.BracketRight:
+#                
+#                self.KeyboardHandles.BracketRightHandler()
+#                
+#            elif key == keyboard.Key.Equal:
+#                
+#                self.KeyboardHandles.EqualHandler()
+#                
+#            elif key == keyboard.Key.Greater:
+#                
+#                self.KeyboardHandles.GreaterHandler()
+#                
+#            elif key == keyboard.Key.Less:
+#                
+#                self.KeyboardHandles.LessHandler()
+#                
+#            elif key == keyboard.Key.QuoteLeft:
+#                
+#                self.KeyboardHandles.QuoteLeftHandler()
+#                
+#            elif key == keyboard.Key.QuoteDbl:
+#                
+#                self.KeyboardHandles.QuoteDblHandler()
+#                
+#            elif key == keyboard.Key.PageUp:
+#                
+#                self.KeyboardHandles.controlKeyPageUpHandler()
+#                
+#            elif key == keyboard.Key.PageDown:
+#                
+#                self.KeyboardHandles.controlKeyPageDownHandler()
+#                
+#            elif key == keyboard.Key.F1:
+#                
+#                self.KeyboardHandles.controlKeyF1Handler()
+#                
+#            elif key == keyboard.Key.F2:
+#                
+#                self.KeyboardHandles.controlKeyF2Handler()
+#                
+#            elif key == keyboard.Key.F3:
+#            
+#                self.KeyboardHandles.controlKeyF3Handler()
+#                
+#            elif key == keyboard.Key.F4:
+#            
+#                self.KeyboardHandles.controlKeyF4Handler()
+#                
+#            elif key == keyboard.Key.F5:
+#                
+#                self.KeyboardHandles.controlKeyF5Handler()
+#                
+#            elif key == keyboard.Key.F6:
+#            
+#                self.KeyboardHandles.controlKeyF6Handler()
+#                
+#            elif key == keyboard.Key.F7:
+#                
+#                self.KeyboardHandles.controlKeyF7Handler()
+#                
+#            elif key == keyboard.Key.F8:
+#                
+#                self.KeyboardHandles.controlKeyF8Handler()
+#                
+#            elif key == keyboard.Key.F9:
+#            
+#                self.KeyboardHandles.controlKeyF9Handler()
+#                
+#            elif key == keyboard.Key.F10:
+#                
+#                self.KeyboardHandles.controlKeyF10Handler()
+#                
+#            elif key == keyboard.Key.F11:
+#                
+#                self.KeyboardHandles.controlKeyF11Handler()
+#                
+#            elif key == keyboard.Key.F12:
+#            
+#                self.KeyboardHandles.controlKeyF12Handler()
+#                
+#            elif key == keyboard.Key.End:
+#                
+#                self.KeyboardHandles.controlKeyEndHandler()
+#                
+#            elif key == keyboard.Key.Delete:
+#            
+#                self.KeyboardHandles.controlKeyDeleteHandler()
+#                
+#            elif key == keyboard.Key.Tab:
+#                
+#                self.KeyboardHandles.controlKeyTabHandler()
+#                
+#            elif key == keyboard.Key.Shift:
+#                
+#                self.KeyboardHandles.controlKeyShiftHandler()
+#                
+#            elif key == keyboard.Key.CapsLock:
+#                
+#                self.KeyboardHandles.controlKeyCapsLockHandler()
+#                
+#            #ai generated
+#            elif key == keyboard.Key.Slash:
+#                
+#                self.KeyboardHandles.controlKeypadSlashHandler()
+#                
+#            elif key == keyboard.Key.Asterisk:
+#                
+#                self.KeyboardHandles.controlKeypadAsteriskHandler()
+#                
+#            elif key == keyboard.Key.Minus:
+#                
+#                self.KeyboardHandles.controlKeypadMinusHandler()
+#                
+#            elif key == keyboard.Key.Plus:
+#                
+#                self.KeyboardHandles.controlKeypadPlusHandler()
+#                
+#            elif key == keyboard.Key.Enter:
+#                
+#                self.KeyboardHandles.controlKeypadEnterHandler()
+#                
+#            elif key == keyboard.Key.Period:
+#                
+#                self.KeyboardHandles.controlKeypadPeriodHandler()
+#                
+#    # =============================================================================
+#    #         elif key == qc.Qt.Keypad_0:
+#    #             
+#    #             self.KeyboardHandles.controlKeypad0Handler()
+#    #             
+#    #         elif key == qc.Qt.Keypad_1:
+#    #             
+#    #             self.KeyboardHandles.controlKeypad1Handler()
+#    #             
+#    #         elif key == qc.Qt.Keypad_2:
+#    #             
+#    #             self.KeyboardHandles.controlKeypad2Handler()
+#    #             
+#    #         elif key == qc.Qt.Keypad_3:
+#    #             
+#    #             self.KeyboardHandles.controlKeypad3Handler()
+#    #             
+#    #         elif key == qc.Qt.Keypad_4:
+#    #             
+#    #             self.KeyboardHandles.controlKeypad4Handler()
+#    #             
+#    #         elif key == qc.Qt.Keypad_5:
+#    #             
+#    #             self.KeyboardHandles.controlKeypad5Handler()
+#    #             
+#    #         elif key == qc.Qt.Keypad_6:
+#    #         
+#    #             self.KeyboardHandles.controlKeypad6Handler()
+#    #             
+#    #         elif key == qc.Qt.Keypad_7:
+#    #             
+#    #             self.KeyboardHandles.controlKeypad7Handler()
+#    #             
+#    #         elif key == qc.Qt.Keypad_8:
+#    #         
+#    #             self.KeyboardHandles.controlKeypad8Handler()
+#    #             
+#    #         elif key == qc.Qt.Keypad_9:
+#    #             
+#    #             self.KeyboardHandles.controlKeypad9Handler()
+#    #             
+#    # =============================================================================
+#                
+#            elif key == keyboard.Key.ParenLeft:
+#                
+#                self.KeyboardHandles.controlKeypadParenLeftHandler()
+#                
+#            elif key == keyboard.Key.ParenRight:
+#            
+#                self.KeyboardHandles.controlKeypadParenRightHandler()
+#                
+#            elif key == keyboard.Key.BracketLeft:
+#                
+#                self.KeyboardHandles.controlKeypadBracketLeftHandler()
+#                
+#            elif key == keyboard.Key.BracketRight:
+#            
+#                self.KeyboardHandles.controlKeypadBracketRightHandler()
+#                
+#            elif key == keyboard.Key.BraceLeft:
+#                
+#                self.KeyboardHandles.controlKeypadBraceLeftHandler()
+#                
+#            elif key == keyboard.Key.BraceRight:
+#            
+#                self.KeyboardHandles.controlKeypadBraceRightHandler()
+#                
+#            elif key == keyboard.Key.Bar:
+#                
+#                self.KeyboardHandles.controlKeypadBarHandler()
+#                
+#            elif key == keyboard.Key.Backslash:
+#            
+#                self.KeyboardHandles.controlKeypadBackslashHandler()
+#                
+#            elif key == keyboard.Key.Colon:
+#                
+#                self.KeyboardHandles.controlKeypadColonHandler()
+#                
+#            elif key == keyboard.Key.QuoteDbl:
+#            
+#                self.KeyboardHandles.controlKeypadQuoteDblHandler()
+#                
+#            elif key == keyboard.Key.Apostrophe:
+#                
+#                self.KeyboardHandles.controlKeypadApostropheHandler()
+#                
+#            elif key == keyboard.Key.Less:
+#            
+#                self.KeyboardHandles.controlKeypadLessHandler()
+#                
+#            elif key == keyboard.Key.Greater:
+#                
+#                self.KeyboardHandles.controlKeypadGreaterHandler()
+#                
+#            elif key == keyboard.Key.Question:
+#            
+#                self.KeyboardHandles.controlKeypadQuestionHandler()
+#                
+#            elif key == keyboard.Key.Exclam:
+#                
+#                self.KeyboardHandles.controlKeypadExclamHandler()
+#                
+#            elif key == keyboard.Key.At:
+#            
+#                self.KeyboardHandles.controlKeypadAtHandler()
+#                
+#            elif key == keyboard.Key.NumberSign:
+#                
+#                self.KeyboardHandles.controlKeypadNumberSignHandler()
+#                
+#            elif key == keyboard.Key.Dollar:
+#            
+#                self.KeyboardHandles.controlKeypadDollarHandler()
+#                
+#            elif key == keyboard.Key.Percent:
+#                
+#                self.KeyboardHandles.controlKeypadPercentHandler()
+#                
+#            elif key == keyboard.Key.AsciiCircum:
+#            
+#                self.KeyboardHandles.controlKeypadAsciiCircumHandler()
+#                
+#            elif key == keyboard.Key.Ampersand:
+#                
+#                self.KeyboardHandles.controlKeypadAmpersandHandler()
+#                
+#            elif key == keyboard.Key.Apostrophe:
+#            
+#                self.KeyboardHandles.controlKeypadApostropheHandler()
+#                
+#            elif key == keyboard.Key.AsciiTilde:
+#                
+#                self.KeyboardHandles.controlKeypadAsciiTildeHandler()
+#                
+#            elif key == keyboard.Key.notsign:
+#            
+#                self.KeyboardHandles.controlKeypadNotHandler()
+#                
+#            elif key == keyboard.Key.Bar:
+#                
+#                self.KeyboardHandles.controlKeypadBarHandler()
+#                
+#            elif key == keyboard.Key.Control:
+#                
+#                self.controlOn = 1
+#                print("control is on")
+#    # =============================================================================
+#    #         elif key == keyboard.Key.EuroSign:
+#    #         
+#    #             self.KeyboardHandles.controlKeypadEuroSignHandler()
+#    #             
+#    #         elif key == keyboard.Key.PoundSign:
+#    #             
+#    #             self.KeyboardHandles.controlKeypadPoundSignHandler()
+#    #             
+#    #         elif key == keyboard.Key.YenSign:
+#    #         
+#    #             self.KeyboardHandles.controlKeypadYenSignHandler()
+#    #             
+#    #         elif key == keyboard.Key.Para:
+#    #             
+#    #             self.KeyboardHandles.controlKeypadParaHandler()
+#    #             
+#    #         elif key == keyboard.Key.SectionSign:
+#    #         
+#    #             self.KeyboardHandles.controlKeypadSectionSignHandler()
+#    #             
+#    #         elif key == keyboard.Key.CentSign:
+#    #             
+#    #             self.KeyboardHandles.controlKeypadCentSignHandler()
+#    #             
+#    #         elif key == keyboard.Key.DegreeSign:
+#    #         
+#    #             self.KeyboardHandles.controlKeypadDegreeSignHandler()
+#    #             
+#    #         elif key == keyboard.Key.PlusMinusSign:
+#    #             
+#    #             self.KeyboardHandles.controlKeypadPlusMinusSignHandler()
+#    #             
+#    #         elif key == keyboard.Key.MicroSign:
+#    #         
+#    #             self.KeyboardHandles.controlKeypadMicroSignHandler()
+#    #             
+#    #         elif key == keyboard.Key.RootSign:
+#    #             
+#    #             self.KeyboardHandles.controlKeypadRootSignHandler()
+#    #             
+#    #         elif key == keyboard.Key.ApproxSign:
+#    #         
+#    #             self.KeyboardHandles.controlKeypadApproxSignHandler()
+#    #             
+#    #         elif key == keyboard.Key.AcuteAccent:
+#    #             
+#    #             self.KeyboardHandles.controlKeypadAcuteAccentHandler()
+#    #             
+#    #         elif key == keyboard.Key.AsciiTilde:
+#    #         
+#    #             self.KeyboardHandles.controlKeypadAsciiTildeHandler()
+#    #             
+#    #         elif key == keyboard.Key.Diaeresis:
+#    #             
+#    #             self.KeyboardHandles.controlKeypadDiaeresisHandler()
+#    #             
+#    #         elif key == keyboard.Key.CircumflexAccent:
+#    #         
+#    #             self.KeyboardHandles.controlKeypadCircumflexAccentHandler()
+#    #             
+#    #         elif key == keyboard.Key.GraveAccent:
+#    #             
+#    #             self.KeyboardHandles.controlKeypadGraveAccentHandler()
+#    #             
+#    #         elif key == keyboard.Key.Apostrophe:
+#    #         
+#    #             self.KeyboardHandles.controlKeypadApostropheHandler()
+#    #             
+#    #         elif key == keyboard.Key.AsciiCircum:
+#    #             
+#    #             self.KeyboardHandles.controlKeypadAsciiCircumHandler()
+#    #             
+#    #         elif key == keyboard.Key.Cedilla:
+#    #         
+#    #             self.KeyboardHandles.controlKeypadCedillaHandler()
+#    #             
+#    #         elif key == keyboard.Key.Hook:
+#    #             
+#    #             self.KeyboardHandles.controlKeypadHookHandler()
+#    # =============================================================================
+#                
+#            else:
+#                print("no handler for that key")
+#     
+#         
+# =============================================================================
+
+    def handleKeyReleaseEvent(self, key):
+        pass
+# =============================================================================
+#         #key = keyReleaseEvent.key()
+#         if key == keyboard.Key.ctrl_l:
+#             self.controlOn = 0
+#             print("control is off")
+# 
+# =============================================================================

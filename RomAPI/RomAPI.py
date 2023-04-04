@@ -7,7 +7,7 @@ Created on Tue Nov  1 11:18:01 2022
 
 import ctypes
 import time
-import DefaultKeyboardHandles as dh
+import DefaultKeyboardHandles as dk
 import DefaultMouseHandles as dm
 import DefaultRomVisualizationHandles as dr
 import OperationsManager as om
@@ -125,7 +125,7 @@ class RomState():
         #get values for the truth table
         pass
 
-class RomKeyboardHandles(dh.DefaultKeyboardHandles):
+class RomKeyboardHandles(dk.DefaultKeyboardHandles):
 
     def __init__(self):
         super().__init__()

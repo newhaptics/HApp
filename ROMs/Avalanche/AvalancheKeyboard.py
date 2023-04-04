@@ -8,9 +8,11 @@ Created on Thu Feb 16 16:52:24 2023
 
 import RomAPI as rs
 
-import DefaultKeyboardHandles as dh
+# =============================================================================
+# import DefaultKeyboardHandles as dh
+# =============================================================================
 
-class AvalancheKeyboardHandles(dh.DefaultKeyboardHandles):
+class AvalancheKeyboardHandles(rs.RomKeyboardHandles):
     
     def __init__(self, GameFlag):
         super().__init__()
@@ -19,7 +21,6 @@ class AvalancheKeyboardHandles(dh.DefaultKeyboardHandles):
         
         self.godMode = 0
         #self.AvalancheModel = AvalancheModel
-
 
     def addAvalancheModel(self, AvalancheModel):
         self.AvalancheModel = AvalancheModel

@@ -308,8 +308,47 @@ class AutoExecuteParameterOperation(rs.RomOperation):
     def execute(self):
         # execute the touch points
         self.MasterModel.registerTouchParameters()
-
-
+        
+        
+        
+# =============================================================================
+# class BlinkCursorOperation(rs.RomOperation):
+#     
+#     def __init__(self, name, MasterModel, TactileDisplay):
+#         super().__init__(name)
+#         self.createDebugString()        
+#         self.cursorBlinker = 0
+#         
+#         # inputs to the operation
+#         self.MasterModel = MasterModel
+#         self.outputDictionary["Master Model"] = self.MasterModel
+#         
+#         # outputs to the ToolFlag
+#         self.TactileDisplay = TactileDisplay
+#         self.outputDictionary[self.TactileDisplay.name] = self.TactileDisplay
+#         
+#         # provide a description
+#         self.description = "This operation refreshs the display when keys are typed."
+#         
+#         # execute the function continuously until otherwise
+#         executionParameters = {
+#             "executeDelay": 0, # a delay in milliseconds that starts the execution of the Operation after the flag dependencies have been met
+#             "executeContinuously": True, # a boolean value that determines if the Operation will execute forever
+#             "executionIntervalTime": 1, # an interval in milliseconds that determines the time between execution
+#         }
+#         
+#         self.setExecutionParameters(executionParameters)
+#         
+#         self.executable = self.execute
+#         
+#         self.createDebugString()
+#     
+#     def execute(self):
+#         # just print the text editor output to see if the limitation is on rom side
+#         self.TactileDisplay.dot(self.MasterModel.cursor)
+#         self.TactileDisplay.refresh()
+# =============================================================================
+        
 class TouchFlag(rs.RomFlag):
     
     def __init__(self, name):

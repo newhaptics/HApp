@@ -6,12 +6,12 @@ Created on Mon Feb 20 17:02:58 2023
 
 """
 
-import DefaultKeyboardHandles as dh
+import RomAPI as rs
 
 """ class to handle keyboard inputs for the touch tunes rom """
 
 # class to handle keyboard inputs for the touch tunes rom
-class TouchTunesKeyboardHandles(dh.DefaultKeyboardHandles):
+class TouchTunesKeyboardHandles(rs.RomKeyboardHandles):
 
     # constructor
     def __init__(self, TouchTunesModel, TunesFlag):

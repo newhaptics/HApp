@@ -159,10 +159,10 @@ class BlinkCursorOperation(rs.RomOperation):
         
         pinPosition = (brailleXPosition,brailleYPosition)
         
-        self.TactileDisplay.setPinCursorPosition(pinPosition)
+        #self.TactileDisplay.setPinCursorPosition(pinPosition)
         
         #when cursor location moves outside of bounding box switch bounding box location
-        pinCursor = self.TactileDisplay.grabPinCursor()
+        pinCursor = pinPosition#self.TactileDisplay.grabPinCursor()
         
         #control refresh
 # =============================================================================
@@ -204,26 +204,35 @@ class BlinkCursorOperation(rs.RomOperation):
         #calculate the number of times the cursor should blink
         #numBlinks = period // dutyCycle
         #print(numBlinks)
-        timeLow = int(period * dutyCycle)
+        #print(self.cursorBlinker)
+        self.cursorBlinker = 0
+        self.TactileDisplay.braille((0,0), self.TextEditor.editorMatrixOutput())
         
-        #make the pin cursor position blink
-        if self.cursorBlinker > period:
-            #print(self.cursorBlinker)
-            self.cursorBlinker = 0
-            self.TactileDisplay.braille((0,0),self.TextEditor.editorMatrixOutput())
-            
-            #turn the cursor on
-            self.cursorOn(pinCursor)
-
-        elif self.cursorBlinker == timeLow:
-            #print(self.cursorBlinker)
-            self.TactileDisplay.braille((0,0),self.TextEditor.editorMatrixOutput())
-            
-            #turn the cursor off
-            self.cursorOff(pinCursor)
-    
-            #restart the refresh operation
-            #self.Controller.HAppControlCenter.restartExecutingOperation("TactileDisplayRefreshOperation")
+        #turn the cursor on
+        self.cursorOn(pinCursor)
+        
+# =============================================================================
+#         timeLow = int(period * dutyCycle)
+#         
+#         #make the pin cursor position blink
+#         if self.cursorBlinker > period:
+#             #print(self.cursorBlinker)
+#             self.cursorBlinker = 0
+#             self.TactileDisplay.braille((0,0),self.TextEditor.editorMatrixOutput())
+#             
+#             #turn the cursor on
+#             self.cursorOn(pinCursor)
+# 
+#         elif self.cursorBlinker == timeLow:
+#             #print(self.cursorBlinker)
+#             self.TactileDisplay.braille((0,0),self.TextEditor.editorMatrixOutput())
+#             
+#             #turn the cursor off
+#             self.cursorOff(pinCursor)
+#     
+#             #restart the refresh operation
+#             #self.Controller.HAppControlCenter.restartExecutingOperation("TactileDisplayRefreshOperation")
+# =============================================================================
 
 
     def cursorOn(self, pinCursor):

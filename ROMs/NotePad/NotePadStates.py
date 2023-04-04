@@ -81,8 +81,10 @@ class NotePadTextEditor(rs.RomState):
         self.Controller.HAppControlCenter.addOperation(self.TactileDisplayRefreshOperation)
 
         #create an operation that blinks the cursor of the Braille Display
-        self.BlinkCursorOperation = no.BlinkCursorOperation("BlinkCursorOperation", self.Controller, self.TextEditor)
-        self.Controller.HAppControlCenter.addOperation(self.BlinkCursorOperation)
+# =============================================================================
+#         self.BlinkCursorOperation = no.BlinkCursorOperation("BlinkCursorOperation", self.Controller, self.TextEditor)
+#         self.Controller.HAppControlCenter.addOperation(self.BlinkCursorOperation)
+# =============================================================================
         
         self.TextEditor.KeyboardHandles.TactileDisplayRefreshOperation = self.TactileDisplayRefreshOperation
         
@@ -126,8 +128,8 @@ class NotePadExitState(rs.RomState):
         self.Controller.HAppControlCenter.killOperation("BlinkCursorOperation")
         
         # reset keyboard handles
-        KeyboardPeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Keyboard")
-        KeyboardPeripheral.setNewKeyboardHandler(rs.RomKeyboardHandles())
+        #KeyboardPeripheral = self.Controller.HAppControlCenter.getPeripheral("Master Keyboard")
+        #KeyboardPeripheral.setNewKeyboardHandler(rs.RomKeyboardHandles())
         
     def closeState(self):
         #clear the screen of all information and shut down start screen processes

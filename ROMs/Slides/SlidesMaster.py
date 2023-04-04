@@ -98,7 +98,7 @@ class SlidesMaster():
 
     def beginAutoExecuteParameters(self):
         # launch the operation
-        self.AutoExecuteParameterOperation = so.AutoExecuteParameterOperation("AutoExecuteParameterOperation", self, self.TouchFlag)
+        self.AutoExecuteParameterOperation = so.AutoExecuteParameterOperation("AutoExecuteParameterOperation", self)#, self.TouchFlag)
         self.Controller.HAppControlCenter.addOperation(self.AutoExecuteParameterOperation)
 
     def endAutoExecuteParameters(self):
@@ -127,6 +127,10 @@ class SlidesMaster():
                 pinPointList.append(touchPinPoint)
 
         self.TouchFlag.state = pinPointList
+        
+        
+    def cursorClicked(self):
+        self.parameterClicked(self.cursor)
 
     def registerTouchParameters(self):
         # get the touch points

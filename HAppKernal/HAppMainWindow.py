@@ -12,7 +12,7 @@ from PyQt5 import QtCore as qc
 
 
 import KeyboardPeripheral as kb
-import HAppKeyboardHandles as hk
+#import HAppKeyboardHandles as hk
 import DefaultKeyboardHandles as dk
 
 import MousePeripheral as mh
@@ -53,9 +53,12 @@ class HAppMainWindow(qw.QMainWindow):
 
         # create a dock widget to communicate with Cave
         self.commandBox = qw.QTextEdit()
+        self.commandBox.setReadOnly(True)
         self.commandDock = qw.QDockWidget("llmOS Commands", self, qc.Qt.Widget)
         self.commandDock.setWidget(self.commandBox)
         self.addDockWidget(qc.Qt.LeftDockWidgetArea, self.commandDock, qc.Qt.Vertical)
+        self.commandBox.setText("this is a test")
+        self.commandDock.setFloating(True)
         
         # set the mouse cursor to always be tracked
         self.setMouseTracking(True)
@@ -75,6 +78,7 @@ class HAppMainWindow(qw.QMainWindow):
         self.ARCSDock = qw.QDockWidget("ARCS Monitor", self, qc.Qt.Widget)
         self.ARCSDock.setWidget(self.ARCSLabel)
         self.addDockWidget(qc.Qt.RightDockWidgetArea, self.ARCSDock, qc.Qt.Vertical)
+        self.ARCSDock.setFloating(True)
         
         # display and define logo
         FCIcon = qg.QIcon(":main_symbol")
@@ -92,13 +96,6 @@ class HAppMainWindow(qw.QMainWindow):
         self.statusBar = qw.QStatusBar()
         self.setStatusBar(self.statusBar)
         
-        # Build a default keyboard
-        self.DefaultKeyboardHandles = dk.DefaultKeyboardHandles()
-        self.KeyboardPeripheral = kb.KeyboardPeripheral("Master Keyboard", self.DefaultKeyboardHandles)
-        
-        # add the Keyboard to the control center
-        self.HapticsEngine.addPeripheral(self.KeyboardPeripheral)
-        
         # Build a default mouse
         self.DefaultMouseHandles = dm.DefaultMouseHandles()
         self.MousePeripheral = mh.MousePeripheral("Master Mouse", self.DefaultMouseHandles)
@@ -113,7 +110,7 @@ class HAppMainWindow(qw.QMainWindow):
 # =============================================================================
         
         # update the ARCS status label
-        self.UpdateMonitorOperation = he.UpdateMonitorOperation("UpdateMonitorOperation", self.HapticsEngine, self.ARCSLabel)
+        self.UpdateMonitorOperation = he.UpdateMonitorOperation("UpdateMonitorOperation", self.HapticsEngine, self.ARCSLabel, self.commandBox)
         self.HapticsEngine.addOperation(self.UpdateMonitorOperation)
         
         # begin executing HApp operations
@@ -124,11 +121,15 @@ class HAppMainWindow(qw.QMainWindow):
 
         qc.QTimer.singleShot(1000, lambda: self.quickConnect())
         
+        
+    def setTheCommandWindow(self, text):
+        self.commandBox.setText(text)
+        
     def quickConnect(self):
         # ease of use
-        self.HapticOS.osDecider("PeripheralManagement Connect Display Fourplex COM3")
-        print(self.TactileDisplayVisualizer.getCoordinateSystem())
-        #self.HapticOS.osDecider("RomControl StartRom Notepad")
+        self.HapticOS.osDecider("PeripheralManagement Connect Display Fourplex COM7")
+        #print(self.TactileDisplayVisualizer.getCoordinateSystem())
+        #self.HapticOS.osDecider("RomControl StartRom Slides")
 # =============================================================================
 #         self.HapticOS.osDecider("RomControl EndRom Notepad")
 #         self.HapticOS.osDecider("RomControl StartRom Avalanche")
@@ -151,32 +152,6 @@ class HAppMainWindow(qw.QMainWindow):
 
         # Close SplashScreen after 2 seconds (2000 ms)
         qc.QTimer.singleShot(2000, self.splash.close)
-
-    """ Keyboard related functions """
-
-    def keyPressEvent(self, event):
-        event.ignore()
-
-        if event.key() == qc.Qt.Key_F1:
-            prompt = self.commandBox.toPlainText()
-            print(prompt)
-            self.HapticOS.llmOSCommand(prompt)
-            self.commandBox.clear()
-            
-        if event.key() == qc.Qt.Key_F2:
-            prompt = self.commandBox.toPlainText()
-            print(prompt)
-            self.HapticOS.osDecider(prompt)
-            self.commandBox.clear()
-
-        # Connect to KeyboardPeripheral class key press event
-        self.KeyboardPeripheral.handleKeyPressEvent(event)
-
-    def keyReleaseEvent(self, event):
-        event.ignore()
-        
-        # Connect to KeyboardPeripheral class key release event
-        self.KeyboardPeripheral.handleKeyReleaseEvent(event)
         
     """ Mouse related functions """
     
@@ -341,10 +316,12 @@ class HAppMainWindow(qw.QMainWindow):
         # Construction of Operation
         self.TactileDisplayVisualizerRenderer = rtsv.TactileDisplayVisualizerRenderer("TactileDisplayVisualizerRenderer",  self.MousePeripheral, TactileDisplay, CoordinateSystem, self.TactileDisplayVisualizer)
         
-        # Reimplement Keyboard
-        self.HAppKeyboardHandles = hk.HAppKeyboardHandles(self.TactileDisplayVisualizerRenderer)
-        self.KeyboardPeripheral.setDefaultHandler(self.HAppKeyboardHandles)
-        
+# =============================================================================
+#         # Reimplement Keyboard
+#         self.HAppKeyboardHandles = hk.HAppKeyboardHandles(self.TactileDisplayVisualizerRenderer)
+#         self.KeyboardPeripheral.setDefaultHandler(self.HAppKeyboardHandles)
+#         
+# =============================================================================
         # Reimplement Mouse
         self.HAppMouseHandles = hm.HAppMouseHandles(self.TactileDisplayVisualizerRenderer)
         self.MousePeripheral.setDefaultHandler(self.HAppMouseHandles)

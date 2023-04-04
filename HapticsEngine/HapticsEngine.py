@@ -29,6 +29,10 @@ class HapticsEngine:
         self.VisualizationManager = vm.VisualizationManager()
         self.FileManager = fi.FileManager()
         self.exitEvent = 0
+        
+        
+        # command box
+        self.commandText = "test text"
 
         # list for holding roms
         self.romList = []
@@ -326,7 +330,7 @@ class OperationTimer(QTimer):
     
 class UpdateMonitorOperation(om.Operation):
     
-    def __init__(self, name, HapticsEngine, ARCSLabel):
+    def __init__(self, name, HapticsEngine, ARCSLabel, commandBox):
         super().__init__(name)
         # inputs to the operation
         self.HapticsEngine = HapticsEngine
@@ -335,8 +339,11 @@ class UpdateMonitorOperation(om.Operation):
         # outputs to the operation
         self.ARCSLabel = ARCSLabel
         self.outputDictionary["ARCSLabel"] = self.ARCSLabel
-    
         
+        # outputs to the operation
+        self.commandBox = commandBox
+        self.outputDictionary["commandBox"] = self.commandBox
+
         # provide a description
         self.description = "Updates the ARCs Monitor label."
         
@@ -358,6 +365,7 @@ class UpdateMonitorOperation(om.Operation):
         #ARCSLayout = self.HapticsEngine.debugGetResourceLabels()
         #self.ARCSLabel.setLayout(ARCSLayout)
         self.ARCSLabel.setText(self.HapticsEngine.debugPrintAllResources())
+        self.commandBox.setText(self.HapticsEngine.commandText)
         
         
 # =============================================================================

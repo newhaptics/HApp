@@ -7,16 +7,16 @@ Created on Tue Nov 15 15:12:42 2022
 
 import RomAPI as rs
 
-import DefaultKeyboardHandles as dh
+#import DefaultKeyboardHandles as dh
 
-class TextEditorKeyboardHandles(dh.DefaultKeyboardHandles):
+class TextEditorKeyboardHandles(rs.RomKeyboardHandles):
     
     def __init__(self, textEditor, HAppControlCenter):
         super().__init__()
         
         self.HAppControlCenter = HAppControlCenter
         
-        self.TactileDisplay = self.HAppControlCenter.getPeripheral("NewHaptics Display SarissaV1")
+        self.TactileDisplay = self.HAppControlCenter.getPeripheral("Fourplex")
         self.TactileDisplayRefreshOperation = self.HAppControlCenter.getOperation("TactileDisplayRefreshOperation")
         
         self.editor = textEditor
@@ -330,32 +330,26 @@ class TextEditorKeyboardHandles(dh.DefaultKeyboardHandles):
     def BracketRightHandler(self):
         self.editor.insertCharacter("]")
         self.updateDisplay()
-
         
     def EqualHandler(self):
         self.editor.insertCharacter("=")
         self.updateDisplay()
 
-        
     def GreaterHandler(self):
         self.editor.insertCharacter(">")
         self.updateDisplay()
-
         
     def LessHandler(self):
         self.editor.insertCharacter("<")
         self.updateDisplay()
 
-        
     def QuoteDblHandler(self):
         self.editor.insertCharacter('"')
         self.updateDisplay()
-
         
     def QuoteLeftHandler(self):
         self.editor.insertCharacter("'")
         self.updateDisplay()
-
         
     def KeyPageUpHandler(self):
         self.editor.pageUp()

@@ -33,6 +33,9 @@ class Imprint():
         self.gnome = self.Gnomes[gnomeKey]
         
     def generateResponse(self, prompt):
+        print("test 1")
+        print(prompt)
+        print(self.gnome)
         response = openai.ChatCompletion.create(
           model="gpt-3.5-turbo",
           messages = [
@@ -42,7 +45,8 @@ class Imprint():
                 {"role": "user", "content": prompt}
             ]
         )
-    
+        print("test 2")
+        print(response.choices[0].message.content)
         self.encodedResponse = response.choices[0].message.content
         return self.encodedResponse
 

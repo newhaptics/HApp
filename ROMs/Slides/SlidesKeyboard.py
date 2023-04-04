@@ -9,9 +9,7 @@ Created on Wed Dec  7 16:40:31 2022
 
 import RomAPI as rs
 
-import DefaultKeyboardHandles as dh
-
-class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
+class SlidesKeyboardHandles(rs.RomKeyboardHandles):
     
     def __init__(self, MasterModel):
         super().__init__()
@@ -55,30 +53,30 @@ class SlidesKeyboardHandles(dh.DefaultKeyboardHandles):
 
     def KeyWHandler(self):
         # move the cursor around
-        if self.cursor[1] < self.MasterModel.displaySize[0]:
-            self.cursor[1] += 1
-            print("current cursor position {}".format(self.cursor))
+        if self.MasterModel.cursor[0] > 0:
+            self.MasterModel.cursor[0] -= 1
+            print("current cursor position {}".format(self.MasterModel.cursor))
         else:
             print("hit the bottom edge of screen")
 
     def KeyAHandler(self):
-        if self.cursor[0] > self.MasterModel.displaySize[1]:
-            self.cursor[0] -= 1
-            print("current cursor position {}".format(self.cursor))
+        if self.MasterModel.cursor[1] > 0:
+            self.MasterModel.cursor[1] -= 1
+            print("current cursor position {}".format(self.MasterModel.cursor))
         else:
             print("hit the left edge of screen")
 
     def KeySHandler(self):
-        if self.cursor[1] < self.MasterModel.displaySize[0]:
-            self.cursor[1] -= 1
-            print("current cursor position {}".format(self.cursor))
+        if self.MasterModel.cursor[0] < self.MasterModel.displaySize[0]:
+            self.MasterModel.cursor[0] += 1
+            print("current cursor position {}".format(self.MasterModel.cursor))
         else:
             print("hit the top edge of screen")
 
     def KeyDHandler(self):
-        if self.cursor[0] < self.MasterModel.displaySize[1]:
-            self.cursor[0] += 1
-            print("current cursor position {}".format(self.cursor))
+        if self.MasterModel.cursor[1] < self.MasterModel.displaySize[1]:
+            self.MasterModel.cursor[1] += 1
+            print("current cursor position {}".format(self.MasterModel.cursor))
         else:
             print("hit the right edge of screen")
 

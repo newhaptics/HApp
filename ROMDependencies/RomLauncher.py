@@ -42,3 +42,7 @@ class RomLauncher():
         # ends the rom and closes everything related to the rom freeing up resources
         print("Ending the ROM")
         self.HapticsEngine.exitEvent = 1
+
+    def pauseRom(self):
+        # do something to pause the rom
+        pass
