@@ -11,7 +11,7 @@ import serial.tools.list_ports
 import PeripheralDevice as pd
 
 # need to import the files for all the potential peripherals
-import NHAPI as nh
+import TactileDisplay as nh
 import IntegratedTouchscreenPeripheral as itp
 
 
@@ -92,7 +92,7 @@ class PeripheralManager:
                 
                 if peripheralType == "Display":
 
-                    self.TactileDisplay = nh.NHAPI(peripheralName)
+                    self.TactileDisplay = nh.TactileDisplay(peripheralName)
 
                     self.TactileDisplay.connect(comPortList[0])
 

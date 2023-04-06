@@ -1,0 +1,55 @@
+The GraphicsEngine class is a custom Python class that allows you to draw 2D geometric features on a matrix using PyCairo. It is initialized with its dimensions like GraphicsEngine((4, 3)). The class provides the following methods for adding and drawing various features:
+
+addPoint(coordinates): Add a point to the image with the specified coordinates.
+addLine(startPoint, endPoint, width): Add a line to the image with the specified start and end points and width.
+addCurve(controlPoints, width): Add a quadratic Bezier curve to the image using the specified control points and width.
+addTriangle(vertices, width): Add a triangle to the image with the specified vertices and width.
+addCircle(center, radius, width): Add a circle to the image with the specified center, radius, and width.
+addEllipse(center, major_axis, minor_axis, angle, width): Add an ellipse to the image with the specified center, major axis, minor axis, rotation angle, and width.
+addArc(center, radius, start_angle, end_angle, width): Add an arc to the image with the specified center, radius, start angle, end angle, and width.
+addPolygon(vertices, width): Add a polygon to the image with the specified vertices and width.
+addRectangle(startPoint, endPoint, width): Add a rectangle to the image with the specified start point (top-left corner), end point (bottom-right corner), and width.
+addQuadrilateral(vertices, width): Add a quadrilateral to the image with the specified vertices and width.
+
+After adding the features, you can use the drawFeatures() method to draw the features onto the matrix, and the showImage() method to display the resulting image.
+
+example code drawing of a small person:
+engine = GraphicsEngine((500,500))
+
+# Head
+head_center = (150, 150)
+head_radius = 50
+engine.addCircle(head_center, head_radius, 2)
+
+# Body
+body_start = (100, 200)
+body_end = (200, 300)
+engine.addRectangle(body_start, body_end, 2)
+
+# Left arm
+left_arm_start = (50, 200)
+left_arm_end = (100, 250)
+engine.addRectangle(left_arm_start, left_arm_end, 2)
+
+# Right arm
+right_arm_start = (200, 200)
+right_arm_end = (250, 250)
+engine.addRectangle(right_arm_start, right_arm_end, 2)
+
+# Left leg
+left_leg_start = (100, 300)
+left_leg_end = (130, 400)
+engine.addRectangle(left_leg_start, left_leg_end, 2)
+
+# Right leg
+right_leg_start = (170, 300)
+right_leg_end = (200, 400)
+engine.addRectangle(right_leg_start, right_leg_end, 2)
+
+# Draw features and show image
+engine.drawFeatures()
+engine.showImage()
+
+Using the GraphicsEngine class, create 10 application icons that fit within the GraphicsEngine canvas.
+
+using a GraphicsEngine((4, 3)).

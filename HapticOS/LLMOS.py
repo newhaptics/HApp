@@ -16,6 +16,7 @@ import KeyboardPeripheral as kb
 #import HAppKeyboardHandles as hk
 import DefaultKeyboardHandles as dk
 
+import GraphicsRenderOperation as gro
 
 import CommandLineKeyboardHandles as ck
 
@@ -25,7 +26,7 @@ class LLMOS(im.Imprint):
 
     def __init__(self, openAIKey, elevenLabsKey):
         # create the imprint of llmOS
-        super().__init__(openAIKey, "C://Users//derek//Documents//HApp//HAppKernal//gnomes//LLMOS.gnome")
+        super().__init__(openAIKey, "C://Users//derek//Documents//HApp//HapticOS//gnomes//LLMOS.gnome")
 
         # create the control center for llmOS resources
         self.HapticsEngine = he.HapticsEngine()
@@ -159,7 +160,8 @@ class LLMOS(im.Imprint):
                 self.TactileDisplay = self.HapticsEngine.getPeripheral("Fourplex")
                 self.isDisplayConnected = 1
                 #displaySize = TactileDisplay.return_displaySize()
-                
+                self.Render = gro.GraphicsRenderOperation("Render", self.TactileDisplay)
+                self.HapticsEngine.addOperation(self.Render)
                 # add the commandline output to be set
                 
 

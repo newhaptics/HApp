@@ -86,7 +86,7 @@ class TactileDisplay(pd.PeripheralDevice):
                          for row in matrix]))
         print('---------------------------\n')
 
-    def return_displaySize(self):
+    def size(self):
         """ returns the current number of rows and columns """
         return (self.__numRows, self.__numColumns)
 
@@ -172,7 +172,7 @@ class TactileDisplay(pd.PeripheralDevice):
                 self.com.setRow(rowIndex,desiredRowData)
             rowIndex += 1  
         
-    def comLink_on(self, COM, *args):
+    def connect(self, COM, *args):
         """ creates connection to embedded side and initializes dot matrix size"""
         if len(args) > 0:
             if args[0] == 1:

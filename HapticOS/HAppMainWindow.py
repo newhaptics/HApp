@@ -10,7 +10,6 @@ from PyQt5 import QtWidgets as qw
 from PyQt5 import QtGui as qg
 from PyQt5 import QtCore as qc
 
-
 import KeyboardPeripheral as kb
 #import HAppKeyboardHandles as hk
 import DefaultKeyboardHandles as dk
@@ -127,7 +126,7 @@ class HAppMainWindow(qw.QMainWindow):
         
     def quickConnect(self):
         # ease of use
-        self.HapticOS.osDecider("PeripheralManagement Connect Display Fourplex COM7")
+        self.HapticOS.osDecider("PeripheralManagement Connect Display Fourplex COM3")
         #print(self.TactileDisplayVisualizer.getCoordinateSystem())
         #self.HapticOS.osDecider("RomControl StartRom Slides")
 # =============================================================================
