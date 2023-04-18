@@ -35,7 +35,9 @@ class GraphicsEngine(fm.FeatureMetadata):
         self.matrix = np.ndarray(shape=(self.cairoDimensions[1], self.cairoDimensions[0]), dtype=np.uint8, buffer=buf)
 
     def retrieveList(self):
-        subMatrix = self.matrix[0:self.dimensions[1], 0:self.dimensions[0]]
+        subMatrix = self.matrix[0:self.dimensions[1], 0:self.dimensions[0]]        
+        subMatrix[subMatrix < 50] = 0
+        subMatrix[subMatrix >= 50] = 1
         return subMatrix.tolist()
         
     def showImage(self):

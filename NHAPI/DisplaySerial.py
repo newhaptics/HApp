@@ -26,6 +26,7 @@ class DisplaySerial(serial.Serial):
         self.nRows = self.getNRows()
         self.nColumns = self.getNColumns()
         self.nBytesPerRow = self.getNBytesPerRow()
+        self.nBytesPerColumn = self.getNBytesPerColumn()
 
 # =============================================================================
 #     #sets the echo of the com port onOff (0=Off, 1=On)
@@ -92,17 +93,14 @@ class DisplaySerial(serial.Serial):
         byteList = [padList[n:n+N] for n in range(0, len(rowData), N)]
         
         for byte in byteList: 
-            msbString = '0b' + ''.join(map(str, byte))
+            msbString = '0b' +''.join(map(str, byte))
             
             #lsbString = '0b' + ''.join(reversed(msbString))
-            
             output.append(int(msbString, base=2))
         
-# =============================================================================
-#         print("row index to edit {}".format(rowIndex))
-#         print("row data to set {}".format(rowData))
-#         print("encoded row data {}".format(output))
-# =============================================================================
+        print("row index to edit {}".format(rowIndex))
+        print("row data to set {}".format(rowData))
+        print("encoded row data {}".format(output))
         #send as bytearray with each parameter as a byte
         self.write(bytearray(output))
         
@@ -297,9 +295,83 @@ class DisplaySerial(serial.Serial):
         responseList = self.genericSerialCommand(1)
 
         return responseList[0]
+    
+    # Function 15: Gets the RowValveArray
+    def getRowValveArray(self):
+        self.write(bytearray([15]))
+        
+        responseList = self.genericSerialCommand(self.nRows)
+
+        return responseList
+
+    # Function 16: Sets the state of elements in rowValveArray
+    def setRowValveArrayAssignment(self, rowValveArray):
+        self.write(bytearray([16]))
+
+        self.write(bytearray(rowValveArray))
+
+        self.genericSerialCommand(0)
+
+    # Function 17: Gets the Column valve array assignments
+    def getColumnValveArray(self):
+        # send the function 17 command
+        self.write(bytearray([17]))
+        
+        responseList = self.genericSerialCommand(self.nColumns)
+        
+        return responseList
+
+    # Function 18: Sets the start of elements in columnValveArray
+    def setColumnValveArrayAssignment(self, columnValveArray):
+        self.write(bytearray([18]))
+
+        self.write(bytearray(columnValveArray))
+
+        self.genericSerialCommand(0)
+
+    # Function 19: Sets the state of all valves in a row
+    def setRowValveStateArray(self, valveStateArray):
+        # send the function 19 command
+        self.write(bytearray([19]))
+
+        self.write(bytearray(valveStateArray))
+
+        self.genericSerialCommand(0)
+
+    # Function 20: Sets the state of all valves in a column
+    def setColumnValveStateArray(self, valveStateArray):
+        self.write(bytearray([20]))
+
+        self.write(bytearray(valveStateArray))
+
+        self.genericSerialCommand(0)
+        
+    # Function 21: turns off the refresh matrix
+    def setRefreshMatrix(self, onOff):
+        self.write(bytearray([21]))
+        
+        self.write(bytearray([onOff]))
+        
+        self.genericSerialCommand(0)
+
+    # Function 23: Gets the number of bytes in a column
+    def getNBytesPerColumn(self):
+        #send the function 23 command
+        self.write(bytearray([23]))
+
+        responseList = self.genericSerialCommand(1)
+
+        return responseList[0]
+
+    # Function 32: Sets the state of all valves in a column
+    def setValveStateArray(self, valveStateArray):
+        self.write(bytearray([32]))
+
+        self.write(bytearray(valveStateArray))
+
+        self.genericSerialCommand(0)
 
     def genericSerialCommand(self, responseBytes):
-        
         
         if responseBytes > 0:
             responseList = []

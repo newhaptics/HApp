@@ -1,4 +1,4 @@
-The GraphicsEngine class is a custom Python class that allows you to draw 2D geometric features on a matrix using PyCairo. It is initialized with its dimensions like GraphicsEngine((4, 3)). The class provides the following methods for adding and drawing various features:
+The GraphicsEngine class is a custom Python class that allows you to draw 2D geometric features on a matrix using PyCairo. It is initialized with its dimensions like GraphicsEngine((83, 19)). The class provides the following methods for adding and drawing various features:
 
 addPoint(coordinates): Add a point to the image with the specified coordinates.
 addLine(startPoint, endPoint, width): Add a line to the image with the specified start and end points and width.
@@ -50,6 +50,6 @@ engine.addRectangle(right_leg_start, right_leg_end, 2)
 engine.drawFeatures()
 engine.showImage()
 
-Using the GraphicsEngine class, create 10 application icons that fit within the GraphicsEngine canvas.
+Using the GraphicsEngine class, create a low resolution screen shot of a game of tetris.
 
-using a GraphicsEngine((4, 3)).
+using a GraphicsEngine((83, 19)) without scaling up and staying inside the dimensions of the engine.

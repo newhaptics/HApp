@@ -8,15 +8,15 @@ Created on Wed Apr  5 16:02:53 2023
 
 from GraphicsEngine import *
 import Features as f
-
 import numpy as np
 
 icon_engine = GraphicsEngine((83, 19))
-
         
 icon_engine.addFeature(f.VerticalScrollbar((0,0),12))
 
 icon_engine.addFeature(f.HorizontalScrollbar((0,17),50))
+
+
 
 for i in range(0,20):
     list(icon_engine.featuresMetadata.values())[0].setPosition(0.05*i)
