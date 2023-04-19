@@ -98,9 +98,6 @@ class DisplaySerial(serial.Serial):
             #lsbString = '0b' + ''.join(reversed(msbString))
             output.append(int(msbString, base=2))
         
-        print("row index to edit {}".format(rowIndex))
-        print("row data to set {}".format(rowData))
-        print("encoded row data {}".format(output))
         #send as bytearray with each parameter as a byte
         self.write(bytearray(output))
         

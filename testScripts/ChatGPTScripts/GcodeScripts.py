@@ -11,7 +11,7 @@ import DisplaySerial as ds
 import time
 from TactileDisplayGcode import GCodeController
 
-serial_port = ds.DisplaySerial("COM4", 57600, 3)
+serial_port = ds.DisplaySerial("COM8", 57600, 3)
 serial_port.getSize()
 row_array = serial_port.getRowValveArray()
 column_array = serial_port.getColumnValveArray()
@@ -20,25 +20,35 @@ column_array = serial_port.getColumnValveArray()
 # serial_port.setColumnValveArrayAssignment(column_array)
 # serial_port.setRowValveArrayAssignment(row_array)
 # =============================================================================
-print(serial_port.getColumnValveArray())
-print(serial_port.getRowValveArray())
+
 
 gcode_controller = GCodeController(serial_port)
 
 # Set all column valves high sequentially
 gcode_controller.process_gcode("c")
-for i in range(len(column_array)):
-    gcode_controller.process_gcode(f"C[{i}:{i}]")
-    time.sleep(0.2)
+gcode_controller.process_gcode("r")
+#print(gcode_controller.row_valve_state_array)
+#print(gcode_controller.column_valve_state_array)
 
-# Set all row valves high
-gcode_controller.process_gcode("R")
-time.sleep(1)
+# make shift functionality test
 
-# Set all column valves low
-gcode_controller.process_gcode("c")
 
-# Set all row valves low sequentially
-for i in range(len(row_array)):
-    gcode_controller.process_gcode(f"r[{i}:{i}]")
-    time.sleep(0.2)
+# =============================================================================
+# for i in range(len(column_array)):
+#     gcode_controller.process_gcode(f"C[{i}:{i}]")
+#     time.sleep(0.02)
+# 
+# # Set all row valves high
+# gcode_controller.process_gcode("R")
+# time.sleep(1)
+# 
+# # Set all column valves low
+# gcode_controller.process_gcode("c")
+# 
+# # Set all row valves low sequentially
+# for i in range(len(row_array)):
+#     gcode_controller.process_gcode(f"r[{i}:{i}]")
+#     time.sleep(0.05)
+# 
+# 
+# =============================================================================

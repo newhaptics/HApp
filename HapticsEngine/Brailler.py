@@ -10,10 +10,9 @@ import numpy as np
 
 class Brailler():
     
-    def __init__(self, data, state):
+    def __init__(self, data):
         #store the outputs for every braille character inside the brailler
         self.data = data
-        self.state = state
         
         self.brailleCharacterDictionary = { " "	:	0b000000,
                                             "!"	:	0b011101,
@@ -154,8 +153,5 @@ class Brailler():
                     self.data[startCoordinate[1] + yCoordinate, startCoordinate[0] + xCoordinate] = 255
                 else:
                     self.data[startCoordinate[1] + yCoordinate, startCoordinate[0] + xCoordinate] = 0
-
-                self.state[startCoordinate[1] + yCoordinate][startCoordinate[0] + xCoordinate] = bool(output)
-
 
 
