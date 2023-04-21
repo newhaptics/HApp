@@ -75,15 +75,15 @@ class LLMOS(im.Imprint):
 
 # =============================================================================
 #         tempgnome = self.gnome
-# 
+#
 #         # turn the response into Cave Johnson
 #         self.openGnome("Cave Johnson")
-# 
+#
 #         userString = "User-" + command
 #         AIString = "AI assistant-" + genericResponse[1]
-# 
+#
 #         voiceResponse = self.generateResponse(userString + "\n" + AIString)
-# 
+#
 #         print(voiceResponse)
 #         self.gnome = tempgnome
 #         self.Voice.synthVoice(voiceResponse)
@@ -103,8 +103,7 @@ class LLMOS(im.Imprint):
         # decide the class of command
         print(instruction)
         components = instruction.split(" ")
-        
-        
+
         if components[0] == "RomControl":
             # enact the commands for rom control
             self.RomControl(instruction)
@@ -115,7 +114,7 @@ class LLMOS(im.Imprint):
 
         else:
             print("{0} instruction class not recognized".format(components[0]))
-            
+
 
     def RomControl(self, instruction):
         components = instruction.split(" ")
@@ -129,7 +128,7 @@ class LLMOS(im.Imprint):
             romFolder = romFile.split("//{}.rom".format(components[2]))
             print(romFolder)
             self.FileManager.addDirectory(romFolder[0])
-            
+
             self.RomLauncher.startRom(components[2])
             # open the appropriate gnome
             self.openGnome("EndRom")
@@ -139,11 +138,11 @@ class LLMOS(im.Imprint):
             print("llmos endRom")
             self.commandLineMode = 1
             self.RomLauncher.endRom()
-            
+
             # open the appropriate gnome
             self.openGnome("StartRom")
             self.currentHandler = self.KeyboardPeripheral.KeyboardHandles
-            
+
         else:
             print("{} is not a valid instruction".format(components[1]))
 
@@ -153,17 +152,19 @@ class LLMOS(im.Imprint):
 
         if "Connect" == components[1]:
             self.PeripheralManager.connectPeripheral(components[2], components[3], components[4:])
-            
+
             if components[2] == "Display":
                 self.MainWindow.renderDisplay(self.PeripheralManager.TactileDisplay)
-                
+
                 self.TactileDisplay = self.HapticsEngine.getPeripheral("Fourplex")
                 self.isDisplayConnected = 1
                 #displaySize = TactileDisplay.return_displaySize()
-                self.Render = gro.GraphicsRenderOperation("Render", self.TactileDisplay)
-                self.HapticsEngine.addOperation(self.Render)
+# =============================================================================
+#                 self.Render = gro.GraphicsRenderOperation("Render", self.TactileDisplay)
+#                 self.HapticsEngine.addOperation(self.Render)
+# =============================================================================
                 # add the commandline output to be set
-                
+
 
             if components[2] == "Touchscreen":
                 Touchscreen = self.HapticsEngine.getPeripheral(components[3])
@@ -172,7 +173,7 @@ class LLMOS(im.Imprint):
                 x = Touchscreen.nSensorColumns - 1
                 self.HapticsEngine.addCoordinateSystem("Touchscreen", (x,y))
                 print(self.HapticsEngine.CoordinateSystem.boundedRegions)
-                
+
                 # add the touchscreen to the TactileDisplayVisualizerRenderer
                 displayRender = self.HapticsEngine.getOperation("TactileDisplayVisualizerRenderer")
                 displayRender.addTouchscreen(Touchscreen)
@@ -200,10 +201,10 @@ class LLMOS(im.Imprint):
 # =============================================================================
                 print("command line mode on")
                 self.RomLauncher.endRom()
-                
+
                 # open the appropriate gnome
                 self.openGnome("StartRom")
-                
+
                 self.commandLineMode = 1
                 self.KeyboardPeripheral.setNewKeyboardHandler(self.CommandLineKeyboardHandles)
 
@@ -211,19 +212,19 @@ class LLMOS(im.Imprint):
             self.KeyboardPeripheral.handleKeyPressEvent(key)
 
             if key == keyboard.Key.tab:
-    
+
                 self.MainWindow.TactileDisplayVisualizerRenderer.changeDisplay()
                 print("changing display")
-    
+
             elif key == keyboard.Key.enter:
-    
+
                 prompt = self.MainWindow.commandBox.toPlainText()
                 print(prompt)
                 self.llmOSCommand(prompt)
                 self.CommandLine.clear()
-    
+
             elif key == keyboard.Key.f2:
-    
+
                 prompt = self.MainWindow.commandBox.toPlainText()
                 print(prompt)
                 self.osDecider(prompt)
@@ -236,41 +237,41 @@ class LLMOS(im.Imprint):
                 self.TactileDisplay.clear()
                 self.TactileDisplay.braille((0,0), outputText)
                 self.TactileDisplay.refresh()
-        
+
         else:
             self.KeyboardPeripheral.handleKeyPressEvent(key)
-        
+
         #self.MainWindow.commandBox.setText(outputText)
         #print(f"Key {key} pressed on device")
 
     def onRelease(self, key):
-        
+
         self.KeyboardPeripheral.handleKeyReleaseEvent(key)
         #print(f"Key {key} released on device")
 
 # =============================================================================
 #     def keyPressEvent(self, key):
 #         key.ignore()
-# 
+#
 #         if key() == qc.Qt.Key_F1:
 #             prompt = self.commandBox.toPlainText()
 #             print(prompt)
 #             self.llmOSCommand(prompt)
 #             self.commandBox.clear()
-#             
+#
 #         if event.key() == qc.Qt.Key_F2:
 #             prompt = self.commandBox.toPlainText()
 #             print(prompt)
 #             self.HapticOS.osDecider(prompt)
 #             self.commandBox.clear()
-# 
+#
 #         # Connect to KeyboardPeripheral class key press event
 #         self.KeyboardPeripheral.handleKeyPressEvent(event)
 # =============================================================================
 
     def keyReleaseEvent(self, event):
         event.ignore()
-        
+
         # Connect to KeyboardPeripheral class key release event
         self.KeyboardPeripheral.handleKeyReleaseEvent(event)
 
@@ -278,81 +279,81 @@ class LLMOS(im.Imprint):
 # =============================================================================
 #     def connectTouchscreen(self, comString):
 #         self.TactileDisplay.connectTouch("NewHaptics Touchscreen KausiaV1", comString)
-#         
+#
 #         # get the dimensions of the display
 #         state = self.TactileDisplay.state()
 #         displaySize = self.TactileDisplay.size()
-#         
+#
 #         if self.called == 0:
 #             # Create the real time visualizer
 #             self.TouchVisualizer = tsv.TouchVisualizer("TouchVisualizer", state, displaySize)
-#             
+#
 #             # create an operation to constantly refresh the visualizer and add it to the controller
 #             self.TouchVisualizerRefreshOperation = tsv.TouchVisualizerOperation("TouchVisualizerRefreshOperation", self.MousePeripheral, self.TactileDisplay, self.TouchVisualizer, self.margins)
-#             
+#
 #             # Build a HApp keyboard
 #             self.HAppKeyboardHandles = hk.HAppKeyboardHandles(self.TouchVisualizerRefreshOperation)
 #             self.KeyboardPeripheral.setDefaultHandler(self.HAppKeyboardHandles)
-#             
+#
 #             # Build a HApp mouse
 #             self.HAppMouseHandles = hm.HAppMouseHandles(self.TouchVisualizerRefreshOperation)
 #             self.MousePeripheral.setDefaultHandler(self.HAppMouseHandles)
-#             
+#
 #             # remove the state visualizer
 #             self.HAppControlCenter.killOperation("StateVisualizerRefreshOperation")
 #             self.HAppControlCenter.removeVisualization("StateVisualizer")
-#             
+#
 #             # add it as a visualization to the control center
 #             self.HAppControlCenter.addVisualization(self.TouchVisualizer)
 #             self.HAppControlCenter.addOperation(self.TouchVisualizerRefreshOperation)
-#             
+#
 #             # set the mouse and keyboard handlers inside main window
 #             self.TouchVisualizerKeyboardHandles = tsv.TouchVisualizerKeyboardHandles(self.HAppControlCenter)
 #             self.TouchVisualizerMouseHandles = tsv.TouchVisualizerMouseHandles(self.HAppControlCenter)
-#             
+#
 #             # assign the touchvisualizer keyboard handles
 #             self.KeyboardPeripheral.setDefaultHandler(self.TouchVisualizerKeyboardHandles)
 #             self.MousePeripheral.setDefaultHandler(self.TouchVisualizerMouseHandles)
-#             
+#
 #             # update the ARCS status label
 #             #self.ARCSLabel.setText(self.HAppControlCenter.debugPrintAllResources())
-#             
+#
 #             self.setCentralWidget(self.TouchVisualizer)
 #             self.called = 1
 #         else:
 #             # remove the state visualizer
 #             self.HAppControlCenter.killOperation("TouchVisualizerRefreshOperation")
 #             self.HAppControlCenter.removeVisualization("TouchVisualizer")
-#             
+#
 #             # Build a HApp keyboard
 #             self.HAppKeyboardHandles = hk.HAppKeyboardHandles(self.TouchVisualizerRefreshOperation)
 #             self.KeyboardPeripheral.setDefaultHandler(self.HAppKeyboardHandles)
-#             
+#
 #             # Build a HApp mouse
 #             self.HAppMouseHandles = hm.HAppMouseHandles(self.TouchVisualizerRefreshOperation)
 #             self.MousePeripheral.setDefaultHandler(self.HAppMouseHandles)
-#             
+#
 #             # Create the real time visualizer
 #             self.TouchVisualizer = tsv.TouchVisualizer("TouchVisualizer", state, displaySize)
-#             
+#
 #             # create an operation to constantly refresh the visualizer and add it to the controller
 #             self.TouchVisualizerRefreshOperation = tsv.TouchVisualizerOperation("TouchVisualizerRefreshOperation", self.MousePeripheral, self.TactileDisplay, self.TouchVisualizer, self.margins)
-#             
+#
 #             # add it as a visualization to the control center
 #             self.HAppControlCenter.addVisualization(self.TouchVisualizer)
 #             self.HAppControlCenter.addOperation(self.TouchVisualizerRefreshOperation)
-#             
+#
 #             # set the mouse and keyboard handlers inside main window
 #             self.TouchVisualizerKeyboardHandles = tsv.TouchVisualizerKeyboardHandles(self.HAppControlCenter)
 #             self.TouchVisualizerMouseHandles = tsv.TouchVisualizerMouseHandles(self.HAppControlCenter)
-#             
+#
 #             # assign the touchvisualizer keyboard handles
 #             self.KeyboardPeripheral.setDefaultHandler(self.TouchVisualizerKeyboardHandles)
 #             self.MousePeripheral.setDefaultHandler(self.TouchVisualizerMouseHandles)
-#             
+#
 #             # update the ARCS status label
 #             #self.ARCSLabel.setText(self.HAppControlCenter.debugPrintAllResources())
-#             
+#
 #             self.setCentralWidget(self.TouchVisualizer)
-#     
+#
 # =============================================================================

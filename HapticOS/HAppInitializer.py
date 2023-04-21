@@ -12,7 +12,8 @@ import LLMOS as llm
 import sys
 from pynput import keyboard
 
-
+elevenLabsKey = "188c0f632906bc15892cf9955e3c1253"
+openAIKey = "sk-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"
 HapticOS = llm.LLMOS(openAIKey, elevenLabsKey)
 
 # import the remaining HapticOS Libraries

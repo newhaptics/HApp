@@ -7,7 +7,7 @@ class GCodeController:
         self.serial_port = serial_port
         
         self.nRows = 19
-        self.nColumns = 41
+        self.nColumns = 83
         
         self.row_valve_state_array = [0] * self.nRows
         self.column_valve_state_array = [0] * self.nColumns

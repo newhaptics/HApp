@@ -11,20 +11,27 @@ import DisplaySerial as ds
 import time
 from TactileDisplayGcode import GCodeController
 
-serial_port = ds.DisplaySerial("COM8", 57600, 3)
+serial_port = ds.DisplaySerial("COM4", 57600, 3)
 serial_port.getSize()
 row_array = serial_port.getRowValveArray()
 column_array = serial_port.getColumnValveArray()
 
 gcode_controller = GCodeController(serial_port)
 
-pw = 0.07
+pw = 0.2
 
 # Set all column valves high sequentially
 gcode_controller.process_gcode("c")
 time.sleep(0.1)
 gcode_controller.process_gcode("R")
 time.sleep(0.1)
+
+# =============================================================================
+# for i in range(len(row_array)):
+#     gcode_controller.process_gcode(f"C[{i}:{i}]")
+#     time.sleep(pw)
+#     #gcode_controller.process_gcode(f"R[{i}:{i}]")
+# =============================================================================
 
 gcode_controller.process_gcode("C")
 # Set Clock in all the values sequentially

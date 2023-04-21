@@ -6,101 +6,161 @@ Created on Wed Apr 19 14:51:04 2023
 
 """
 
+import pygame
 
 from GraphicsEngine import *
 import Features as f
 import numpy as np
-import TactileDisplay as td
 from pynput import keyboard
 
-Display = td.TactileDisplay("testDisplay")
-Display.connect("COM4")
-Engine = GraphicsEngine((41, 19))
 
-mode = 0
-cursor = 0
-
-def refreshDisplay():
-    Engine.drawFeatures()
+class ModalInterface():
     
+    def __init__(self, GraphicsEngine, RomLauncher, node):
 
-    mat = Engine.retrieveList()
-    # set the desired to the edited
-    Display.set_desiredState(mat)
-    print("num: {}".format(0))
-    print('---------------------------\n')
-    print('\n'.join([' '.join(['{:4}'.format(item) for item in row])
-                 for row in mat]))
-    print('---------------------------\n')
-    # push the desired into current
-    Display.push_desiredState()
-    Engine.clearFeatures()
+        self.Engine = GraphicsEngine
+        self.currentNode = node
+        self.RomLauncher = RomLauncher
+        pygame.mixer.init()
 
-def HAppManager():
-    # happ manager
-    Engine.addBraille((1,0), "Avalanche")
-    Engine.addBraille((1,1), "Slides")
-    Engine.addBraille((1,2), "Notepad")
+        self.voice = "CaveNav"
+        self.mode = 0
+        self.cursor = 0
+        self.romOn = 0
 
-    # context dialog
-    Engine.addBraille((0,4), "HApps")
-
-    # modal inteface
-    Engine.addBraille((12,4), "H")
-    
-def moveCursor():
-    global cursor
-    
-    Engine.addBraille((0,cursor), "Y")
-    
-def CommandLine():
-    # context dialog
-    Engine.addBraille((0,4), "Command")
-
-    # modal inteface
-    Engine.addBraille((13,4), "N")
-
-""" Keyboard related functions """
-
-def onPress(key):
-    global mode
-    global cursor
-    
-    if key == keyboard.Key.up:
-        if cursor > 0:
-            cursor -= 1
-            moveCursor()
-            if not mode:    
-                HAppManager()
-            else:
-                CommandLine()
-            refreshDisplay()
+    def refreshDisplay(self):
+        self.Engine.drawFeatures()
         
-    elif key == keyboard.Key.down:
-        if cursor < 3:
-            cursor += 1
-            moveCursor()
-            if not mode:
-                HAppManager()
-            else:
-                CommandLine()
-            refreshDisplay()
+        mat = self.Engine.retrieveList()
+        # set the desired to the edited
+        self.Display.set_desiredState(mat)
+        print("num: {}".format(0))
+        print('---------------------------\n')
+        print('\n'.join([' '.join(['{:4}'.format(item) for item in row])
+                     for row in mat]))
+        print('---------------------------\n')
+        # push the desired into current
+        self.Display.push_desiredState()
+        self.Engine.clearFeatures()
     
-    if key == keyboard.Key.ctrl_l:
-        if mode:
-            mode = 0
-            # modal inteface
-            moveCursor()
-            HAppManager()
-            refreshDisplay()
+    def drawHAppManager(self):
+        # happ manager
+        self.Engine.clearFeatures()
+        self.Engine.addBraille((0,self.cursor), "Y")
+        self.Engine.addBraille((1,0), "Avalanche")
+        self.Engine.addBraille((1,1), "Slides")
+        self.Engine.addBraille((1,2), "Notepad")
+    
+        # context dialog
+        self.Engine.addBraille((0,4), "HApps")
+    
+        # modal inteface
+        self.Engine.addBraille((12,4), "H")
+        #self.refreshDisplay()
+        
+    def drawCommandLine(self):
+        # context dialog
+        self.Engine.clearFeatures()
+        self.Engine.addBraille((0,self.cursor), "Y")
+        self.Engine.addBraille((0,4), "Command")
+    
+        # modal inteface
+        self.Engine.addBraille((13,4), "N")
+        #self.refreshDisplay()
+    
+    """ Keyboard related functions """
+    
+    def onPress(self, key):
+        
+
+        if key == keyboard.Key.up:
+            if self.cursor > 0:
+                self.cursor -= 1
+                print(self.cursor)
+            
+        elif key == keyboard.Key.down:
+            if self.cursor < 3:
+                self.cursor += 1
+                print(self.cursor)
+        
+        if key == keyboard.Key.ctrl_l:
+            if self.mode:
+                print("HApp Mode")
+                self.mode = 0
+                pygame.mixer.music.load("{}/HAppMode.mp3".format(self.voice))
+                pygame.mixer.music.play()
+                if self.romOn:
+                    self.RomLauncher.resumeRom("Avalanche")
+                
+            else:
+                print("Command Line Mode")
+                self.mode = 1
+                self.cursor = 0
+                pygame.mixer.music.load("{}/CommandLineMode.mp3".format(self.voice))
+                pygame.mixer.music.play()
+                if self.romOn:
+                    self.RomLauncher.pauseRom("Avalanche")
+                
+        if key == keyboard.Key.enter:
+            if self.mode == 1:
+                pass
+            elif self.mode == 0:
+                # draw current node
+                
+                if not self.romOn:
+                    if self.cursor == 0:
+                        print("running notepad")
+                        # launch the notepad
+                        pygame.mixer.music.load("{}/RunningNotepad.mp3".format(self.voice))
+                        pygame.mixer.music.play()
+                        self.currentHApp = "Notepad"
+                    elif self.cursor == 1:
+                        print("running slides")
+                        pygame.mixer.music.load("{}/RunningSlides.mp3".format(self.voice))
+                        pygame.mixer.music.play()
+                        self.currentHApp = "Slides"
+                    elif self.cursor == 2:
+                        print("running avalanche")
+                        pygame.mixer.music.load("{}/RunningAvalanche.mp3".format(self.voice))
+                        pygame.mixer.music.play()
+                        self.RomLauncher.startRom("Avalanche")
+                        self.currentHApp = "Avalanche"
+                        self.romOn = 1
+                        
+        if key == keyboard.Key.esc:
+            if self.romOn:
+              if self.currentHApp == "Notepad":
+                  print("closing notepad")
+                  # launch the notepad
+                  pygame.mixer.music.load("{}/ClosingNotepad.mp3".format(self.voice))
+                  pygame.mixer.music.play()
+              elif self.currentHApp == "Slides":
+                  print("closing slides")
+                  pygame.mixer.music.load("{}/ClosingSlides.mp3".format(self.voice))
+                  pygame.mixer.music.play()
+              elif self.currentHApp == "Avalanche":
+                  print("closing avalanche")
+                  pygame.mixer.music.load("{}/ClosingAvalanche.mp3".format(self.voice))
+                  pygame.mixer.music.play()
+                  self.RomLauncher.endRom()
+                  self.currentHApp = ""
+                  self.romOn = 0
+                    
+        if key == keyboard.Key.tab:
+            if self.voice == "CaveNav":
+                self.voice = "Boring"
+                pygame.mixer.music.load("{}/HI.mp3".format(self.voice))
+                pygame.mixer.music.play()
+            elif self.voice == "Boring":
+                self.voice = "AbsolutelyDisgusting"
+                pygame.mixer.music.load("{}/HI.mp3".format(self.voice))
+                pygame.mixer.music.play()
+            else:
+                self.voice = "CaveNav"
+                pygame.mixer.music.load("{}/HI.mp3".format(self.voice))
+                pygame.mixer.music.play()
+        
+        if not self.mode:
+            self.drawHAppManager()
         else:
-            mode = 1
-            cursor = 0
-            moveCursor()
-            # modal inteface
-            CommandLine()
-            refreshDisplay()
-
-
-key_listener = keyboard.Listener(on_press=onPress)
-key_listener.start()
+            self.drawCommandLine()

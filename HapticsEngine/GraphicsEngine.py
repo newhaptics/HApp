@@ -11,11 +11,11 @@ Created on Fri Aug  7 10:18:00 2020
 import numpy as np
 import cairo
 import Brailler as br
-import FeatureMetadata as fm
+from FeatureMetadata import FeatureMetadata
 from PIL import Image
 import math
 
-class GraphicsEngine(fm.FeatureMetadata):
+class GraphicsEngine(FeatureMetadata):
     def __init__(self, dimensions):
         super().__init__()
         self.dimensions = dimensions
