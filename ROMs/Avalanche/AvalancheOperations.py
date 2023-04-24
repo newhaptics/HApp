@@ -66,7 +66,7 @@ class AvalancheGraphicsRender(rs.RomOperation):
     def renderIcicle(self):
         self.GraphicsEngine.clearFeatures()
         # render the avalanche object
-        self.GraphicsEngine.addLine((self.GameFlag.pongPosition[0],self.GameFlag.pongPosition[1] - 2), (self.GameFlag.pongPosition[0] + 2,self.GameFlag.pongPosition[1] - 2), 1)
+        #self.GraphicsEngine.addLine((self.GameFlag.pongPosition[0],self.GameFlag.pongPosition[1] - 2), (self.GameFlag.pongPosition[0] + 2,self.GameFlag.pongPosition[1] - 2), 1)
         self.GraphicsEngine.addLine((self.GameFlag.pongPosition[0],self.GameFlag.pongPosition[1] - 1), (self.GameFlag.pongPosition[0] + 1,self.GameFlag.pongPosition[1] - 2), 1)
         self.GraphicsEngine.addLine((self.GameFlag.pongPosition[0],self.GameFlag.pongPosition[1]), (self.GameFlag.pongPosition[0] + 2,self.GameFlag.pongPosition[1]), 1)
 
@@ -78,14 +78,14 @@ class AvalancheGraphicsRender(rs.RomOperation):
     def renderStartMenu(self):
         self.GraphicsEngine.clearFeatures()
         print("press space key to start")
-        self.GraphicsEngine.addBraille((0,0),"press space key to start")
-
+        self.GraphicsEngine.addBraille((0,0),"press space key")
+        self.GraphicsEngine.addBraille((0,1),"to start")
     def renderExitScreen(self):
         """ exit screen  """
         print("You Lose!")
         print("score is {}".format(self.GameFlag.score))
-        self.GraphicsEngine.addBraille((0,0),"you lose score is {}".format(self.GameFlag.score))
-
+        self.GraphicsEngine.addBraille((0,0),"you lose score")
+        self.GraphicsEngine.addBraille((0,1),"is {}".format(self.GameFlag.score))
     def renderScoreScreen(self):
         """ displays score """
         self.GraphicsEngine.clearFeatures()

@@ -33,7 +33,7 @@ HappManager.addChild(Avalanche)
 
 # create the display to run the demo on
 Display = td.TactileDisplay("Twoplex")
-Display.connect("COM14")
+Display.connect("COM7")
 
 size = Display.size()
 
@@ -45,7 +45,6 @@ HapticsEngine = he.HapticsEngine(GraphicsEngine((nColumns, nRows)))
 
 # add the tactile display to the HapticsEngine
 HapticsEngine.addPeripheral(Display)
-
 # create a keyboard to use during the demo
 DefaultKeyboardHandles = dk.DefaultKeyboardHandles()
 KeyboardPeripheral = kb.KeyboardPeripheral("Master Keyboard", DefaultKeyboardHandles)

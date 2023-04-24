@@ -385,9 +385,9 @@ class RenderOperation(om.Operation):
 
         # execute the function continuously until otherwise
         executionParameters = {
-            "executeDelay": 500, # a delay in milliseconds that starts the execution of the Operation after the flag dependencies have been met
+            "executeDelay": 0, # a delay in milliseconds that starts the execution of the Operation after the flag dependencies have been met
             "executeContinuously": True, # a boolean value that determines if the Operation will execute forever
-            "executionIntervalTime": 5, # an interval in milliseconds that determines the time between execution
+            "executionIntervalTime": 50, # an interval in milliseconds that determines the time between execution
         }
 
         self.setExecutionParameters(executionParameters)

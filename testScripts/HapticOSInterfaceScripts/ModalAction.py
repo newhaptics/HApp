@@ -23,7 +23,7 @@ class ModalInterface():
         self.RomLauncher = RomLauncher
         pygame.mixer.init()
 
-        self.voice = "CaveNav"
+        self.voice = "Boring"
         self.mode = 0
         self.cursor = 0
         self.romOn = 0
@@ -48,15 +48,15 @@ class ModalInterface():
         nColumns = self.Engine.dimensions[0]
         self.Engine.clearFeatures()
         self.Engine.addBraille((0,self.cursor), "Y")
-        self.Engine.addBraille((1,0), "Avalanche")
+        self.Engine.addBraille((1,0), "Notepad")
         self.Engine.addBraille((1,1), "Slides")
-        self.Engine.addBraille((1,2), "Notepad")
+        self.Engine.addBraille((1,2), "Avalanche")
     
         # context dialog
-        self.Engine.addBraille((0,4), "HApps")
+        #self.Engine.addBraille((0,4), "HApps")
     
         # modal inteface
-        self.Engine.addBraille((int(nColumns/3)-1,4), "H")
+        #self.Engine.addBraille((int(nColumns/3)-1,4), "H")
         #self.refreshDisplay()
         
     def drawCommandLine(self):
@@ -65,10 +65,10 @@ class ModalInterface():
 
         self.Engine.clearFeatures()
         self.Engine.addBraille((0,self.cursor), "Y")
-        self.Engine.addBraille((0,4), "Command")
+        #self.Engine.addBraille((0,4), "Command")
     
         # modal inteface
-        self.Engine.addBraille((int(nColumns/3),4), "C")
+        #self.Engine.addBraille((int(nColumns/3),4), "C")
         #self.refreshDisplay()
     
     """ Keyboard related functions """

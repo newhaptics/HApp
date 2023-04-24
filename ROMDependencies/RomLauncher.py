@@ -28,7 +28,7 @@ class RomLauncher():
         # gets the path of the rom to start
         # launches that rom using the rom reader
         self.launchRom(self.romDictionary[romString])
-        print(self.RomReader.romSettings["HapticsEngineAddress"])
+        print(self.romDictionary[romString])
         
         if romString == "Slides":
             self.RomVisualization = rv.RomVisualization("RomVisualizer", self.HapticsEngine)
