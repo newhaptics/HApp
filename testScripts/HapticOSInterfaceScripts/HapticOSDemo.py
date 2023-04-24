@@ -19,26 +19,29 @@ import DefaultKeyboardHandles as dk
 
 from pynput import keyboard
 
-from ModalAction import M od
-alInterface
+from ModalAction import ModalInterface
 from AccessTreeTesting import *
 
 HappManager = TreeNode("HApp Manager")
 Notepad = TreeNode("Notepad")
-  Slides = TreeNode("Slides")
+Slides = TreeNode("Slides")
 Avalanche = TreeNode("Avalanche")
 
 HappManager.addChild(Notepad)
-Ha  ppManager.addChild(Slides)
+HappManager.addChild(Slides)
 HappManager.addChild(Avalanche)
-
- 
-# create the control center for llmOS resources
-HapticsEngine = he.HapticsEngine()
 
 # create the display to run the demo on
 Display = td.TactileDisplay("Twoplex")
-Display.connect("COM4")
+Display.connect("COM14")
+
+size = Display.size()
+
+nRows = size[0]
+nColumns = size[1]
+
+# create the control center for llmOS resources
+HapticsEngine = he.HapticsEngine(GraphicsEngine((nColumns, nRows)))
 
 # add the tactile display to the HapticsEngine
 HapticsEngine.addPeripheral(Display)

@@ -23,14 +23,14 @@ import time
 """ A class for an object which controls when operations execute and in what order they execute according to the flags set in the application """
 
 class HapticsEngine:
-    def __init__(self):
+    def __init__(self, GraphicsEngine):
         self.FlagManager = fm.FlagManager()
         self.OperationManager = om.OperationManager()
         self.PeripheralManager = pm.PeripheralManager()
         self.VisualizationManager = vm.VisualizationManager()
         self.FileManager = fi.FileManager()
         self.exitEvent = 0
-        self.Graphics = GraphicsEngine((41, 19))
+        self.Graphics = GraphicsEngine
 
         # command box
         self.commandText = "test text"
