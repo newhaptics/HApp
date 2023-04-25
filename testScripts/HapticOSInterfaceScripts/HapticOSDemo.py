@@ -33,7 +33,7 @@ HappManager.addChild(Avalanche)
 
 # create the display to run the demo on
 Display = td.TactileDisplay("Twoplex")
-Display.connect("COM7")
+Display.connect("COM16")
 
 size = Display.size()
 
@@ -73,7 +73,6 @@ def onRelease(key):
     global KeyboardPeripheral
     if not interface.mode:
         KeyboardPeripheral.handleKeyReleaseEvent(key)
-    
 
 if __name__ == '__main__':
 

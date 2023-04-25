@@ -163,7 +163,8 @@ class ModalInterface():
                 pygame.mixer.music.load("{}/HI.mp3".format(self.voice))
                 pygame.mixer.music.play()
         
-        if not self.mode:
-            self.drawHAppManager()
-        else:
-            self.drawCommandLine()
+        if not self.romOn:
+            if not self.mode:
+                self.drawHAppManager()
+            else:
+                self.drawCommandLine()
