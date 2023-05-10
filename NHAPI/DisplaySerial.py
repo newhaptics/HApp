@@ -148,6 +148,22 @@ class DisplaySerial(serial.Serial):
 
         return responseList[0]
     
+    # Function 13: Update setup, hold, and pulse width
+    def setRefreshParameters(self, settingArray):
+        self.write(bytearray([13]))
+
+        self.write(bytearray(settingArray))
+        
+        self.genericSerialCommand(0)
+
+    # Function 14: get the setup, hold, and pulse width
+    def getRefreshParameters(self):
+        self.write(bytearray([14]))
+
+        responseList = self.genericSerialCommand(6)
+        
+        return responseList
+
     # Function 15: Gets the RowValveArray
     def getRowValveArray(self):
         self.write(bytearray([15]))
@@ -236,6 +252,22 @@ class DisplaySerial(serial.Serial):
         self.write(bytearray([36]))
 
         responseList = self.genericSerialCommand(8)
+        
+        return responseList
+    
+    # Function 37: sets the Refresh Matrix parementers dealing with the state
+    def setRefreshStateParameters(self, settingArray):
+        self.write(bytearray([37]))
+
+        self.write(bytearray(settingArray))
+        
+        self.genericSerialCommand(0)
+
+    # Function 38: get the the Refresh matrix parameters dealing with the state
+    def getRefreshStateParameters(self):
+        self.write(bytearray([38]))
+
+        responseList = self.genericSerialCommand(10)
         
         return responseList
 

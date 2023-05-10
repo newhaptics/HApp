@@ -8,14 +8,22 @@ Created on Tue Apr 25 13:18:40 2023
 from DisplaySerial import DisplaySerial
 
 testSerial = DisplaySerial("COM3", 57600, 3)
+response = testSerial.getRefreshStateParameters()
+response[0] = 30
 
-response = testSerial.getSolenoidDriver()
+testSerial.setRefreshStateParameters(response)
 
-response[0] = 10
-response[-2] = 1
-response[2] = 5
+response = testSerial.getRefreshStateParameters()
 
-
-testSerial.setSolenoidDriver(response)
-
-#response = testSerial.getSolenoidDriver()
+# =============================================================================
+# response = testSerial.getSolenoidDriver()
+# 
+# response[0] = 10
+# response[-2] = 1
+# response[2] = 5
+# 
+# 
+# testSerial.setSolenoidDriver(response)
+# 
+# response = testSerial.getSolenoidDriver()
+# =============================================================================
