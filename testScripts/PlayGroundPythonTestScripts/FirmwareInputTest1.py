@@ -9,7 +9,7 @@ Created on Tue May  9 17:00:06 2023
 from DisplaySerial import *
 import time
 
-comPort = DisplaySerial("COM3", 57600, 3)
+comPort = DisplaySerial("COM50", 57600, 3)
 
 prev_button_values = [0, 0, 0, 0]
 prev_analog_values = [0, 0, 0, 0]

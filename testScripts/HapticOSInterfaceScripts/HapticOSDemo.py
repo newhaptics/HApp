@@ -33,7 +33,7 @@ HappManager.addChild(Avalanche)
 
 # create the display to run the demo on
 Display = td.TactileDisplay("Twoplex")
-Display.connect("COM16")
+Display.connect("COM23")
 
 size = Display.size()
 

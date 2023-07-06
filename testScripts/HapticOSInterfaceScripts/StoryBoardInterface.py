@@ -11,7 +11,7 @@ import numpy as np
 import TactileDisplay as td
 
 Display = td.TactileDisplay("testDisplay")
-Display.connect("COM4")
+Display.connect("COM6")
 Engine = GraphicsEngine((41, 19))
 
 def refreshDisplay():

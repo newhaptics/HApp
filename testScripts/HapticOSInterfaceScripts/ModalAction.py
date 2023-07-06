@@ -53,10 +53,10 @@ class ModalInterface():
         self.Engine.addBraille((1,2), "Avalanche")
     
         # context dialog
-        #self.Engine.addBraille((0,4), "HApps")
+        self.Engine.addBraille((0,4), "HApps")
     
         # modal inteface
-        #self.Engine.addBraille((int(nColumns/3)-1,4), "H")
+        self.Engine.addBraille((int(nColumns/3)-1,4), "H")
         #self.refreshDisplay()
         
     def drawCommandLine(self):
@@ -65,10 +65,10 @@ class ModalInterface():
 
         self.Engine.clearFeatures()
         self.Engine.addBraille((0,self.cursor), "Y")
-        #self.Engine.addBraille((0,4), "Command")
+        self.Engine.addBraille((0,4), "Command")
     
         # modal inteface
-        #self.Engine.addBraille((int(nColumns/3),4), "C")
+        self.Engine.addBraille((int(nColumns/3),4), "C")
         #self.refreshDisplay()
     
     """ Keyboard related functions """

@@ -1,0 +1,246 @@
+{
+    "name": "TactileDisplayFirmware",
+    "type": "folder",
+    "children": [
+        {
+            "name": ".vscode",
+            "type": "folder",
+            "children": [
+                {
+                    "name": "arduino.json",
+                    "type": "file"
+                },
+                {
+                    "name": "c_cpp_properties.json",
+                    "type": "file"
+                },
+                {
+                    "name": "settings.json",
+                    "type": "file"
+                }
+            ]
+        },
+        {
+            "name": "AppConfig.h",
+            "type": "file"
+        },
+        {
+            "name": "autoStateMachineTest",
+            "type": "folder",
+            "children": [
+                {
+                    "name": "autoDiagram.txt",
+                    "type": "file"
+                },
+                {
+                    "name": "autoStateMachinePrompt.txt",
+                    "type": "file"
+                },
+                {
+                    "name": "autoStateTransitionPrompt.txt",
+                    "type": "file"
+                },
+                {
+                    "name": "autoTiming.txt",
+                    "type": "file"
+                },
+                {
+                    "name": "RefreshMatrix",
+                    "type": "folder",
+                    "children": [
+                        {
+                            "name": "RefreshMatrix.h",
+                            "type": "file"
+                        },
+                        {
+                            "name": "RefreshMatrix.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "Transitions.h",
+                            "type": "file"
+                        }
+                    ]
+                },
+                {
+                    "name": "RefreshMatrix.png",
+                    "type": "file"
+                },
+                {
+                    "name": "SolenoidDriver",
+                    "type": "folder",
+                    "children": [
+                        {
+                            "name": "SolenoidDriver.h",
+                            "type": "file"
+                        },
+                        {
+                            "name": "SolenoidDriverFunctions.h",
+                            "type": "file"
+                        }
+                    ]
+                },
+                {
+                    "name": "solenoidDriver.png",
+                    "type": "file"
+                }
+            ]
+        },
+        {
+            "name": "Brailler.h",
+            "type": "file"
+        },
+        {
+            "name": "BrailleUnicodePrint.h",
+            "type": "file"
+        },
+        {
+            "name": "BrailleUnicodePrint.ino",
+            "type": "file"
+        },
+        {
+            "name": "ControlInput.h",
+            "type": "file"
+        },
+        {
+            "name": "Descriptors.c",
+            "type": "file"
+        },
+        {
+            "name": "Descriptors.h",
+            "type": "file"
+        },
+        {
+            "name": "Diagnostics.h",
+            "type": "file"
+        },
+        {
+            "name": "Diagnostics.txt",
+            "type": "file"
+        },
+        {
+            "name": "ElectroFluidicConverter_toAdd",
+            "type": "folder",
+            "children": [
+                {
+                    "name": "ElectroFluidicConverter.cpp",
+                    "type": "file"
+                },
+                {
+                    "name": "ElectroFluidicConverter.h",
+                    "type": "file"
+                }
+            ]
+        },
+        {
+            "name": "HardwareDescriptors",
+            "type": "folder",
+            "children": [
+                {
+                    "name": "EEPROMStorage.h",
+                    "type": "file"
+                },
+                {
+                    "name": "fourplex_V4.h",
+                    "type": "file"
+                },
+                {
+                    "name": "fourplex_V5.h",
+                    "type": "file"
+                },
+                {
+                    "name": "HardwareDescriptorTemplate.h",
+                    "type": "file"
+                },
+                {
+                    "name": "HardwareDescriptorTemplate_V2.h",
+                    "type": "file"
+                },
+                {
+                    "name": "template_prototype.h",
+                    "type": "file"
+                },
+                {
+                    "name": "twoplex_ProMicroV1.h",
+                    "type": "file"
+                },
+                {
+                    "name": "twoplex_V4.h",
+                    "type": "file"
+                },
+                {
+                    "name": "TwoWayValveSingleChip.h",
+                    "type": "file"
+                },
+                {
+                    "name": "unitTest.h",
+                    "type": "file"
+                }
+            ]
+        },
+        {
+            "name": "LUFA.c",
+            "type": "file"
+        },
+        {
+            "name": "LUFAConfig.h",
+            "type": "file"
+        },
+        {
+            "name": "NLHID.h",
+            "type": "file"
+        },
+        {
+            "name": "ProcessReport.h",
+            "type": "file"
+        },
+        {
+            "name": "ProcessReport.ino",
+            "type": "file"
+        },
+        {
+            "name": "RefreshMatrix.h",
+            "type": "file"
+        },
+        {
+            "name": "RefreshMatrixDebugLibrary.h",
+            "type": "file"
+        },
+        {
+            "name": "RefreshMatrixFunctions.h",
+            "type": "file"
+        },
+        {
+            "name": "SerialCommunication.h",
+            "type": "file"
+        },
+        {
+            "name": "SerialCommunicationFunctions.h",
+            "type": "file"
+        },
+        {
+            "name": "SolenoidDriver.h",
+            "type": "file"
+        },
+        {
+            "name": "SolenoidDriverDebugLibrary.h",
+            "type": "file"
+        },
+        {
+            "name": "SolenoidDriverFunctions.h",
+            "type": "file"
+        },
+        {
+            "name": "TactileDisplay.c",
+            "type": "file"
+        },
+        {
+            "name": "TactileDisplay.h",
+            "type": "file"
+        },
+        {
+            "name": "TactileDisplayFirmware.ino",
+            "type": "file"
+        }
+    ]
+}
