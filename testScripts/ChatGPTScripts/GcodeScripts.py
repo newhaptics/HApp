@@ -20,25 +20,42 @@ column_array = serial_port.getColumnValveArray()
 # serial_port.setColumnValveArrayAssignment(column_array)
 # serial_port.setRowValveArrayAssignment(row_array)
 # =============================================================================
-print(serial_port.getColumnValveArray())
-print(serial_port.getRowValveArray())
 
 gcode_controller = GCodeController(serial_port)
 
 # Set all column valves high sequentially
 gcode_controller.process_gcode("c")
-for i in range(len(column_array)):
-    gcode_controller.process_gcode(f"C[{i}:{i}]")
-    time.sleep(0.2)
-
-# Set all row valves high
+gcode_controller.process_gcode("r")
+time.sleep(3)
+gcode_controller.process_gcode("C")
+time.sleep(3)
 gcode_controller.process_gcode("R")
-time.sleep(1)
-
-# Set all column valves low
+time.sleep(3)
 gcode_controller.process_gcode("c")
+time.sleep(3)
+gcode_controller.process_gcode("r")
 
-# Set all row valves low sequentially
-for i in range(len(row_array)):
-    gcode_controller.process_gcode(f"r[{i}:{i}]")
-    time.sleep(0.2)
+#print(gcode_controller.row_valve_state_array)
+#print(gcode_controller.column_valve_state_array)
+
+# make shift functionality test
+
+# =============================================================================
+# for i in range(len(column_array)):
+#     gcode_controller.process_gcode(f"C[{i}:{i}]")
+#     time.sleep(0.1)
+# 
+# # Set all row valves high
+# gcode_controller.process_gcode("R")
+# time.sleep(1)
+# 
+# # Set all column valves low
+# gcode_controller.process_gcode("c")
+# 
+# # Set all row valves low sequentially
+# for i in range(len(row_array)):
+#     gcode_controller.process_gcode(f"r[{i}:{i}]")
+#     time.sleep(0.1)
+# 
+# =============================================================================
+

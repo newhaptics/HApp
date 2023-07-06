@@ -21,36 +21,36 @@ import AvalancheMouse as amo
 
 
 class AvalancheController(rs.RomController):
-    
+
     def __init__(self, HapticsEngineAddress, stopEvent):
 
         super().__init__(HapticsEngineAddress, stopEvent)
 
         # add the Tactile Display
-        self.TactileDisplay = self.HAppControlCenter.getPeripheral("Fourplex")
+        self.TactileDisplay = self.HAppControlCenter.getPeripheral("Twoplex")
 
         # Create the Game Flag
         self.GameFlag = ao.GameStateFlag("Game State Flag", 4)
         self.HAppControlCenter.addFlag(self.GameFlag)
 
         # Create the ability to render game graphics
-        self.AvalancheGraphicsRender = ao.AvalancheGraphicsRender("AvalancheGraphicsRender", self.TactileDisplay, self.GameFlag)
+        self.AvalancheGraphicsRender = ao.AvalancheGraphicsRender("AvalancheGraphicsRender", self.HAppControlCenter.Graphics, self.GameFlag)
         self.HAppControlCenter.addOperation(self.AvalancheGraphicsRender)
-        
+
         # create the handles for the keyboard including the interrupt dictionary
         self.AvalancheKeyboardHandles = ak.AvalancheKeyboardHandles(self.GameFlag)
-        
+
         # add in the keyboard handles by grabbing from the HApp control center
         KeyboardPeripheral = self.HAppControlCenter.getPeripheral("Master Keyboard")
         KeyboardPeripheral.setNewKeyboardHandler(self.AvalancheKeyboardHandles)
 
         #initialize all state objects and pass in the controller
         self.AvalancheStartMenu = avs.AvalancheStartMenu(self)
-        
+
         self.AvalancheGame = avs.AvalancheGame(self)
-        
+
         self.EndRom = avs.AvalancheExitState(self)
-        
+
         #current state of rom (user can intialize a default state)
         self.stateKey = 'Start Menu'
 

@@ -78,6 +78,8 @@ class RomController():
     def runRom(self):
         # Main loop of the Rom
         shouldRomEnd = self.HAppControlCenter.exitEvent
+        currentState = self.getCurrentState()
+        currentState.startState()
         while shouldRomEnd == 0:
 
             #always step one tick into the current state

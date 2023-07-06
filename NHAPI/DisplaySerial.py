@@ -35,7 +35,7 @@ class DisplaySerial(serial.Serial):
 #             self.__echo = 1
 #         else:
 #             self.__echo = 0
-#     
+#
 # =============================================================================
     #opens the serial port
 # =============================================================================
@@ -48,7 +48,7 @@ class DisplaySerial(serial.Serial):
 #     #closes the serial port
 #     def close(self):
 #         self.port.close()
-# 
+#
 #     #if echo is on prints the recieve data
 #     def __print_rx(self):
 #         read = self.__read_rx()
@@ -56,13 +56,13 @@ class DisplaySerial(serial.Serial):
 #             print(read)
 #         else:
 #             pass
-#         
+#
 #     #reads in data on the serial line
 #     def __read_rx(self):
 #         # self.port.flushInput()
 #         self.__recieveBuffer = self.port.read(1)
 #         return self.__recieveBuffer #.decode('utf-8')
-#     
+#
 #     #reads one byte and prints based on echo state
 #     def __readSerialResponse(self):
 #         read = self.port.read(1)
@@ -70,17 +70,17 @@ class DisplaySerial(serial.Serial):
 #             print(read)
 #         else:
 #             pass
-#         
+#
 # =============================================================================
     # Function 1: Sets state of a row on the chip
     def setRow(self, rowIndex, rowData):
         #select the set Row Function (1)
         self.write(bytearray([1]))
-        
+
         output = []
-        
+
         #add the row index to the list
-        output.append(rowIndex) 
+        output.append(rowIndex)
 
         rowData = list(map(int, rowData))
 
@@ -88,32 +88,29 @@ class DisplaySerial(serial.Serial):
         N = 8
         # pad the data so that all of the row data can fit into a mulitple of 8 bits
         padList = rowData + [fill] * N
-        
+
         # create a list with each element as a byte representing 8 bits of data in the rowData
         byteList = [padList[n:n+N] for n in range(0, len(rowData), N)]
-        
-        for byte in byteList: 
+
+        for byte in byteList:
             msbString = '0b' +''.join(map(str, byte))
-            
+
             #lsbString = '0b' + ''.join(reversed(msbString))
             output.append(int(msbString, base=2))
-        
-        print("row index to edit {}".format(rowIndex))
-        print("row data to set {}".format(rowData))
-        print("encoded row data {}".format(output))
+
         #send as bytearray with each parameter as a byte
         self.write(bytearray(output))
-        
-        responseList = self.genericSerialCommand(0)# + (self.nBytesPerRow/8)*2)
-        
 
-    # Function 2: Sets display matrix to all 0s and turns all electronic valves OFF    
+        responseList = self.genericSerialCommand(0)# + (self.nBytesPerRow/8)*2)
+
+
+    # Function 2: Sets display matrix to all 0s and turns all electronic valves OFF
     def forceClearAll(self):
         #create list of bytes to send
         self.write(bytearray([2]))
-        
+
         responseList = self.genericSerialCommand(1)
-        
+
         #print the recieved bit
         return responseList[0]
 
@@ -121,161 +118,29 @@ class DisplaySerial(serial.Serial):
     def getMatrix(self):
         self.write(bytearray([3]))
         nMatrixBytes = self.nBytesPerRow * self.nRows
-        
+
         return self.genericSerialCommand(nMatrixBytes)
 
-# =============================================================================
-#     # Function 4: Returns 1 if matrix is in the process of refreshing, 0 if done refreshing.        
-#     def is_idle(self):
-#         #create list to be the output
-#         output = []
-#         
-#         #select the fourth function
-#         output.append(4)
-#         
-#         #send the byte
-#         self.port.write(bytearray(output))
-#         
-#         #read whether the device is idle
-#         # self.__recieveBuffer = self.port.read_until(b'\x0b')
-#         self.__recieveBuffer_value = self.port.read(1)
-# 
-#         #read the output on the serial port
-#         self.__readSerialResponse()
-# 
-#         return self.__recieveBuffer_value
-#         
-#     # Function 5: Turns all electronic valves OFF    
-#     def turn_off(self):
-#         #create the list for output
-#         output = []
-#         
-#         #select the fifth function
-#         output.append(5)
-#         
-#         #send the byte
-#         self.port.write(bytearray(output))
-#         
-#         #read the output on the serial port
-#         self.__readSerialResponse()
-#         
-#     # Function 6: Turns source pressure ON
-#     def turn_on(self):
-#         #create a list for the output
-#         output = []
-#         
-#         #select the sixth function
-#         output.append(6)
-#         
-#         #send the command
-#         self.port.write(bytearray(output))
-#         
-#         
-#         
-#         #read the output on the serial port
-#         self.__readSerialResponse()
-#         
-#         
-#         
-#     # Function 7: Sets value of matrix to desired state. Input is m x n array, where m = numRows and n=numCols of matrix.
-#     def set_matrix(self, mat):
-#         
-#         #create a list for the output
-#         output = []
-#         
-#         #flush the port
-#         self.port.flushInput()
-#         
-#         #select the first function as set matrix is implementing set row
-#         #output.append(1)
-#         
-#         #response = self.port.write(bytearray(output))
-#          
-#         #take list of rows and create byte arrays out of each row
-#         rowIndex = 1
-#         for rowData in mat:    
-#             self.set_row(rowIndex,rowData)
-#             rowIndex += 1            
-#             
-#             
-#         test = 1
-#     
-#     # Function 7: Sets value of matrix to desired state. Input is m x n array, where m = numRows and n=numCols of matrix.
-#     def setMatrix(self, mat):
-#         #create a list for the output
-#         output = []
-#         
-#         #select the seventh function
-#         output.append(7)
-#         
-#         #flush the port
-#         self.port.flushInput()
-#         
-#         #take list of rows and create byte arrays out of each row
-#         fill = 0
-#         N = 8
-#         for rowData in mat:
-#             row = list(map(int, rowData))[::-1]
-#             tempList = row + [fill] * N
-#             subList = [tempList[n:n+N] for n in range(0, len(row), N)]
-#             for lst in subList:
-#                 s = '0b' + ''.join(map(str, lst))
-#                 output.append(int(s, base=2))
-#     
-#         #send the command
-#         #n = len(output)
-#         test = self.port.write(bytearray(output))
-#         #self.port.write(bytearray(output[0:n/2]))
-#         
-#         #self.port.write(bytearray(output[n/2:n-1]))
-#         
-#         #read the output on the serial port
-#         self.__readSerialResponse()
-#         
-#     # Function 8: Sets state of single dot. Inputs: (row_index=1:num_rows, col_index=1:num_cols, state=0,1)  
-#     def set_dot(self, rowIndex, colIndex, data):
-#         #create output list
-#         output = []
-#         
-#         #select the eighth function
-#         output.append(8)
-#         
-#         #add the row index column index and state
-#         output.append(rowIndex-1) # accomodate 0 index shift
-#         output.append(colIndex-1) # accomodate 0 index shift
-#         output.append(data)
-#         
-#         #send the command
-#         self.port.write(bytearray(output))
-#         
-#         #read the output on the serial port
-#         self.__readSerialResponse()
-#         
-#     # Function 9: Sets state of all dots ON or OFF. Input: (state=0,1)    
-#     def set_all(self, data):
-#         #create output list
-#         output = []
-#         
-#         #select function
-#         output.append(9)
-#         
-#         #add the desired data for the state to be set to
-#         output.append(data)
-#         
-#         #send the command
-#         self.port.write(bytearray(output))
-#         
-#         #read the output on the serial port
-#         self.__readSerialResponse()
-# =============================================================================
-    
+    # Function 5: Turns all electronic valves OFF
+    def setAllValvesOff(self):
+      self.write(bytearray([5]))
+
+      self.genericSerialCommand(0)
+
+    # Function 6: Turns source pressure ON
+    def setSourceValvesOn(self):
+      self.write(bytearray([6]))
+
+      self.genericSerialCommand(0)
+
+
     # Function 10: Returns number of rows of dot matrix
     def getNRows(self):
         #send the function 10 command
         self.write(bytearray([10]))
 
         responseList = self.genericSerialCommand(1)
-        
+
         return responseList[0]
 
     # Function 11: Returns number of columns of dot matrix
@@ -287,7 +152,7 @@ class DisplaySerial(serial.Serial):
 
         return responseList[0]
 
-    # Function 12: Returns number of bytes to expect per row of the matrix. 
+    # Function 12: Returns number of bytes to expect per row of the matrix.
     def getNBytesPerRow(self):
         #send the function 12 command
         self.write(bytearray([12]))
@@ -295,11 +160,28 @@ class DisplaySerial(serial.Serial):
         responseList = self.genericSerialCommand(1)
 
         return responseList[0]
-    
+
+    # Function 13: Update setup, hold, and pulse width
+    def setRefreshParameters(self, settingArray):
+        self.write(bytearray([13]))
+
+        self.write(bytearray(self.intToByte(settingArray)))
+
+        self.genericSerialCommand(0)
+
+    # Function 14: get the setup, hold, and pulse width
+    def getRefreshParameters(self):
+        self.write(bytearray([14]))
+
+        responseList = self.genericSerialCommand(6)
+
+        newList = self.byteToInt(responseList)
+        return newList
+
     # Function 15: Gets the RowValveArray
     def getRowValveArray(self):
         self.write(bytearray([15]))
-        
+
         responseList = self.genericSerialCommand(self.nRows)
 
         return responseList
@@ -316,9 +198,9 @@ class DisplaySerial(serial.Serial):
     def getColumnValveArray(self):
         # send the function 17 command
         self.write(bytearray([17]))
-        
+
         responseList = self.genericSerialCommand(self.nColumns)
-        
+
         return responseList
 
     # Function 18: Sets the start of elements in columnValveArray
@@ -345,23 +227,34 @@ class DisplaySerial(serial.Serial):
         self.write(bytearray(valveStateArray))
 
         self.genericSerialCommand(0)
-        
+
     # Function 21: turns off the refresh matrix
     def setRefreshMatrix(self, onOff):
         self.write(bytearray([21]))
-        
+
         self.write(bytearray([onOff]))
-        
+
         self.genericSerialCommand(0)
 
     # Function 23: Gets the number of bytes in a column
     def getNBytesPerColumn(self):
-        #send the function 23 command
+        # send the function 23 command
         self.write(bytearray([23]))
 
         responseList = self.genericSerialCommand(1)
 
         return responseList[0]
+    
+    # Function 29:  Returns the analog reading at the specified index
+    def readAnalogIndex(self, index):
+        self.write(bytearray([29]))
+        
+        self.write(bytearray([index]))
+
+        responseList = self.genericSerialCommand(2)
+
+        newList = self.byteToInt(responseList)
+        return newList
 
     # Function 32: Sets the state of all valves in a column
     def setValveStateArray(self, valveStateArray):
@@ -371,21 +264,104 @@ class DisplaySerial(serial.Serial):
 
         self.genericSerialCommand(0)
 
-    def genericSerialCommand(self, responseBytes):
+    # Function 35: sets the parameters relating to driving the solenoids
+    def setSolenoidDriver(self, settingArray):
+        self.write(bytearray([35]))
+
+        self.write(bytearray(self.intToByte(settingArray)))
+
+        self.genericSerialCommand(0)
+
+    # Function 36: retieves the current value of parameters related to driving solenoids
+    def getSolenoidDriver(self):
+        self.write(bytearray([36]))
+
+        responseList = self.genericSerialCommand(8)
+
+        newList = self.byteToInt(responseList)
+        return newList
+
+    # Function 37: sets the Refresh Matrix parementers dealing with the state
+    def setRefreshStateParameters(self, settingArray):
+        self.write(bytearray([37]))
+
+        self.write(bytearray(self.intToByte(settingArray)))
+
+        self.genericSerialCommand(0)
+
+    # Function 38: get the the Refresh matrix parameters dealing with the state
+    def getRefreshStateParameters(self):
+        self.write(bytearray([38]))
+
+        responseList = self.genericSerialCommand(10)
+
+        newList = self.byteToInt(responseList)
+        return newList
+
+    # Function 39: set Source based on a 1 or 0
+    def setSource(self, onOff):
+        self.write(bytearray([39]))
+
+        self.write(bytearray([onOff]))
+
+        self.genericSerialCommand(0)
+
+    # Function 40:  Returns the analog readings of the arduino
+    def readAnalog(self):
+        self.write(bytearray([40]))
         
+        responseList = self.genericSerialCommand(8)
+
+        newList = self.byteToInt(responseList)
+        return newList
+    
+    # Function 41:  Returns the byte value of all the button inputs for the button matrix
+    def readButtonMatrix(self):
+        self.write(bytearray([41]))
+        
+        responseList = self.genericSerialCommand(4)
+
+        return responseList
+
+
+    def genericSerialCommand(self, responseBytes):
+
         if responseBytes > 0:
             responseList = []
-            
+
             response = self.read(responseBytes)
-                    
+
             for byte in response:
                 responseList.append(byte)
-            
+
         else:
             responseList = None
-            
+
         confirmBit = int.from_bytes(self.read(1), byteorder='big', signed=False)
-        
+
         self.commandHistory.append((confirmBit,responseList))
-        
+
         return responseList
+
+    def intToByte(self, intList):
+
+        # Convert list of uint16s to list of uint8s
+        byteList = []
+        for value in intList:
+            lowerByte = value & 0xFF
+            upperByte = (value >> 8) & 0xFF
+            byteList.append(lowerByte)
+            byteList.append(upperByte)
+
+        return byteList
+
+    def byteToInt(self, byteList):
+        # Convert list of uint8s to list of uint16s
+        intList = []
+        for i in range(0, len(byteList), 2):
+            lowerByte = byteList[i]
+            upperByte = byteList[i + 1]
+            uint16Value = (upperByte << 8) | lowerByte
+            intList.append(uint16Value)
+        # Displaying the results
+        return intList

@@ -205,3 +205,11 @@ class HorizontalScrollbar(Line):
         offset = int(self.length * completionPercentage) + 0.5
         self.startPoint = (self.anchorPoint[0] + offset, self.anchorPoint[1])
         self.endPoint = (self.anchorPoint[0] + offset, self.anchorPoint[1] + 2)
+        
+class Braille(Feature):
+    def __init__(self, startCell, brailleString):
+        super().__init__(0)
+        self.startCell = startCell
+        self.brailleString = brailleString
+        self.type = "braille"
+        self.id = str(uuid.uuid4())

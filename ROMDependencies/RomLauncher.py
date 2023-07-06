@@ -28,7 +28,7 @@ class RomLauncher():
         # gets the path of the rom to start
         # launches that rom using the rom reader
         self.launchRom(self.romDictionary[romString])
-        print(self.RomReader.romSettings["HapticsEngineAddress"])
+        print(self.romDictionary[romString])
         
         if romString == "Slides":
             self.RomVisualization = rv.RomVisualization("RomVisualizer", self.HapticsEngine)
@@ -43,6 +43,15 @@ class RomLauncher():
         print("Ending the ROM")
         self.HapticsEngine.exitEvent = 1
 
-    def pauseRom(self):
+    def pauseRom(self, romString):
         # do something to pause the rom
-        pass
+        self.HapticsEngine.pauseRoms()
+        if romString == "Avalanche":
+            self.dummyOperation = self.HapticsEngine.getOperation("AvalancheGraphicsRender")
+            self.HapticsEngine.killOperation("AvalancheGraphicsRender")
+            self.HapticsEngine.removeOperation("AvalancheGraphicsRender")
+    
+    def resumeRom(self, romString):
+        self.HapticsEngine.resumeRoms()
+        if romString == "Avalanche":
+            self.HapticsEngine.addOperation(self.dummyOperation)

@@ -32,6 +32,7 @@ class TouchScreenInterface(pd.PeripheralDevice):
         else:
             pass
 
+        self.__echo = 1
         self.touchCursorDimensions = (255,255)
         self.touchPinDisplayDimensions = (19,20)
         self.horizontalPosition = 0

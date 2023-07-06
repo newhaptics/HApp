@@ -5,8 +5,12 @@ import time
 class GCodeController:
     def __init__(self, serial_port):
         self.serial_port = serial_port
-        self.row_valve_state_array = [0] * 19
-        self.column_valve_state_array = [0] * 41
+        
+        self.nRows = 19
+        self.nColumns = 83
+        
+        self.row_valve_state_array = [0] * self.nRows
+        self.column_valve_state_array = [0] * self.nColumns
 
     def state_array_to_bytearray(self, state_array):
         bit_string = ''.join(map(str, state_array))
@@ -41,7 +45,10 @@ class GCodeController:
             if listThing == '':
                 cmd = single_cmd
                 i = 0
-                j = -1
+                if cmd == "r" or cmd == "R" or cmd == "~R":
+                    j = self.nRows
+                elif cmd == "c" or cmd == "C" or cmd == "~C":
+                    j = self.nColumns
             else:
                 i = int(i) if i else 0
                 j = int(j) + 1 if j else -1
@@ -60,4 +67,4 @@ class GCodeController:
                 self.column_valve_state_array[i:j] = [1 - x for x in self.column_valve_state_array[i:j]]
     
             self.update_valve_state_arrays()
-            time.sleep(0.5)
+            #time.sleep(0.5)

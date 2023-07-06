@@ -52,6 +52,10 @@ class FeatureMetadata:
         feature = f.Quadrilateral(vertices, width)
         self.featuresMetadata[feature.id] = feature
         
+    def addBraille(self, cellPosition, brailleString):
+        feature = f.Braille(cellPosition, brailleString)
+        self.featuresMetadata[feature.id] = feature
+        
     def addFeature(self, feature):
         self.featuresMetadata[feature.id] = feature
 
@@ -68,3 +72,5 @@ class FeatureMetadata:
         else:
             raise ValueError(f"Feature with ID '{feature_id}' not found in featuresMetadata.")
 
+    def clearFeatures(self):
+        self.featuresMetadata = {}
