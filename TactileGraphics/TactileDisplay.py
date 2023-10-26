@@ -12,17 +12,19 @@ import PeripheralDevice as pd
 
 
 # touch gesture macros
-NO_GESTURE = 0x00
-
-TAP_GESTURE = 0x01
-
-RIGHT_SWIPE_GESTURE = 0x02
-LEFT_SWIPE_GESTURE = 0x03
-UP_SWIPE_GESTURE = 0x04
-DOWN_SWIPE_GESTURE = 0x05
-
-CW_WHEEL_GESTURE = 0x06
-CCW_WHEEL_GESTURE = 0x07
+# =============================================================================
+# NO_GESTURE = 0x00
+# 
+# TAP_GESTURE = 0x01
+# 
+# RIGHT_SWIPE_GESTURE = 0x02
+# LEFT_SWIPE_GESTURE = 0x03
+# UP_SWIPE_GESTURE = 0x04
+# DOWN_SWIPE_GESTURE = 0x05
+# 
+# CW_WHEEL_GESTURE = 0x06
+# CCW_WHEEL_GESTURE = 0x07
+# =============================================================================
 
 class TactileDisplay(pd.PeripheralDevice):
 
@@ -63,16 +65,18 @@ class TactileDisplay(pd.PeripheralDevice):
             self.pull_displaySize()
 
 
-        self.gestureDictionary = {
-            NO_GESTURE: "none",
-            TAP_GESTURE: "tap",
-            RIGHT_SWIPE_GESTURE: "right swipe",
-            LEFT_SWIPE_GESTURE: "left swipe",
-            UP_SWIPE_GESTURE: "up swipe",
-            DOWN_SWIPE_GESTURE: "down swipe",
-            CW_WHEEL_GESTURE: "cw wheel",
-            CCW_WHEEL_GESTURE: "ccw wheel"
-        }
+# =============================================================================
+#         self.gestureDictionary = {
+#             NO_GESTURE: "none",
+#             TAP_GESTURE: "tap",
+#             RIGHT_SWIPE_GESTURE: "right swipe",
+#             LEFT_SWIPE_GESTURE: "left swipe",
+#             UP_SWIPE_GESTURE: "up swipe",
+#             DOWN_SWIPE_GESTURE: "down swipe",
+#             CW_WHEEL_GESTURE: "cw wheel",
+#             CCW_WHEEL_GESTURE: "ccw wheel"
+#         }
+# =============================================================================
 
     def listResizer(self, listToResize, nColumns, nRows):
         #cutoff the columns

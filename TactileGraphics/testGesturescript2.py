@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Sep  1 15:19:51 2023
+Created on Thu Sep  7 15:29:12 2023
 
 @author: derek
 """
 
 from serial import Serial
+import threading
 
+
+# Initialize the UART communication
 comPort = Serial("COM21", 115200, timeout=3)
 
 frameStartByte1 = 173
@@ -40,8 +43,7 @@ gestureDictionary = {
     CCW_WHEEL_GESTURE: "ccw wheel"
 }
 
-
-def syncTouch():
+def syncTouchscreen():
     while True:
         # pass bytes until a 173 is read
         while comPort.read(1)[0] != frameStartByte1:
@@ -50,35 +52,31 @@ def syncTouch():
             comPort.read(60)
             if comPort.read(1)[0] == frameEndByte:
                 break
-            
-            
-def gestureRecieved():
+
+def gestureCallback(gesture):
+    print(f"Gesture detected: {gesture}")
+
+def gestureRecieved(debugDataIntegers):
+    gestureId = debugDataIntegers[10]
+
     if gestureId in gestureDictionary.keys():
         gesture = gestureDictionary[gestureId]
-        syncTouch()
-        print(gesture)
-        
+        syncTouchscreen()
+        gestureCallback(gesture)
 
-syncTouch()
-print("uart frame synced")
+def pollTouchscreenUart():
+    syncTouchscreen()
+    print("uart frame synced")
+
+    while True:
+        try:
+            debugData = comPort.read(63)
+            debugDataIntegers = [b for b in debugData]
+            gestureRecieved(debugDataIntegers)
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
 
-# implement as an interrupted based system
-while True:
-    try:
-        # Once the trigger value is found, read the next 63 values
-        debugData = comPort.read(63)
-
-        debugDataIntegers = [b for b in debugData]
-        
-        gestureId = debugDataIntegers[10]
-
-        if gestureId in gestureDictionary.keys():
-            gesture = gestureDictionary[gestureId]
-            syncTouch()
-            print(gesture)
-            
-        
-        
-    except Exception as e:
-        print(f"An error occurred: {e}")
+# Start the UART thread
+touchscreenPollingThread = threading.Thread(target=pollTouchscreenUart)
+touchscreenPollingThread.start()
